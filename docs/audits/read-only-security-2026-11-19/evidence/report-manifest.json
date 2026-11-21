@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "assembled_at_utc": "2026-11-20T06:30:31.963375+00:00",
+  "review_date_local": "2026-11-19",
+  "timezone": "America/Los_Angeles",
+  "main_sha": "aa01563fcc891da60fefebb8335eca27855678e8",
+  "candidate_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+  "scope": "Documentation and evidence only; excludes this self-referential manifest.",
+  "files": [
+    {
+      "path": "AUTH.md",
+      "bytes": 32012,
+      "sha256": "3bda0618631ac42fc34d85ea8a0edf84643f578b7d23da4feb211d097dad8d4a"
+    },
+    {
+      "path": "COVERAGE_AND_VALIDATION.md",
+      "bytes": 10547,
+      "sha256": "8c56db823eaa40ce2b713d0ef11f1e559ff47303f790ee3416012654363e5eda"
+    },
+    {
+      "path": "CROSSCHECKS.md",
+      "bytes": 24881,
+      "sha256": "03174ea80a9ae358c2084bb72f91d31bda91a52bc130e28c4d85ec3cf470daea"
+    },
+    {
+      "path": "FEATURES.md",
+      "bytes": 19530,
+      "sha256": "39faf0d00295a4253fc54cb11c2a83320c6aee553dd95bf5d441c8b4590203a1"
+    },
+    {
+      "path": "LEDGER.md",
+      "bytes": 29706,
+      "sha256": "a7a7f23f57997f03df052a3859cfa77e57d352269e0349085cf9dfc202f2795c"
+    },
+    {
+      "path": "OPERATIONS.md",
+      "bytes": 12666,
+      "sha256": "66e4f64c38f9ee4229c53c8558a01e572721e5f2e24f4ec1515a0791d8905cfd"
+    },
+    {
+      "path": "README.md",
+      "bytes": 15275,
+      "sha256": "e06999487b6261e24c5e3689b341843c71c56e3ccc488a002120c1685d2e298b"
+    },
+    {
+      "path": "WEB_API.md",
+      "bytes": 22504,
+      "sha256": "917396e9d2db053332ed0d94c88a60db64ce58bdbeb99aeaf43ed11e2366dc11"
+    },
+    {
+      "path": "WORKER_HANDOFF.md",
+      "bytes": 10082,
+      "sha256": "8decda4f19e56e4107d909c39de6b3af7de835b5a72ae3affd9cf2721bd05aa6"
+    },
+    {
+      "path": "evidence/baseline-tests.log",
+      "bytes": 180,
+      "sha256": "3a44898dc76eba2b6cedee5e087adaee0524a86d82983ab08c3db0758433014c"
+    },
+    {
+      "path": "evidence/branch-inventory.json",
+      "bytes": 39869,
+      "sha256": "2ac10f3472f7f3c482327dc0bacf1cddea4d9dd012b0780607986cad8eaedf9c"
+    },
+    {
+      "path": "evidence/ci-scan-control-excerpt.log",
+      "bytes": 2423,
+      "sha256": "7b23ea3069b6ce434108f3ad0f092fb924fdc39b29a22f673435b06ee2e0f4b5"
+    },
+    {
+      "path": "evidence/cli-baseline-tests.log",
+      "bytes": 182,
+      "sha256": "14cc675cb8a5bdb7368d42c0e90343f328e53e1db98e04499223441020eb6178"
+    },
+    {
+      "path": "evidence/commands.json",
+      "bytes": 3474,
+      "sha256": "9de2d8c721dc4adc96e9ef2e21651284034ff6683f085317d2cb69f666e5354b"
+    },
+    {
+      "path": "evidence/future-manifests.json",
+      "bytes": 13560,
+      "sha256": "562571d5ec9f1bd1f6ef66eeda1c9d86a3927e91dc3f1159f8e0769de76fcd29"
+    },
+    {
+      "path": "evidence/github-observations.json",
+      "bytes": 8323,
+      "sha256": "875c9a526c5475c3bb7091dcc20b119f8e4845568cd82f4b19c43a8c1f61f919"
+    },
+    {
+      "path": "evidence/govulncheck-package.log",
+      "bytes": 26,
+      "sha256": "3016e51e4eac0d421674d2128bbbdefb2924b4646e0c14a1ab034977ad73fae5"
+    },
+    {
+      "path": "evidence/govulncheck.log",
+      "bytes": 256,
+      "sha256": "dd273e701bf72f6dcc5b17a6a96830938fc1b2b13d8ee2cd2414d96fd21133cf"
+    },
+    {
+      "path": "evidence/module-verification.log",
+      "bytes": 21,
+      "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd"
+    },
+    {
+      "path": "evidence/node-helper-tests.log",
+      "bytes": 1562,
+      "sha256": "96513dea0749850bc57cc573125b5e022dde852253733e20ed48c0073d201c19"
+    },
+    {
+      "path": "evidence/python-export-tests.log",
+      "bytes": 141,
+      "sha256": "05dbf1760d7b80e72563c787ab71e90904c20fd7e0fbee19ccd652e8a78e1593"
+    },
+    {
+      "path": "evidence/workflow-pins.log",
+      "bytes": 32,
+      "sha256": "9353c7b345cda410e4d8d1110ace2932403381722b51df6065fea429ad158cd2"
+    }
+  ]
+}

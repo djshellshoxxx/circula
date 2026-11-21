@@ -6,6 +6,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 func (s *server) timeZoneRoutes() {
@@ -24,7 +25,7 @@ func (s *server) timeZonePage(w http.ResponseWriter, r *http.Request, c *rc, sta
 		s.fail(w, r, err)
 		return
 	}
-	p.Title = "Time zone"
+	p.Title = messages.Text("account.time_zone")
 	cur := zone
 	if cur == "" {
 		cur = "UTC"
@@ -47,13 +48,13 @@ func (s *server) timeZonePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	zone := strings.TrimSpace(v["time_zone"])
 	if err := s.svc.SetTimeZone(r.Context(), c.actor, zone); err != nil {
 		if domain.CodeOf(err) == domain.CodeValidation {
-			s.timeZonePage(w, r, c, 422, &page{V: v, Summary: "Not saved. Fix the problem below. Nothing changed.",
-				Errors: []fieldErr{{"time_zone", "Time zone: enter a name such as Europe/Berlin or America/Mexico_City, or leave it empty for UTC."}}})
+			s.timeZonePage(w, r, c, 422, &page{V: v, Summary: messages.Text("time_zone.invalid_summary"),
+				Errors: []fieldErr{{"time_zone", messages.Text("time_zone.invalid_field")}}})
 			return
 		}
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "Time zone saved.")
+	s.setFlash(w, r, messages.Text("time_zone.saved"))
 	http.Redirect(w, r, "/account/time-zone", http.StatusSeeOther)
 }

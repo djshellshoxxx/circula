@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/passwordwork"
 	"github.com/djshellshoxxx/circula/internal/service"
 	tu "github.com/djshellshoxxx/circula/internal/testutil"
 )
@@ -213,7 +214,9 @@ func TestStressConcurrentApprovals(t *testing.T) {
 
 // Racing registrations of one login: exactly one wins, the rest see a conflict-class error, no faults.
 func TestStressConcurrentRegisterAndRedeem(t *testing.T) {
-	e := tu.NewEnv(t)
+	// This existing race targets registration uniqueness, so admit all its
+	// cheap fixture hashes instead of testing the production capacity limit.
+	e := tu.NewEnvConfig(t, nil, func(c *service.Config) { c.PasswordWork = tu.Must(passwordwork.New(10)) })
 	var wg sync.WaitGroup
 	for i := 0; i < 10; i++ {
 		wg.Add(1)

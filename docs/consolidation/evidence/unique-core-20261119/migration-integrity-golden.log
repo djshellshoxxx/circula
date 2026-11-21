@@ -1,0 +1,7 @@
+=== RUN   TestGoldenMigrationV1With10000Transactions
+    golden_migration_test.go:224: DAT-048 migration v1->v22: 10000 transactions, 61 accounts: migrate 2m42.441s, verify 3.823s (fixture build 29.502s)
+--- PASS: TestGoldenMigrationV1With10000Transactions (196.61s)
+=== RUN   TestGoldenMigrationDetectsDamagedFixture
+--- PASS: TestGoldenMigrationDetectsDamagedFixture (176.75s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	374.406s

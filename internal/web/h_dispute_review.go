@@ -3,6 +3,7 @@ package web
 import (
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 // reviewData fills the response (FR-076) and re-review (FR-078) parts of the dispute page.
@@ -23,10 +24,10 @@ func (s *server) reviewData(c *rc, v *service.DisputeView, out *disputeData) {
 	rr := v.ReReview
 	if rr != nil {
 		out.ReReviewWhy = rr.Reason
-		out.ReReviewText = "Re-review requested, waiting for a different reviewer."
+		out.ReReviewText = messages.Text("dispute.rereview.pending")
 		if rr.Status == service.ReReviewDecided {
 			out.ReReviewDone = rr.Rationale
-			out.ReReviewText = reReviewWords(rr.Outcome, domain.FormatAmount(rr.ReversalAmount, c.Net.Policy.Decimals), c.Net.Policy.CurrencyName)
+			out.ReReviewText = reReviewWords(rr.Outcome, domain.FormatAmount(rr.ReversalAmount, c.Net.Policy.Decimals), unitFor(c.Net.Policy.CurrencyName, rr.ReversalAmount, c.Net.Policy.Decimals))
 		}
 	}
 	if until := v.Deadlines.ReReviewCloses; d.Status == domain.DisputeResolved && !until.IsZero() {
@@ -39,14 +40,15 @@ func (s *server) reviewData(c *rc, v *service.DisputeView, out *disputeData) {
 		c.Me.ID != d.ReviewerID
 }
 
+// reReviewWords receives an exact amount string and an already selected unit.
 func reReviewWords(outcome, amt, unit string) string {
 	switch outcome {
 	case service.ReReviewConfirmed:
-		return "Re-review decided: the original decision stands."
+		return messages.Text("dispute.rereview.confirmed")
 	case string(domain.OutcomeUpheld):
-		return "Re-review decided, upheld: a further reversal of " + amt + " " + unit + "s has been posted."
+		return messages.Text("dispute.rereview.upheld_posted", amt, unit)
 	case string(domain.OutcomePartiallyUpheld):
-		return "Re-review decided, partly upheld: a further reversal of " + amt + " " + unit + "s has been posted."
+		return messages.Text("dispute.rereview.partial_posted", amt, unit)
 	}
-	return "Re-review decided."
+	return messages.Text("dispute.rereview.decided")
 }

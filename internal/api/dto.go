@@ -153,11 +153,7 @@ func toListing(l *domain.Listing) listingDTO {
 }
 
 func listingETag(l *domain.Listing) string {
-	p := "-"
-	if l.Price != nil {
-		p = minor(*l.Price)
-	}
-	return etagOf("listing", l.ID, ts(l.UpdatedAt), string(l.Status), l.Title, l.Description, p)
+	return `"` + service.ListingRevision(l) + `"`
 }
 
 type txDTO struct {

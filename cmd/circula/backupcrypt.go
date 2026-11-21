@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/hkdf"
@@ -18,6 +19,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/djshellshoxxx/circula/internal/passwordwork"
 	"golang.org/x/crypto/argon2"
 )
 
@@ -67,6 +69,16 @@ func parseBackupSecret(secret []byte) (kind byte, ikm []byte) {
 // deriveBackupKey turns the configured secret and the per-file salt into the
 // AES-256 key.
 func deriveBackupKey(secret []byte, kdf byte, salt []byte) ([]byte, error) {
+	return deriveBackupKeyContext(context.Background(), secret, kdf, salt)
+}
+
+// deriveBackupKeyContext shares authentication's process budget. Existing
+// backup streaming APIs have no request context; their synchronous derivation
+// retains its admission until it finishes and still refuses overload promptly.
+func deriveBackupKeyContext(ctx context.Context, secret []byte, kdf byte, salt []byte) ([]byte, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	kind, ikm := parseBackupSecret(secret)
 	if kind != kdf {
 		return nil, errBackupWrongKey
@@ -75,7 +87,14 @@ func deriveBackupKey(secret []byte, kdf byte, salt []byte) ([]byte, error) {
 	case kdfHKDF:
 		return hkdf.Key(sha256.New, ikm, salt, "circula backup encryption v1", 32)
 	case kdfArgon2:
-		return argon2.IDKey(ikm, salt, 3, 64<<10, 4, 32), nil
+		work, err := passwordwork.Process().Acquire(ctx)
+		if err != nil {
+			return nil, err
+		}
+		defer work.Release()
+		return work.Run(ctx, func() []byte {
+			return argon2.IDKey(ikm, salt, 3, 64<<10, 4, 32)
+		})
 	}
 	return nil, fmt.Errorf("unknown key derivation %d", kdf)
 }

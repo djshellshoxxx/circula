@@ -1,6 +1,6 @@
 {{define "content"}}
 {{if .D.Status}}
-  {{if .D.Status.Enabled}}<p>{{msg "auth.enrol.already_on"}} <a href="/account/security">{{msg "auth.enrol.security_link"}}</a> {{msg "auth.enrol.page_word"}}</p>
+  {{if .D.Status.Enabled}}{{$enabled := msgAround "auth.enrol.already_on"}}<p>{{$enabled.Before}}<a href="/account/security">{{msg "auth.enrol.security_link"}}</a>{{$enabled.After}}</p>
   {{else}}
   <p>{{msg "auth.enrol.intro"}}</p>
   <form method="post" action="/account/security/mfa/enrol" novalidate>
@@ -15,7 +15,7 @@
   <ol>
     <li>{{msg "auth.enrol.step_key"}}
       <p><code>{{.D.Enrol.Secret}}</code></p>
-      <p>{{msg "auth.enrol.uri_note"}} <code>{{.D.Enrol.URI}}</code></p>
+      {{$uri := msgAround "auth.enrol.uri_note"}}<p>{{$uri.Before}}<code>{{.D.Enrol.URI}}</code>{{$uri.After}}</p>
     </li>
     <li>{{msg "auth.enrol.step_confirm"}}</li>
   </ol>

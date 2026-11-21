@@ -1,0 +1,31 @@
+✔ offline and history warnings use supplied sentences and preserve the last snapshot literally (4.228338ms)
+✔ an initially offline page keeps its server snapshot and a new page starts without a stale warning (2.490563ms)
+✔ session warning appears two minutes before expiry and uses the supplied time sentence (2.337562ms)
+✔ fixed sessions hide extension and retain the draft when they expire (1.440837ms)
+✔ successful extension keeps the request contract and reschedules from the server expiry (9.636859ms)
+✔ failed extension uses the supplied failure message without navigation or form loss (4.009537ms)
+✔ session return links reject a network-path reference (0.793288ms)
+✔ loading announces a same-window page navigation, including keyboard link activation (1.729352ms)
+✔ loading preserves form fields and the chosen submitter name and value (0.799057ms)
+✔ GET filters and submitter overrides retain their native method and target (0.73507ms)
+✔ loading ignores fragments, downloads, other destinations and modified clicks (7.046215ms)
+✔ loading ignores download forms, dialog forms, other windows and submitter exclusions (6.923811ms)
+✔ failed native validation and non-submitting async buttons leave the page idle (0.495819ms)
+✔ an in-place handler can cancel a link or form after the loading listener (1.381067ms)
+✔ pageshow clears pending and displayed feedback when a history page returns (2.430101ms)
+✔ checkbox confirmation skips the identically named error link: I want to end this session. (5.158173ms)
+✔ checkbox confirmation skips the identically named error link: I want to end all my other sessions. (1.709593ms)
+✔ a checkbox without an error summary retains ordinary Tab/Space/Enter behavior (1.345994ms)
+✔ a restored checked confirmation remains checked without another Space press (1.543552ms)
+✔ failed keyboard checking is rejected before submitting the form (1.713819ms)
+✔ a same-name link without the required checkbox is rejected before submission (6.569856ms)
+✔ text entry and intentional link activation retain their existing behavior (2.420547ms)
+✔ ordinary tabTo callers retain their explicit search budget (1.266343ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 179.202666

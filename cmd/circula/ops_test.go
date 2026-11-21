@@ -129,6 +129,7 @@ func TestMetricsExposeRequiredSeriesWithRouteTemplates(t *testing.T) {
 		`circula_job_runs_total{job="expiry",result="ok"} 1`,
 		`circula_schema_version`,
 		`circula_http_request_duration_seconds_count{route="/api/"} 2`,
+		`circula_http_request_duration_by_status_seconds_count{route="/api/",class="2xx"} 2`,
 	} {
 		if !strings.Contains(body, want) {
 			t.Errorf("metrics lack %q", want)

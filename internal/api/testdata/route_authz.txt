@@ -66,6 +66,7 @@ api  POST   /api/v1/challenges/{id}/decision             reviewer
 api  GET    /api/v1/disputes                             member
 api  POST   /api/v1/disputes                             member
 api  GET    /api/v1/disputes/{id}                        member
+api  GET    /api/v1/disputes/{id}/reports                reviewer
 api  POST   /api/v1/disputes/{id}/re-review              member
 api  POST   /api/v1/disputes/{id}/re-review/decision     reviewer
 api  POST   /api/v1/disputes/{id}/resolve                reviewer
@@ -178,10 +179,12 @@ web  GET    /n/{slug}/admin/reverse                      admin
 web  POST   /n/{slug}/admin/reverse                      admin
 web  GET    /n/{slug}/admin/terms                        admin
 web  POST   /n/{slug}/admin/terms                        admin
+web  GET    /n/{slug}/about                              member
 web  GET    /n/{slug}/audit                              member
 web  GET    /n/{slug}/directory                          member
 web  GET    /n/{slug}/disputes                           member
 web  GET    /n/{slug}/disputes/{id}                      member
+web  GET    /n/{slug}/disputes/{id}/reports              reviewer
 web  POST   /n/{slug}/disputes/{id}/{act}                member
 web  GET    /n/{slug}/erase-my-data                      member
 web  POST   /n/{slug}/erase-my-data                      member

@@ -44,18 +44,27 @@ func resolveFlags(name string, args []string, stderr io.Writer, extra func(*flag
 
 func printChecks(w io.Writer, checks []networkCheck) bool {
 	ok := true
+	networks := 0
 	for _, c := range checks {
-		if c.OK {
-			fmt.Fprintf(w, "network %s: ok\n", c.Slug)
-			continue
+		label := "platform audit"
+		if !c.Platform {
+			label = "network " + c.Slug
+			networks++
 		}
-		ok = false
-		fmt.Fprintf(w, "network %s: FAILED\n", c.Slug)
-		for _, f := range c.Findings {
-			fmt.Fprintf(w, "  - %s\n", f)
+		if c.OK {
+			fmt.Fprintf(w, "%s: ok\n", label)
+		} else {
+			ok = false
+			fmt.Fprintf(w, "%s: FAILED\n", label)
+			for _, f := range c.Findings {
+				fmt.Fprintf(w, "  - %s\n", f)
+			}
+		}
+		if !c.Platform {
+			printHistoricalLimits(w, c.HistoricalLimits)
 		}
 	}
-	if len(checks) == 0 {
+	if networks == 0 {
 		fmt.Fprintln(w, "no networks to verify")
 	}
 	return ok
@@ -180,6 +189,7 @@ func cmdBackup(ctx context.Context, args []string, stdout, stderr io.Writer) int
 	}
 	fmt.Fprintf(stdout, "backup: %s\nmanifest: %s.manifest.json\nsha256: %s\nschema: v%d\nledger: %s\nencrypted: %t\n",
 		dest, dest, mf.SHA256, mf.SchemaVersion, mf.Ledger.Status, mf.Encrypted)
+	printHistoricalLimits(stdout, mf.Ledger.HistoricalLimits)
 	if !mf.Encrypted {
 		fmt.Fprintln(stderr, "circula: WARNING: the backup is not encrypted (no backup-encryption-key configured); it holds password hashes and every member's data in the clear (OPS-019)")
 	}
@@ -470,7 +480,7 @@ func cmdVerifyLedger(ctx context.Context, args []string, stdout, stderr io.Write
 		fmt.Fprintf(stderr, "circula: verify-ledger: %v\n", err)
 		return exitFailure
 	}
-	if network != "" && len(checks) == 0 {
+	if network != "" && summarise(checks).Networks == 0 {
 		fmt.Fprintf(stderr, "circula: verify-ledger: no network matches %q\n", network)
 		return exitFailure
 	}

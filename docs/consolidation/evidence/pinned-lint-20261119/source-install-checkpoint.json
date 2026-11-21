@@ -1,0 +1,409 @@
+{
+  "argv": [
+    "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "install",
+    "-p=1",
+    "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0"
+  ],
+  "cwd": "/dev/shm/circula-tooling-93/work/golangci-install-93",
+  "environment": {
+    "CGO_ENABLED": "0",
+    "GOMAXPROCS": "1",
+    "GOMEMLIMIT": "250MiB",
+    "GOGC": "40",
+    "GOCACHE": "/dev/shm/circula-tooling-93/go-cache",
+    "GOMODCACHE": "/dev/shm/circula-tooling-93/modcache",
+    "GOTMPDIR": "/dev/shm/circula-tooling-93/work/golangci-install-93",
+    "TMPDIR": "/dev/shm/circula-tooling-93/work/golangci-install-93",
+    "GOBIN": "/tmp/circula-tools-93/bin",
+    "GOTOOLCHAIN": "local"
+  },
+  "started_utc": "2026-11-19T13:50:05Z",
+  "resources_before": {
+    "mem_available_mib": 1874,
+    "shm_free_mib": 3230,
+    "tmp_free_mib": 1327,
+    "workspace_free_mib": 88
+  },
+  "resource_samples": [
+    {
+      "elapsed_seconds": 5.0,
+      "mem_available_mib": 1855,
+      "shm_free_mib": 3230,
+      "tmp_free_mib": 1326,
+      "workspace_free_mib": 88
+    },
+    {
+      "elapsed_seconds": 10.0,
+      "mem_available_mib": 1982,
+      "shm_free_mib": 3292,
+      "tmp_free_mib": 1329,
+      "workspace_free_mib": 88
+    },
+    {
+      "elapsed_seconds": 15.0,
+      "mem_available_mib": 1823,
+      "shm_free_mib": 3263,
+      "tmp_free_mib": 1330,
+      "workspace_free_mib": 247
+    },
+    {
+      "elapsed_seconds": 20.0,
+      "mem_available_mib": 1987,
+      "shm_free_mib": 3222,
+      "tmp_free_mib": 1330,
+      "workspace_free_mib": 253
+    },
+    {
+      "elapsed_seconds": 25.0,
+      "mem_available_mib": 1817,
+      "shm_free_mib": 3145,
+      "tmp_free_mib": 1329,
+      "workspace_free_mib": 252
+    },
+    {
+      "elapsed_seconds": 30.0,
+      "mem_available_mib": 1678,
+      "shm_free_mib": 3120,
+      "tmp_free_mib": 1300,
+      "workspace_free_mib": 251
+    },
+    {
+      "elapsed_seconds": 35.0,
+      "mem_available_mib": 1565,
+      "shm_free_mib": 3107,
+      "tmp_free_mib": 1329,
+      "workspace_free_mib": 250
+    },
+    {
+      "elapsed_seconds": 40.0,
+      "mem_available_mib": 1558,
+      "shm_free_mib": 3085,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 249
+    },
+    {
+      "elapsed_seconds": 45.0,
+      "mem_available_mib": 1495,
+      "shm_free_mib": 3065,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 249
+    },
+    {
+      "elapsed_seconds": 50.0,
+      "mem_available_mib": 1474,
+      "shm_free_mib": 3042,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 249
+    },
+    {
+      "elapsed_seconds": 55.0,
+      "mem_available_mib": 1618,
+      "shm_free_mib": 3013,
+      "tmp_free_mib": 1329,
+      "workspace_free_mib": 253
+    },
+    {
+      "elapsed_seconds": 60.0,
+      "mem_available_mib": 1612,
+      "shm_free_mib": 2958,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 252
+    },
+    {
+      "elapsed_seconds": 65.0,
+      "mem_available_mib": 1579,
+      "shm_free_mib": 2934,
+      "tmp_free_mib": 1329,
+      "workspace_free_mib": 250
+    },
+    {
+      "elapsed_seconds": 70.1,
+      "mem_available_mib": 1626,
+      "shm_free_mib": 2898,
+      "tmp_free_mib": 1330,
+      "workspace_free_mib": 248
+    },
+    {
+      "elapsed_seconds": 75.1,
+      "mem_available_mib": 1539,
+      "shm_free_mib": 2865,
+      "tmp_free_mib": 1330,
+      "workspace_free_mib": 247
+    },
+    {
+      "elapsed_seconds": 80.1,
+      "mem_available_mib": 1494,
+      "shm_free_mib": 2847,
+      "tmp_free_mib": 1329,
+      "workspace_free_mib": 245
+    },
+    {
+      "elapsed_seconds": 85.1,
+      "mem_available_mib": 1429,
+      "shm_free_mib": 2818,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 242
+    },
+    {
+      "elapsed_seconds": 90.1,
+      "mem_available_mib": 1715,
+      "shm_free_mib": 2811,
+      "tmp_free_mib": 1330,
+      "workspace_free_mib": 242
+    },
+    {
+      "elapsed_seconds": 95.1,
+      "mem_available_mib": 1588,
+      "shm_free_mib": 2802,
+      "tmp_free_mib": 1330,
+      "workspace_free_mib": 238
+    },
+    {
+      "elapsed_seconds": 100.1,
+      "mem_available_mib": 1485,
+      "shm_free_mib": 2782,
+      "tmp_free_mib": 1329,
+      "workspace_free_mib": 225
+    },
+    {
+      "elapsed_seconds": 105.1,
+      "mem_available_mib": 1448,
+      "shm_free_mib": 2767,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 212
+    },
+    {
+      "elapsed_seconds": 110.1,
+      "mem_available_mib": 1570,
+      "shm_free_mib": 2746,
+      "tmp_free_mib": 1329,
+      "workspace_free_mib": 207
+    },
+    {
+      "elapsed_seconds": 115.1,
+      "mem_available_mib": 1478,
+      "shm_free_mib": 2730,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 205
+    },
+    {
+      "elapsed_seconds": 120.1,
+      "mem_available_mib": 1475,
+      "shm_free_mib": 2710,
+      "tmp_free_mib": 1326,
+      "workspace_free_mib": 198
+    },
+    {
+      "elapsed_seconds": 125.1,
+      "mem_available_mib": 1450,
+      "shm_free_mib": 2697,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 196
+    },
+    {
+      "elapsed_seconds": 130.1,
+      "mem_available_mib": 1409,
+      "shm_free_mib": 2662,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 193
+    },
+    {
+      "elapsed_seconds": 135.1,
+      "mem_available_mib": 1632,
+      "shm_free_mib": 2642,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 191
+    },
+    {
+      "elapsed_seconds": 140.1,
+      "mem_available_mib": 1559,
+      "shm_free_mib": 2612,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 187
+    },
+    {
+      "elapsed_seconds": 145.1,
+      "mem_available_mib": 1430,
+      "shm_free_mib": 2604,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 185
+    },
+    {
+      "elapsed_seconds": 150.1,
+      "mem_available_mib": 1504,
+      "shm_free_mib": 2575,
+      "tmp_free_mib": 1335,
+      "workspace_free_mib": 178
+    },
+    {
+      "elapsed_seconds": 155.1,
+      "mem_available_mib": 1487,
+      "shm_free_mib": 2556,
+      "tmp_free_mib": 1335,
+      "workspace_free_mib": 174
+    },
+    {
+      "elapsed_seconds": 160.1,
+      "mem_available_mib": 1947,
+      "shm_free_mib": 2649,
+      "tmp_free_mib": 1335,
+      "workspace_free_mib": 249
+    },
+    {
+      "elapsed_seconds": 165.1,
+      "mem_available_mib": 1890,
+      "shm_free_mib": 2626,
+      "tmp_free_mib": 1335,
+      "workspace_free_mib": 238
+    },
+    {
+      "elapsed_seconds": 170.1,
+      "mem_available_mib": 1828,
+      "shm_free_mib": 2603,
+      "tmp_free_mib": 1334,
+      "workspace_free_mib": 237
+    },
+    {
+      "elapsed_seconds": 175.1,
+      "mem_available_mib": 1807,
+      "shm_free_mib": 2579,
+      "tmp_free_mib": 1332,
+      "workspace_free_mib": 239
+    },
+    {
+      "elapsed_seconds": 180.1,
+      "mem_available_mib": 1750,
+      "shm_free_mib": 2548,
+      "tmp_free_mib": 1331,
+      "workspace_free_mib": 239
+    },
+    {
+      "elapsed_seconds": 185.2,
+      "mem_available_mib": 1856,
+      "shm_free_mib": 2525,
+      "tmp_free_mib": 1355,
+      "workspace_free_mib": 235
+    },
+    {
+      "elapsed_seconds": 190.2,
+      "mem_available_mib": 1918,
+      "shm_free_mib": 2516,
+      "tmp_free_mib": 1352,
+      "workspace_free_mib": 230
+    },
+    {
+      "elapsed_seconds": 195.2,
+      "mem_available_mib": 1871,
+      "shm_free_mib": 2487,
+      "tmp_free_mib": 1343,
+      "workspace_free_mib": 233
+    },
+    {
+      "elapsed_seconds": 200.2,
+      "mem_available_mib": 1800,
+      "shm_free_mib": 2460,
+      "tmp_free_mib": 1342,
+      "workspace_free_mib": 236
+    },
+    {
+      "elapsed_seconds": 205.2,
+      "mem_available_mib": 2034,
+      "shm_free_mib": 2443,
+      "tmp_free_mib": 1555,
+      "workspace_free_mib": 234
+    },
+    {
+      "elapsed_seconds": 210.2,
+      "mem_available_mib": 2141,
+      "shm_free_mib": 2418,
+      "tmp_free_mib": 1555,
+      "workspace_free_mib": 233
+    },
+    {
+      "elapsed_seconds": 215.2,
+      "mem_available_mib": 2073,
+      "shm_free_mib": 2398,
+      "tmp_free_mib": 1555,
+      "workspace_free_mib": 234
+    },
+    {
+      "elapsed_seconds": 220.2,
+      "mem_available_mib": 2090,
+      "shm_free_mib": 2368,
+      "tmp_free_mib": 1555,
+      "workspace_free_mib": 234
+    },
+    {
+      "elapsed_seconds": 225.2,
+      "mem_available_mib": 2009,
+      "shm_free_mib": 2329,
+      "tmp_free_mib": 1555,
+      "workspace_free_mib": 234
+    },
+    {
+      "elapsed_seconds": 230.2,
+      "mem_available_mib": 1940,
+      "shm_free_mib": 2305,
+      "tmp_free_mib": 1555,
+      "workspace_free_mib": 234
+    },
+    {
+      "elapsed_seconds": 235.2,
+      "mem_available_mib": 1789,
+      "shm_free_mib": 2277,
+      "tmp_free_mib": 1554,
+      "workspace_free_mib": 234
+    },
+    {
+      "elapsed_seconds": 240.2,
+      "mem_available_mib": 1631,
+      "shm_free_mib": 2261,
+      "tmp_free_mib": 1553,
+      "workspace_free_mib": 234
+    },
+    {
+      "elapsed_seconds": 245.2,
+      "mem_available_mib": 1540,
+      "shm_free_mib": 2236,
+      "tmp_free_mib": 1553,
+      "workspace_free_mib": 234
+    },
+    {
+      "elapsed_seconds": 250.2,
+      "mem_available_mib": 1565,
+      "shm_free_mib": 2217,
+      "tmp_free_mib": 1553,
+      "workspace_free_mib": 233
+    },
+    {
+      "elapsed_seconds": 255.2,
+      "mem_available_mib": 1460,
+      "shm_free_mib": 2200,
+      "tmp_free_mib": 1528,
+      "workspace_free_mib": 233
+    },
+    {
+      "elapsed_seconds": 260.2,
+      "mem_available_mib": 1486,
+      "shm_free_mib": 2186,
+      "tmp_free_mib": 1551,
+      "workspace_free_mib": 233
+    },
+    {
+      "elapsed_seconds": 265.2,
+      "mem_available_mib": 1595,
+      "shm_free_mib": 2165,
+      "tmp_free_mib": 1551,
+      "workspace_free_mib": 233
+    }
+  ],
+  "watchdog_limits_mib": {
+    "mem_available_min": 700,
+    "shm_free_min": 384,
+    "tmp_free_min": 192,
+    "workspace_free_min": 32
+  },
+  "max_wall_seconds": 1200,
+  "process_group": 6
+}

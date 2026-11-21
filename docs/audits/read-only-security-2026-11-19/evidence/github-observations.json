@@ -1,0 +1,256 @@
+{
+  "observed_at_utc": "2026-11-20 06:21:03 UTC",
+  "local_date": "2026-11-19",
+  "timezone": "America/Los_Angeles",
+  "repo": "djshellshoxxx/circula",
+  "reviewed_main": "aa01563fcc891da60fefebb8335eca27855678e8",
+  "reviewed_candidate": "22c767a90f69d286642ef96e6b3c174836637a3c",
+  "main_branch": {
+    "endpoint": "https://api.github.com/repos/djshellshoxxx/circula/branches/main",
+    "sha": "aa01563fcc891da60fefebb8335eca27855678e8",
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    }
+  },
+  "rulesets": {
+    "endpoint": "https://api.github.com/repos/djshellshoxxx/circula/rulesets?includes_parents=true&per_page=100",
+    "value": []
+  },
+  "pr125": {
+    "url": "https://github.com/djshellshoxxx/circula/pull/125",
+    "head": "22c767a90f69d286642ef96e6b3c174836637a3c",
+    "base": "aa01563fcc891da60fefebb8335eca27855678e8",
+    "draft": true,
+    "changed_files": 386
+  },
+  "checks": [
+    {
+      "name": "test (${{ matrix.os }})",
+      "id": 136036461485,
+      "head_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "conclusion": "skipped",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44660259330/job/136036461485",
+      "started_at": "2026-11-20T02:21:59Z",
+      "completed_at": "2026-11-20T02:21:59Z"
+    },
+    {
+      "name": "e2e (Playwright, axe, keyboard)",
+      "id": 136036460255,
+      "head_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44660259330/job/136036460255",
+      "started_at": "2026-11-20T02:58:41Z",
+      "completed_at": "2026-11-20T03:09:53Z"
+    },
+    {
+      "name": "Python export reader (windows-2022)",
+      "id": 136036460088,
+      "head_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44660259397/job/136036460088",
+      "started_at": "2026-11-20T02:51:42Z",
+      "completed_at": "2026-11-20T02:52:14Z"
+    },
+    {
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "id": 136036460029,
+      "head_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "conclusion": "failure",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44660259330/job/136036460029",
+      "started_at": "2026-11-20T02:58:14Z",
+      "completed_at": "2026-11-20T02:58:52Z"
+    },
+    {
+      "name": "API contract and load smoke",
+      "id": 136036460009,
+      "head_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44660259330/job/136036460009",
+      "started_at": "2026-11-20T02:57:18Z",
+      "completed_at": "2026-11-20T02:57:48Z"
+    },
+    {
+      "name": "Python export reader (macos-15-intel)",
+      "id": 136036459969,
+      "head_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44660259397/job/136036459969",
+      "started_at": "2026-11-20T02:51:22Z",
+      "completed_at": "2026-11-20T02:51:59Z"
+    },
+    {
+      "name": "test (ubuntu-24.04)",
+      "id": 136036459923,
+      "head_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44660259330/job/136036459923",
+      "started_at": "2026-11-20T02:55:42Z",
+      "completed_at": "2026-11-20T03:08:43Z"
+    },
+    {
+      "name": "reproducible build (two builds, same sha256)",
+      "id": 136036459855,
+      "head_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44660259330/job/136036459855",
+      "started_at": "2026-11-20T02:48:42Z",
+      "completed_at": "2026-11-20T02:50:00Z"
+    },
+    {
+      "name": "build release targets",
+      "id": 136036459814,
+      "head_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44660259330/job/136036459814",
+      "started_at": "2026-11-20T02:46:00Z",
+      "completed_at": "2026-11-20T02:48:39Z"
+    },
+    {
+      "name": "fuzz smoke (RB-017)",
+      "id": 136036459682,
+      "head_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44660259330/job/136036459682",
+      "started_at": "2026-11-20T02:44:37Z",
+      "completed_at": "2026-11-20T02:46:20Z"
+    },
+    {
+      "name": "Python export reader (ubuntu-24.04)",
+      "id": 136036459672,
+      "head_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44660259397/job/136036459672",
+      "started_at": "2026-11-20T02:50:03Z",
+      "completed_at": "2026-11-20T02:50:23Z"
+    }
+  ],
+  "failed_job_steps": {
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1
+      },
+      {
+        "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2
+      },
+      {
+        "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3
+      },
+      {
+        "name": "Check workflow action pins",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4
+      },
+      {
+        "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5
+      },
+      {
+        "name": "Verify post-snapshot evidence SHA-256 manifest",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6
+      },
+      {
+        "name": "Dependency licences against the approved list (ARC-024)",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7
+      },
+      {
+        "name": "Secret scan (ARC-023, SEC-027)",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 8
+      },
+      {
+        "name": "gofmt",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 9
+      },
+      {
+        "name": "go vet",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 10
+      },
+      {
+        "name": "Requirement traceability is current",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 11
+      },
+      {
+        "name": "Export reader and property-runner tests",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 12
+      },
+      {
+        "name": "Progressive browser message and keyboard helper tests",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 13
+      },
+      {
+        "name": "golangci-lint",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 14
+      },
+      {
+        "name": "govulncheck",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 15
+      },
+      {
+        "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 29
+      },
+      {
+        "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31
+      }
+    ]
+  }
+}

@@ -27,9 +27,9 @@ const (
 	// CodeNetworkFrozen: the network's ledger failed verification and the
 	// network is read-only until an operator resolves it (CMD-07, OPS-033).
 	CodeNetworkFrozen Code = "network-frozen"
-	// CodeUnavailable is the retryable "try again" error: the database was busy
-	// or locked past the busy timeout. No partial state was written. Adapters
-	// map it to 503 with Retry-After.
+	// CodeUnavailable is the retryable "try again" error: a bounded resource
+	// could not admit work, or the database stayed busy past its timeout.
+	// No partial state was written. Adapters map it to 503 with Retry-After.
 	CodeUnavailable Code = "unavailable"
 	CodeInternal    Code = "internal-error"
 )
@@ -87,7 +87,7 @@ var (
 )
 
 // IsRetryable reports whether err is a transient failure the caller may retry
-// unchanged (database busy). Rate limits are not retryable immediately.
+// unchanged (a busy resource). Rate limits are not retryable immediately.
 func IsRetryable(err error) bool { return CodeOf(err) == CodeUnavailable }
 
 // Errf builds an Error with a formatted message.

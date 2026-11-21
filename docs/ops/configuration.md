@@ -69,7 +69,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `tls-key-file` | `CIRCULA_TLS_KEY_FILE` | none | no | PEM private key for `tls-cert-file`. On Unix it must not be readable by group or others. Setting only one of the two refuses to start. |
 | `audit-anchor-key-file` | `CIRCULA_AUDIT_ANCHOR_KEY_FILE` | none | no | Key that HMACs audit anchors (RB-010). Keep a copy off the database host. See [Audit anchors](#audit-anchors-rb-010). |
 | `audit-anchor-with-backups` | `CIRCULA_AUDIT_ANCHOR_WITH_BACKUPS` | `true` | no | Write `<backup>.anchor.json` beside each scheduled backup. Removed together with the backup it belongs to. |
-| `audit-mirror-file` | `CIRCULA_AUDIT_MIRROR_FILE` | none | no | Append every audit event (chain metadata only) to this JSONL file after commit (RB-012). See [Audit mirror](#audit-mirror-rb-012). |
+| `audit-mirror-file` | `CIRCULA_AUDIT_MIRROR_FILE` | none | no | Offer committed audit metadata to a bounded, best-effort JSONL mirror (RB-012). See [Audit mirror](#audit-mirror-rb-012). |
 | `state-dir` | `CIRCULA_STATE_DIR` | directory of `database` | no | Where runtime state lives: today only the web signing key `circula-web.key` (see below). Created `0700` when missing. |
 | `export-spool-dir` | `CIRCULA_EXPORT_SPOOL_DIR` | `<state-dir>/export-spool` | no | Where API export archives are written and kept until they expire. Created `0700` when missing; `serve` refuses to start if it cannot write there. See [Export spool](#export-spool-fr-095-br-06). |
 
@@ -223,20 +223,28 @@ non-loopback address without TLS keeps starting with a warning, since that is th
 ## Audit anchors (RB-010)
 
 The audit hash chain and its head live in the database file, so someone who can write that file can recompute the whole
-chain. An anchor is a small JSON file holding, for every network, the chain head (`seq` and `hash`), the time and a database
-id. Store it off-host.
+chain. New anchors use JSON format version 2 and hold the platform audit checkpoint plus every network's checkpoint
+(`seq` and `hash`), the time and a database id. The checkpoints are read in one database snapshot. Store the file off-host.
 
 ```sh
 circula audit-anchor write /var/backups/offsite/anchor-$(date +%F).json
 circula audit-anchor verify anchor-2026-10-01.json     # exit 0 intact, exit 3 tail truncated or history rewritten
 ```
 
-`verify` passes when each anchored event still exists with the same hash, so the chain may have grown since. It fails when the
+`verify` passes when each covered checkpoint still exists with the same hash, so the chains may have grown since. It fails when the
 anchored event is missing (truncation, deleted network), differs (rewrite) or the database id changed. Both commands read
 the database without the writer lock, so they work beside `serve`. With `audit-anchor-key-file` set, the anchor carries an
 HMAC-SHA-256 and `verify` rejects an edited, unsigned or wrongly keyed file; the key should not live only on the database
 host. Scheduled backups write `<backup>.anchor.json` beside the backup unless `audit-anchor-with-backups=false`; copy those
-off-host with the backups. Limit: an anchor proves history up to its time. Events after the newest anchor are not covered.
+off-host with the backups. Run `verify-ledger` as well to check the complete live chains against their event contents and
+recorded heads; anchor verification compares the independently retained checkpoints. Events after a checkpoint are not
+covered by that anchor.
+
+Version 1 anchors retain their original signature encoding and remain verifiable. Their success output explicitly says
+**network-only coverage; platform audit not covered**. They are never upgraded or treated as evidence about platform
+history. Version 2 requires a separate `platform` object. An empty scope is `{ "seq": 0, "hash": "" }`: it covers no past
+events and allows later growth. A database with no audit events also has an empty database id, so that checkpoint cannot
+establish a database identity until an event exists. Write a new anchor after the first events.
 
 ## Export spool (FR-095, BR-06)
 
@@ -259,12 +267,38 @@ it holds only short-lived copies of data that is in the database.
 
 ## Audit mirror (RB-012)
 
-`audit-mirror-file` makes the service append one JSON line per audit event after the database commit. Only chain metadata is
-written (ids, seq, time, actor, action, target, request id, `prev_hash`, `hash`); summaries, reasons and subject ids stay in
-the database so that erasure of personal data is not undone by the mirror. Limits: best effort (a crash between commit and
-write, or a write error, loses lines; the first failure is logged), and the file is only as tamper-proof as its location.
-Point it at a path the service account can append to but not rewrite (`chattr +a`, a log-shipper pipe or an object-locked
-mount) and ship it off-host. The mirror lets you compare `hash` and `prev_hash` linkage against the database independently.
+`audit-mirror-file` offers one metadata record after each audit event commits in the database. A single background worker
+appends admitted records as JSON lines in FIFO order. Only chain metadata is written (ids, seq, time, actor, action,
+target, request id, `prev_hash`, `hash`); summaries, reasons and subject ids stay in the database so that erasure of
+personal data is not undone by the mirror. A slow destination does not delay transaction acknowledgement or keep the
+store's writer gate occupied. The callback performs bounded encoding and a nonblocking queue offer, with no file writes
+or logging on that path. The destination is opened during startup.
+
+The mirror remains **best effort**, with these fixed limits:
+
+- At most **256 queued records**, each at most **16 KiB including its newline**: at most 4 MiB of queued encoded data,
+  plus one record being delivered. Oversized metadata is rejected before a large encoding allocation; the encoded size
+  is checked again after JSON escaping. Records are dropped whole, never truncated to fit. Full queues drop new offers.
+- One worker writes admitted records in order. Failed writes are not retried, because a partial write has an uncertain
+  result. A write error or short write may leave a partial JSON line; subsequent records continue in admission order.
+  A successful write means the destination accepted those bytes, not that another system durably retained them.
+- Shutdown detaches the store callback and allows **two seconds** to drain. At the deadline, queued records are discarded
+  and counted. A write already in progress is **unconfirmed** and may finish later. The shutdown caller does not wait for
+  a blocked destination `Write` or `Close`; that one existing worker may remain until the destination returns or the
+  process exits. No additional worker is started for a timeout or an event.
+- A crash can lose admitted records that have not reached the destination. The database audit rows remain the primary
+  committed copy under the configured database durability mode; this queue is not a durable outbox or a delivery receipt.
+
+`/metrics` exposes pending records, successful writes, write failures and drops by reason (`queue_full`, `oversize`,
+`encoding`, `closed`, `shutdown`). These counters remain readable even while the destination is stalled. The worker logs
+the first write failure and coalesces drop summaries to at most once per minute, plus a final summary when it exits;
+those messages can be delayed by a blocked destination. An incomplete shutdown is logged with its pending and loss counts.
+See [monitoring](monitoring.md#metrics) for the metric names. Check these counters when using mirror gaps as evidence;
+absence from this best-effort copy does not establish absence from the database.
+
+The file is only as tamper-proof as its location. Point it at a path the service account can append to but not rewrite
+(`chattr +a`, a log-shipper pipe or an object-locked mount) and ship it off-host. Retained `hash` and `prev_hash` values let
+you compare audit-chain linkage against the database independently; the mirror does not claim complete delivery.
 
 ## Secure delete (RB-003)
 
@@ -304,11 +338,13 @@ On every `serve` start, in this order (before the port opens):
    start. In `auto` mode, a pre-migration backup is taken first and migration is refused if the backup fails. In both
    modes a database file that does not exist yet is created at the current schema.
 4. Open the database. Check WAL journal mode and foreign-key enforcement.
-5. Verify the ledger for every network. A network that fails is **frozen** (CMD-07, OPS-033): its writes are refused with
+5. Verify the ledger for every network and the platform audit chain. A network that fails is **frozen** (CMD-07, OPS-033): its writes are refused with
    `network-frozen` (API `423`, web page "Network read-only"), reads still work, and every other network serves. The
    failure is logged at error level and `circula_frozen_networks` / `circula_ledger_verification_ok` show it. The hourly
    verification re-checks every network: a network that passes again thaws on its own. Run `circula verify-ledger` for
    the findings and follow the ledger-failure procedure in [monitoring.md](monitoring.md#failure-modes-ops-033).
+   A platform audit finding is logged at error level and makes `circula_ledger_verification_ok` zero. It does not add a
+   failing network or freeze unrelated financial networks; the existing critical verification alert requires operator review.
 6. Log a warning if maintenance mode is on, then open the port.
 
 If the integrity check or the verified backup before a migration fails (step 3, `auto` mode, or `circula migrate`), the

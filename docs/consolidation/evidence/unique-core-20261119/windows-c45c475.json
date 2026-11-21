@@ -1,0 +1,14 @@
+{
+  "source_commit": "c45c475f6ca22497072e8c8d3bc4f1e444b0f382",
+  "equivalent_local_commit": "c7104872cc2fe049b62d175fbb95a9751bf31bdd",
+  "workflow_run_id": 44704139026,
+  "job_id": 136179516490,
+  "job_name": "test (windows-2022)",
+  "conclusion": "failure",
+  "failed_tests": [
+    "TestMigrationsExpandThenContract"
+  ],
+  "failure": "Migration0023 preserving rebuild had not yet been registered; repaired in later local7acede5. All other package outcomes passed or had no tests. This is not a full gate pass.",
+  "log_sha256": "2ca827e5a60ad16f021566e57a85fb72ffd9960eb90157daf57a429c054ccb96",
+  "url": "https://github.com/djshellshoxxx/circula/actions/runs/44704139026/job/136179516490"
+}

@@ -85,9 +85,19 @@ func TestAuditAnchorWriteVerifyAndTamper(t *testing.T) {
 
 	// Rewrite of the anchored head (chain recomputed by an attacker).
 	dropAuditTriggers(t, db)
-	raw, _ := openRaw(db)
-	if _, err := raw.Exec(`UPDATE audit_events SET hash = 'ff' || substr(hash, 3) WHERE network_id = (SELECT id FROM networks WHERE slug='test-net') AND seq = (SELECT MAX(seq) FROM audit_events WHERE network_id = (SELECT id FROM networks WHERE slug='test-net'))`); err != nil {
+	raw, err := openRaw(db)
+	if err != nil {
 		t.Fatal(err)
+	}
+	defer func() { _ = raw.Close() }()
+	// Replacing a prefix with a constant can leave an already matching digest
+	// unchanged. Choose the other prefix so this fixture always changes one byte.
+	result, err := raw.Exec(`UPDATE audit_events SET hash = CASE WHEN substr(hash, 1, 2) = 'ff' THEN '00' ELSE 'ff' END || substr(hash, 3) WHERE network_id = (SELECT id FROM networks WHERE slug='test-net') AND seq = (SELECT MAX(seq) FROM audit_events WHERE network_id = (SELECT id FROM networks WHERE slug='test-net'))`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if n, err := result.RowsAffected(); err != nil || n != 1 {
+		t.Fatalf("rewrite fixture affected %d rows, want 1: %v", n, err)
 	}
 	if code, out := runAnchor(t, db, "verify", anchor); code != exitLedgerFailed || !strings.Contains(out, "rewritten") {
 		t.Fatalf("rewrite not detected = %d %s", code, out)

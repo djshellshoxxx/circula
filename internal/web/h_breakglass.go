@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 func init() {
@@ -16,6 +17,19 @@ type breakGlassRow struct {
 	ID, Operator, Reason, Status string
 	Opened, Expires, Closed      any
 	ClosedReason                 string
+}
+
+func breakGlassStatusText(status string) string {
+	switch status {
+	case "open":
+		return messages.Text("admin.break_glass.status_open")
+	case "closed":
+		return messages.Text("admin.break_glass.status_closed")
+	case "expired":
+		return messages.Text("admin.break_glass.status_expired")
+	default:
+		return status
+	}
 }
 
 // breakGlassPage shows the network's operator break-glass history, read only
@@ -31,7 +45,7 @@ func (s *server) breakGlassPage(w http.ResponseWriter, r *http.Request, c *rc) {
 	now := s.opts.Clock.Now()
 	rows := make([]breakGlassRow, 0, len(bs))
 	for _, b := range bs {
-		row := breakGlassRow{ID: b.ID, Operator: b.OperatorLabel, Reason: b.Reason, Status: b.Status(now),
+		row := breakGlassRow{ID: b.ID, Operator: b.OperatorLabel, Reason: b.Reason, Status: breakGlassStatusText(b.Status(now)),
 			Opened: fmtTime(b.OpenedAt), Expires: fmtTime(b.ExpiresAt), ClosedReason: b.ClosedReason}
 		if b.ClosedAt != nil {
 			row.Closed = fmtTime(*b.ClosedAt)
@@ -42,5 +56,5 @@ func (s *server) breakGlassPage(w http.ResponseWriter, r *http.Request, c *rc) {
 	if len(bs) == 50 {
 		next = bs[49].ID
 	}
-	s.render(w, r, c, "admin_break_glass", http.StatusOK, &page{Title: "Operator access", D: map[string]any{"Rows": rows, "Next": next}})
+	s.render(w, r, c, "admin_break_glass", http.StatusOK, &page{Title: messages.Text("admin.break_glass.title"), D: map[string]any{"Rows": rows, "Next": next}})
 }

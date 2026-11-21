@@ -1,0 +1,17 @@
+{
+  "observed_utc": "2026-11-19T13:59:29Z",
+  "status": "executor_interrupted",
+  "exit_code": null,
+  "clean_termination_confirmed": false,
+  "interrupt_attempt": "write_stdin Ctrl-C for own session45458 failed: exec-server transport disconnected; recovery timed out after45s",
+  "last_persisted_sample": {
+    "elapsed_seconds": 265.2,
+    "mem_available_mib": 1595,
+    "shm_free_mib": 2165,
+    "tmp_free_mib": 1551,
+    "workspace_free_mib": 233
+  },
+  "last_checkpoint_had_terminal_status": false,
+  "post_restart_tool_binary_and_volatile_caches_present": false,
+  "replacement": "checksum-verified official v2.15.0 prebuilt; no repeated source install"
+}

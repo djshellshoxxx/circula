@@ -2,14 +2,14 @@
 {{with .D}}
 <p class="big">{{.Sentence}}</p>
 <dl class="kv">
-  <dt>Payer</dt><dd>{{.Payer}}{{with $.MemberRef .Tx.PayerMemberID}} (member reference {{.}}){{end}}</dd>
-  <dt>Payee</dt><dd>{{.Payee}}{{with $.MemberRef .Tx.PayeeMemberID}} (member reference {{.}}){{end}}</dd>
+  <dt>{{msg "trade.payer"}}</dt><dd>{{$payerRef := $.MemberRef .Tx.PayerMemberID}}{{if $payerRef}}{{msg "trade.member_with_reference" .Payer $payerRef}}{{else}}{{.Payer}}{{end}}</dd>
+  <dt>{{msg "trade.payee"}}</dt><dd>{{$payeeRef := $.MemberRef .Tx.PayeeMemberID}}{{if $payeeRef}}{{msg "trade.member_with_reference" .Payee $payeeRef}}{{else}}{{.Payee}}{{end}}</dd>
 </dl>
 <p>{{.Consequence}}</p>
 <form method="post" action="/n/{{$.Slug}}/trades/{{.Tx.ID}}/{{.Action}}">
   {{template "csrf" $}}{{template "idem" $}}
-  {{if .AskReason}}{{template "field" dict "P" $ "Name" "reason" "Label" "Reason" "Hint" "Required when you cancel a trade you are not part of." "Req" true}}{{end}}
-  <div class="actions"><button type="submit" class="danger">{{.Verb}} this trade</button> <a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}">Go back</a></div>
+  {{if .AskReason}}{{template "field" dict "P" $ "Name" "reason" "Label" (msg "trade.reason") "Hint" (msg "trade.action.reason_hint") "Req" true}}{{end}}
+  <div class="actions"><button type="submit" class="danger">{{msg "trade.action.confirm" .Verb}}</button> <a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}">{{msg "trade.back"}}</a></div>
 </form>
 {{end}}
 {{end}}

@@ -4,6 +4,8 @@ Circula is a self-hosted credit-ledger service for trading networks. Members of 
 trades that move credit between their accounts. Every posting is an append-only double entry, every command writes an
 audit event, and a verification operation recomputes the ledger invariants.
 
+Credits are accounting units used inside one network. They are a record of who has given and received value; they have no value outside it and are not guaranteed to be accepted.
+
 This repository contains the Go core (domain, service layer, SQLite store) and the `circula` command, which runs the
 HTTP service, the web UI and the JSON API, and operates the database.
 

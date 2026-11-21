@@ -1,0 +1,54 @@
+=== RUN   TestVerifyPlatformAuditScopeAndFindings
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/empty_history
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/zero_head_is_not_empty_history
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/complete_history
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/legitimate_growth
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/missing_head
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/incomplete_history
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/head_without_events
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/content_mismatch
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/sequence_gap
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/broken_link
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/event_read_error
+=== RUN   TestVerifyPlatformAuditScopeAndFindings/head_read_error
+--- PASS: TestVerifyPlatformAuditScopeAndFindings (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/empty_history (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/zero_head_is_not_empty_history (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/complete_history (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/legitimate_growth (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/missing_head (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/incomplete_history (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/head_without_events (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/content_mismatch (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/sequence_gap (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/broken_link (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/event_read_error (0.00s)
+    --- PASS: TestVerifyPlatformAuditScopeAndFindings/head_read_error (0.00s)
+=== RUN   TestVerifyPlatformAuditRequiresSystem
+--- PASS: TestVerifyPlatformAuditRequiresSystem (0.00s)
+=== RUN   TestAuditFailureRollsBackStateChange
+--- PASS: TestAuditFailureRollsBackStateChange (1.10s)
+=== RUN   TestAuditHashPreservesOriginalFormat
+--- PASS: TestAuditHashPreservesOriginalFormat (0.00s)
+=== RUN   TestAuditEventContent
+--- PASS: TestAuditEventContent (0.99s)
+=== RUN   TestVerifyDetectsBalanceCorruptionAndBalanceAt
+--- PASS: TestVerifyDetectsBalanceCorruptionAndBalanceAt (1.29s)
+=== RUN   TestVerifyAsSystemActor
+--- PASS: TestVerifyAsSystemActor (0.95s)
+=== RUN   TestVerifyLedgerIsReadOnly
+--- PASS: TestVerifyLedgerIsReadOnly (1.33s)
+=== RUN   TestVerifyLedgerDoesNotTakeWriteGate
+--- PASS: TestVerifyLedgerDoesNotTakeWriteGate (0.94s)
+=== RUN   TestAuditTailTruncationDetected
+--- PASS: TestAuditTailTruncationDetected (1.30s)
+=== RUN   TestAuditHeadTracksAppendsAndIsProtected
+--- PASS: TestAuditHeadTracksAppendsAndIsProtected (0.93s)
+=== RUN   TestVerifyDetectsTamperedEntry
+--- PASS: TestVerifyDetectsTamperedEntry (1.20s)
+=== RUN   TestRestoreAuditRecordsOperatorAndAdministratorIdentity
+--- PASS: TestRestoreAuditRecordsOperatorAndAdministratorIdentity (0.83s)
+=== RUN   TestRestoreCredentialInvalidationAtomicAndOperatorOnly
+--- PASS: TestRestoreCredentialInvalidationAtomicAndOperatorOnly (0.99s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	12.948s

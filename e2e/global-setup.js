@@ -405,7 +405,7 @@ async function seedApply(base) {
 
     await p.goto(`/n/${APPLY_SLUG}/admin/members?status=pending`);
     const approveHref = async (name) => {
-      const href = await p.locator('a[href$="/approve"]').filter({ hasText: name }).first().getAttribute('href');
+      const href = await p.getByRole('link', { name: `Approve ${name}`, exact: true }).getAttribute('href');
       if (!href) throw new Error('no pending request from ' + name);
       return href;
     };

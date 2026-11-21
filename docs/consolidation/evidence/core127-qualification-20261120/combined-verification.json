@@ -1,0 +1,40 @@
+{
+  "source_commit": "2d45ef0ef27f746d11990c07fa65e469c2199184",
+  "source_scope": "combined Go source at this commit; later documentation additions require final provider qualification",
+  "go": "go1.26.11 linux/amd64",
+  "focused_race": {
+    "exit_code": 0,
+    "command": "go test -race -p 1 -count=1 -timeout=4m -json ./internal/store ./internal/web -run '^(TestHistoricalCreditEvidenceDecoder|TestReportDisputeContextHTMLJourney)'",
+    "top_level_passed": 3,
+    "subtests_passed": 28,
+    "failed": 0,
+    "skipped": 0,
+    "packages_passed": 2
+  },
+  "node_helpers": {
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "web_gosec": {
+    "exit_code": 0,
+    "issues": 0,
+    "scope": "production internal/web only; tests disabled for this focused static check"
+  },
+  "full_lint_attempt": {
+    "exit_code": 137,
+    "result": "process killed before producing a lint report; not a pass"
+  },
+  "browser": {
+    "result": "aborted before page creation",
+    "error": "process_singleton_posix.cc:297 socket() failed: Operation not permitted (1)",
+    "assertions_executed": 0
+  },
+  "source_integrity": {
+    "traceability_check": "passed",
+    "hygiene": "passed; four tooling tests",
+    "javascript_syntax": "both changed specs passed",
+    "directory_secret_scan": "passed on recorded pre-publication source; final composition will be scanned again"
+  }
+}

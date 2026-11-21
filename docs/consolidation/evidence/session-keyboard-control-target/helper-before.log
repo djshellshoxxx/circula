@@ -1,0 +1,64 @@
+✖ checkbox confirmation skips the identically named error link: I want to end this session. (4.493798ms)
+✖ checkbox confirmation skips the identically named error link: I want to end all my other sessions. (1.230919ms)
+✔ a checkbox without an error summary retains ordinary Tab/Space/Enter behavior (1.824162ms)
+✖ a same-name link without the required checkbox is rejected before submission (1.410776ms)
+✔ text entry and intentional link activation retain their existing behavior (1.784516ms)
+✔ ordinary tabTo callers retain their explicit search budget (1.203207ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 3
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 169.700164
+
+✖ failing tests:
+
+test at scripts/test_e2e_kbd.cjs:65:3
+✖ checkbox confirmation skips the identically named error link: I want to end this session. (4.493798ms)
+  AssertionError [ERR_ASSERTION]: the confirmation checkbox must be checked
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/workspace/scratch/93aeb012c206/audit-export-catalogue/scripts/test_e2e_kbd.cjs:71:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/test_e2e_kbd.cjs:65:3
+✖ checkbox confirmation skips the identically named error link: I want to end all my other sessions. (1.230919ms)
+  AssertionError [ERR_ASSERTION]: the confirmation checkbox must be checked
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/workspace/scratch/93aeb012c206/audit-export-catalogue/scripts/test_e2e_kbd.cjs:71:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/test_e2e_kbd.cjs:88:1
+✖ a same-name link without the required checkbox is rejected before submission (1.410776ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/workspace/scratch/93aeb012c206/audit-export-catalogue/scripts/test_e2e_kbd.cjs:92:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /could not reach/,
+    operator: 'rejects',
+    diff: 'simple'
+  }

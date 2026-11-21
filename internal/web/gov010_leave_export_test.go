@@ -11,7 +11,7 @@ import (
 func TestLeaveOffersSelfExport(t *testing.T) {
 	w := newWorld(t)
 	b := w.base()
-	exportForm := `<form method="post" action="` + b + `/export">`
+	exportForm := `<form method="post" action="` + b + `/export" data-loading-ignore>`
 
 	al := w.browser(t)
 	al.login("alice@example.org")

@@ -1,0 +1,118 @@
+{
+  "head": "01685005573bf36bcbec07f06a4c14c8bb4a73fa",
+  "tree": "db67c513d60835c7f00bf8250cd1d125b99de879",
+  "cwd": "/workspace/scratch/4d30fa819181/circula-final-check",
+  "status_before": "",
+  "command": [
+    "go",
+    "test",
+    "-json",
+    "-race",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout",
+    "20m",
+    "./..."
+  ],
+  "environment_overrides": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1",
+    "CIRCULA_QA001_FAILDIR": "/workspace/scratch/4d30fa819181/analysis/qualification/qa001-failures"
+  },
+  "started_at_utc": "2026-11-20T07:22:30.259268+00:00",
+  "finished_at_utc": "2026-11-20T07:33:26.721380+00:00",
+  "elapsed_seconds": 656.462,
+  "exit_code": 1,
+  "timed_out": false,
+  "head_after": "01685005573bf36bcbec07f06a4c14c8bb4a73fa",
+  "tree_after": "db67c513d60835c7f00bf8250cd1d125b99de879",
+  "status_after": "",
+  "source_unchanged": true,
+  "test_and_subtest_events": {
+    "pass": 1176,
+    "fail": 2
+  },
+  "packages": {
+    "github.com/djshellshoxxx/circula/cmd/circula": {
+      "action": "fail",
+      "elapsed": 5.186
+    },
+    "github.com/djshellshoxxx/circula/internal/api": {
+      "action": "pass",
+      "elapsed": 337.694
+    },
+    "github.com/djshellshoxxx/circula/internal/contract": {
+      "action": "pass",
+      "elapsed": 33.958
+    },
+    "github.com/djshellshoxxx/circula/internal/domain": {
+      "action": "pass",
+      "elapsed": 1.8519999999999999
+    },
+    "github.com/djshellshoxxx/circula/internal/histbal": {
+      "action": "pass",
+      "elapsed": 1.029
+    },
+    "github.com/djshellshoxxx/circula/internal/httpx": {
+      "action": "pass",
+      "elapsed": 1.018
+    },
+    "github.com/djshellshoxxx/circula/internal/logx": {
+      "action": "pass",
+      "elapsed": 1.259
+    },
+    "github.com/djshellshoxxx/circula/internal/repository": {
+      "action": "pass",
+      "elapsed": 1.117
+    },
+    "github.com/djshellshoxxx/circula/internal/service": {
+      "action": "fail",
+      "elapsed": 0
+    },
+    "github.com/djshellshoxxx/circula/internal/store": {
+      "action": "fail",
+      "elapsed": 175.305
+    },
+    "github.com/djshellshoxxx/circula/internal/storetest": {
+      "action": "skip",
+      "elapsed": 0
+    },
+    "github.com/djshellshoxxx/circula/internal/testutil": {
+      "action": "skip",
+      "elapsed": 0
+    },
+    "github.com/djshellshoxxx/circula/internal/web": {
+      "action": "fail",
+      "elapsed": 0
+    },
+    "github.com/djshellshoxxx/circula/internal/web/messages": {
+      "action": "pass",
+      "elapsed": 1.197
+    },
+    "github.com/djshellshoxxx/circula/scripts/sbom": {
+      "action": "pass",
+      "elapsed": 1.099
+    },
+    "github.com/djshellshoxxx/circula/scripts/traceability": {
+      "action": "pass",
+      "elapsed": 6.901
+    }
+  },
+  "skipped_tests": [],
+  "failed_tests": [
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/store",
+      "test": "TestEventOrderMigrationPreservesExportChecksum"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/store",
+      "test": "TestPersonalDataInventoryCoversSchema"
+    }
+  ]
+}

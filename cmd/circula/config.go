@@ -95,7 +95,7 @@ var settingDefs = []settingDef{
 	{key: "audit-anchor-with-backups", def: "true", help: "write <backup>.anchor.json beside each scheduled backup (RB-010); copy these off-host"},
 	{key: "tls-cert-file", help: "PEM certificate chain: serve HTTPS directly (RB-013); requires tls-key-file; reloaded on SIGHUP"},
 	{key: "tls-key-file", help: "PEM private key for tls-cert-file; must not be readable by group or others"},
-	{key: "audit-mirror-file", help: "append-only JSONL file receiving every audit event after commit (RB-012); best effort, point it at a path the service cannot rewrite"},
+	{key: "audit-mirror-file", help: "bounded best-effort JSONL mirror of committed audit metadata (RB-012); point it at a path the service cannot rewrite"},
 	{key: "backup-key-file", help: "file holding the key that signs backup manifests and is required to restore them (SA-07); or env " + envPrefix + "BACKUP_KEY"},
 }
 
@@ -267,7 +267,7 @@ func (sf *settingsFlags) Resolve(env lookupEnv, forServe bool) (*Config, map[str
 	return cfg, vals, nil
 }
 
-// readConfigFile parses a JSON object whose keys are setting names. Unknown
+// readConfigFile parses exactly one JSON object whose keys are setting names. Unknown
 // keys are rejected so that typos cannot silently fall back to defaults.
 func readConfigFile(path string) (map[string]string, error) {
 	b, err := os.ReadFile(path) //nolint:gosec // G703: operator-supplied config path
@@ -279,6 +279,14 @@ func readConfigFile(path string) (map[string]string, error) {
 	var raw map[string]any
 	if err := dec.Decode(&raw); err != nil {
 		return nil, fmt.Errorf("config file %s: invalid JSON object: %w", path, err)
+	}
+	if raw == nil {
+		return nil, fmt.Errorf("config file %s: invalid JSON object: expected an object", path)
+	}
+	// Decode accepts a value prefix. Refuse any unread content so an
+	// accidentally concatenated or truncated file cannot select a partial config.
+	if _, err := dec.Token(); err != io.EOF {
+		return nil, fmt.Errorf("config file %s: invalid JSON object: trailing content", path)
 	}
 	known := map[string]bool{}
 	for _, d := range settingDefs {

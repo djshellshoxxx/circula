@@ -1,0 +1,94 @@
+✔ offline and history warnings use supplied sentences and preserve the last snapshot literally (2.473778ms)
+✔ an initially offline page keeps its server snapshot and a new page starts without a stale warning (2.570494ms)
+✔ session warning appears two minutes before expiry and uses the supplied time sentence (1.969065ms)
+✔ fixed sessions hide extension and retain the draft when they expire (1.664204ms)
+✔ successful extension keeps the request contract and reschedules from the server expiry (9.111926ms)
+✔ failed extension uses the supplied failure message without navigation or form loss (3.340887ms)
+✔ session return links reject a network-path reference (1.669822ms)
+✖ loading announces a same-window page navigation, including keyboard link activation (2.682232ms)
+✖ loading preserves form fields and the chosen submitter name and value (1.692847ms)
+✖ GET filters and submitter overrides retain their native method and target (1.5957ms)
+✔ loading ignores fragments, downloads, other destinations and modified clicks (13.572575ms)
+✔ loading ignores download forms, dialog forms, other windows and submitter exclusions (12.944476ms)
+✔ failed native validation and non-submitting async buttons leave the page idle (1.31077ms)
+✔ an in-place handler can cancel a link or form after the loading listener (2.341518ms)
+✔ pageshow clears pending and displayed feedback when a history page returns (4.596234ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 12
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 210.637712
+
+✖ failing tests:
+
+test at scripts/test_app_messages.cjs:277:1
+✖ loading announces a same-window page navigation, including keyboard link activation (2.682232ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + ''
+  - 'Loading catalogue text <next> $&'
+  
+      at TestContext.<anonymous> (/workspace/scratch/4d30fa819181/circula-ui-completion/scripts/test_app_messages.cjs:283:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: 'Loading catalogue text <next> $&',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/test_app_messages.cjs:288:1
+✖ loading preserves form fields and the chosen submitter name and value (1.692847ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + ''
+  - 'Sending catalogue text <request> $&'
+  
+      at TestContext.<anonymous> (/workspace/scratch/4d30fa819181/circula-ui-completion/scripts/test_app_messages.cjs:296:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: 'Sending catalogue text <request> $&',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/test_app_messages.cjs:303:1
+✖ GET filters and submitter overrides retain their native method and target (1.5957ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + ''
+  - 'Loading catalogue text <next> $&'
+  
+      at TestContext.<anonymous> (/workspace/scratch/4d30fa819181/circula-ui-completion/scripts/test_app_messages.cjs:309:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: 'Loading catalogue text <next> $&',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

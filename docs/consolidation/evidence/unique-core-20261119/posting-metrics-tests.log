@@ -1,0 +1,24 @@
+=== RUN   TestPostingFailureClassesAreBounded
+--- PASS: TestPostingFailureClassesAreBounded (0.00s)
+=== RUN   TestObserverCountsPostingsAndReplays
+--- PASS: TestObserverCountsPostingsAndReplays (0.84s)
+=== RUN   TestPostingObserverCountsCommitCreditRefusalAndReplay
+--- PASS: TestPostingObserverCountsCommitCreditRefusalAndReplay (0.94s)
+=== RUN   TestPostingObserverCountsEnclosingUnitRollbackAndRetry
+--- PASS: TestPostingObserverCountsEnclosingUnitRollbackAndRetry (0.84s)
+=== RUN   TestPostingObserverCountsPendingDisputeRefusal
+--- PASS: TestPostingObserverCountsPendingDisputeRefusal (0.94s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	4.603s
+=== RUN   TestMetricsPostingAttemptsAndBoundedFailureReasons
+--- PASS: TestMetricsPostingAttemptsAndBoundedFailureReasons (0.00s)
+=== RUN   TestMetricsPostingAndReplayCounters
+--- PASS: TestMetricsPostingAndReplayCounters (0.00s)
+=== RUN   TestServiceObserverWiredToMetrics
+--- PASS: TestServiceObserverWiredToMetrics (0.89s)
+=== RUN   TestMetricsLatencyByStatusClass
+--- PASS: TestMetricsLatencyByStatusClass (0.00s)
+=== RUN   TestMetricsExposeRequiredSeriesWithRouteTemplates
+--- PASS: TestMetricsExposeRequiredSeriesWithRouteTemplates (0.65s)
+PASS
+ok  	github.com/djshellshoxxx/circula/cmd/circula	2.595s

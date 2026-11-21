@@ -31,9 +31,11 @@ const (
 	ReReviewDecided   = "decided"
 )
 
-// Report is an abuse report about a listing or member (FR-024).
+// Report is an abuse report about a listing, member or two-member transaction
+// (FR-024, SEC-025).
 type Report struct {
 	ID, NetworkID, ReporterID, TargetType, TargetID, Category, Note string
+	DisputeID                                                       string // optional immutable member/listing case context
 	Status                                                          string // open | handled
 	CreatedAt                                                       time.Time
 	HandledBy, HandlingNote                                         string
@@ -42,9 +44,20 @@ type Report struct {
 
 // ReportFilter selects reports; newest first by id.
 type ReportFilter struct {
-	Status  string // "" = all
-	AfterID string
-	Limit   int
+	Status string // "" = all
+	// DisputeID selects explicitly attached member/listing reports plus
+	// transaction reports for that dispute's exact transaction, before paging.
+	DisputeID string
+	AfterID   string
+	Limit     int
+	// ExcludeSubjectMemberID excludes reports about this member, their listings
+	// or their side of a transaction, including unresolved subjects. Applied
+	// before pagination.
+	ExcludeSubjectMemberID string
+	// ConflictMemberID selects reports about this member, their listings or
+	// their side of a transaction, including unresolved subjects, for
+	// whole-audit access decisions.
+	ConflictMemberID string
 }
 
 // Notification is one inbox entry (FR-038).

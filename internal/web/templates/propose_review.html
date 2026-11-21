@@ -1,19 +1,19 @@
 {{define "content"}}
 {{with .D}}
 <p class="big">{{.Sentence}}</p>
-{{if .TooMuch}}<div class="notice" role="note">This is more than your available to spend ({{.AvailNow}}). It will be refused if you send it. Go back and enter a smaller amount.</div>{{end}}
+{{if .TooMuch}}<div class="notice" role="note">{{msg "trade.review.too_much" .AvailNow}}</div>{{end}}
 <dl class="kv">
-  <dt>With</dt><dd>{{.Counter}}{{with $.MemberRef ($.Val "counterparty_id")}} (member reference {{.}}){{end}}</dd>
-  <dt>Amount</dt><dd>{{.Amount}} {{.Unit}}</dd>
-  <dt>Your balance now</dt><dd>{{template "balance" .Before}}</dd>
-  <dt>Your balance if accepted</dt><dd>{{template "balance" .After}}</dd>
-  <dt>Available to spend now</dt><dd>{{.AvailNow}}</dd>
-  <dt>Available to spend after sending</dt><dd>{{if .Reserve}}{{.AvailAfter}} (the amount is set aside while the trade is pending){{else}}{{.AvailNow}} (it rises only once the trade is accepted){{end}}</dd>
-  <dt>Expires</dt><dd>after {{.Expires}} days if not answered</dd>
+  <dt>{{msg "trade.review.with"}}</dt><dd>{{$ref := $.MemberRef ($.Val "counterparty_id")}}{{if $ref}}{{msg "trade.member_with_reference" .Counter $ref}}{{else}}{{.Counter}}{{end}}</dd>
+  <dt>{{msg "trade.amount"}}</dt><dd>{{msg "trade.amount_value" .Amount .Unit}}</dd>
+  <dt>{{msg "trade.balance.now"}}</dt><dd>{{template "balance" .Before}}</dd>
+  <dt>{{msg "trade.balance.if_accepted"}}</dt><dd>{{template "balance" .After}}</dd>
+  <dt>{{msg "trade.available.now"}}</dt><dd>{{.AvailNow}}</dd>
+  <dt>{{msg "trade.available.after_sending"}}</dt><dd>{{if .Reserve}}{{msg "trade.review.reserved" .AvailAfter}}{{else}}{{msg "trade.review.awaiting" .AvailNow}}{{end}}</dd>
+  <dt>{{msg "trade.expires"}}</dt><dd>{{msg "trade.review.expiry" .Expires}}</dd>
 </dl>
 {{end}}
-{{if $.Val "note"}}<p>Note: {{$.Val "note"}}</p>{{end}}
-<p>Nothing is posted until the other member accepts.</p>
+{{if $.Val "note"}}<p>{{msg "trade.note_value" ($.Val "note")}}</p>{{end}}
+<p>{{msg "trade.review.pending_notice"}}</p>
 <form method="post" action="/n/{{.Slug}}/trades/new">
   {{template "csrf" .}}{{template "idem" .}}
   <input type="hidden" name="counterparty_id" value="{{.Val "counterparty_id"}}">
@@ -22,8 +22,8 @@
   <input type="hidden" name="note" value="{{.Val "note"}}">
   <input type="hidden" name="listing_id" value="{{.Val "listing_id"}}">
   <div class="actions">
-    <button type="submit" name="step" value="confirm">Send trade</button>
-    <button type="submit" name="step" value="back" class="secondary">Go back and edit</button>
+    <button type="submit" name="step" value="confirm">{{msg "trade.review.send"}}</button>
+    <button type="submit" name="step" value="back" class="secondary">{{msg "trade.review.edit"}}</button>
   </div>
 </form>
 {{end}}

@@ -71,6 +71,13 @@ func TestReReviewRequiresReviewedConfirmation(t *testing.T) {
 			br := w.browser(t)
 			br.login("second@example.org")
 			path := w.base() + "/disputes/" + id
+			invalid := br.post(path+"/rereview-decide", br.get(path), url.Values{
+				"outcome": {"partially_upheld"}, "amount": {"not an amount"}, "rationale": {"new evidence"}})
+			if invalid.Status != 422 {
+				t.Fatalf("invalid re-review amount status = %d", invalid.Status)
+			}
+			br.mustContain(invalid, "enter the amount to reverse, with up to 2 decimal places", `href="#f-amount"`)
+			assertReReviewPending(t, w, id, 0)
 			review := br.post(path+"/rereview-decide", br.get(path), url.Values{
 				"outcome": {tc.outcome}, "amount": {tc.amount}, "rationale": {`New "photos" & testimony`}})
 			br.mustContain(review, "Review the re-review decision", "alice@example.org", "bob@example.org", `New "photos" & testimony`)
@@ -93,6 +100,9 @@ func TestReReviewRequiresReviewedConfirmation(t *testing.T) {
 				bad := br.post(path+"/rereview-decide", review, v)
 				if bad.Status != 422 {
 					t.Fatalf("altered %s status = %d", change.field, bad.Status)
+				}
+				if change.field == "review_proof" {
+					br.mustContain(bad, "review this decision again before confirming; nothing changed")
 				}
 				assertReReviewPending(t, w, id, 0)
 			}

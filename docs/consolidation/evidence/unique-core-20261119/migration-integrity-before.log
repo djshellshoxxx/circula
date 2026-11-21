@@ -1,0 +1,47 @@
+=== RUN   TestMigrationRejectsNewLedgerFindingsBeforeCommit
+=== RUN   TestMigrationRejectsNewLedgerFindingsBeforeCommit/cached_balances
+    migration_integrity_test.go:34: migration did not refuse the new cached_balances failure: <nil>
+    migration_integrity_test.go:40: refused migration changed schema, migration metadata or ledger data
+    migration_integrity_test.go:45: rollback did not survive reopening the previous schema
+    migration_integrity_test.go:45: successful retry changed the original ledger records
+=== RUN   TestMigrationRejectsNewLedgerFindingsBeforeCommit/reversal_total
+    migration_integrity_test.go:34: migration did not refuse the new reversal_total failure: <nil>
+    migration_integrity_test.go:40: refused migration changed schema, migration metadata or ledger data
+    migration_integrity_test.go:45: rollback did not survive reopening the previous schema
+    migration_integrity_test.go:45: successful retry changed the original ledger records
+=== RUN   TestMigrationRejectsNewLedgerFindingsBeforeCommit/platform_audit
+    migration_integrity_test.go:34: migration did not refuse the new platform_audit failure: <nil>
+    migration_integrity_test.go:40: refused migration changed schema, migration metadata or ledger data
+    migration_integrity_test.go:45: rollback did not survive reopening the previous schema
+    migration_integrity_test.go:45: successful retry changed the original ledger records
+=== RUN   TestMigrationRejectsNewLedgerFindingsBeforeCommit/verification_query
+    migration_integrity_test.go:34: migration did not refuse the new verification_query failure: <nil>
+    migration_integrity_test.go:39: SQL logic error: no such table: accounts (1)
+--- FAIL: TestMigrationRejectsNewLedgerFindingsBeforeCommit (3.47s)
+    --- FAIL: TestMigrationRejectsNewLedgerFindingsBeforeCommit/cached_balances (0.84s)
+    --- FAIL: TestMigrationRejectsNewLedgerFindingsBeforeCommit/reversal_total (0.91s)
+    --- FAIL: TestMigrationRejectsNewLedgerFindingsBeforeCommit/platform_audit (0.84s)
+    --- FAIL: TestMigrationRejectsNewLedgerFindingsBeforeCommit/verification_query (0.88s)
+=== RUN   TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes
+=== RUN   TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes/unchanged
+=== RUN   TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes/new_failure
+    migration_integrity_test.go:77: existing finding hid the newly introduced failure: <nil>
+    migration_integrity_test.go:80: failed comparison did not preserve the original database
+--- FAIL: TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes (1.47s)
+    --- PASS: TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes/unchanged (0.72s)
+    --- FAIL: TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes/new_failure (0.75s)
+=== RUN   TestMigrationBaselineReadFailurePreventsDDL
+    migration_integrity_test.go:102: incomplete baseline was accepted: <nil>
+    migration_integrity_test.go:105: migration did not read the verification baseline
+    migration_integrity_test.go:108: migration changed state after a baseline read failure
+    migration_integrity_test.go:113: rollback did not survive reopening the previous schema
+--- FAIL: TestMigrationBaselineReadFailurePreventsDDL (0.95s)
+=== RUN   TestMigrationChecksNewAuditHeadsFromOriginalSchema
+    migration_integrity_test.go:130: newly supported audit head was not checked: <nil>
+    migration_integrity_test.go:136: failed original-schema upgrade changed persisted state
+    migration_integrity_test.go:141: rollback did not survive reopening the previous schema
+    migration_integrity_test.go:141: successful retry changed the original ledger records
+--- FAIL: TestMigrationChecksNewAuditHeadsFromOriginalSchema (0.93s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/store	6.837s
+FAIL

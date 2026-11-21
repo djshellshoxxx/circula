@@ -102,6 +102,9 @@ func (s *Service) reverse(tx store.Tx, net *domain.Network, orig *domain.Transac
 		return nil, err
 	}
 	if err := checkCapacity(net, debited, amount, s.now()); err != nil {
+		// Dispute resolution may commit posting_pending after this refusal;
+		// preserve the failed posting attempt even when the whole unit succeeds.
+		s.recordPostingAttempt(err)
 		return nil, err
 	}
 	rev, err := s.newInternalTx(tx, net, domain.KindReversal, orig.PayeeAccountID, orig.PayerAccountID, amount, reason, createdBy, orig.ID, "")

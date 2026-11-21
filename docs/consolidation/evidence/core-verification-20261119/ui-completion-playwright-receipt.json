@@ -1,0 +1,14 @@
+{
+  "head": "e0d27cc7cb73299219439919b260991b824d594a",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "/workspace/scratch/beb70d57deba/circula/e2e/node_modules/playwright/cli.js",
+    "test",
+    "--config",
+    "e2e/playwright.config.js"
+  ],
+  "exit_code": 1,
+  "elapsed_seconds": 2.507,
+  "binary": "/tmp/circula-ui-e0",
+  "note": "Project-configured browser executable and launch flags retained; temporary directory uses available shared-memory filesystem"
+}

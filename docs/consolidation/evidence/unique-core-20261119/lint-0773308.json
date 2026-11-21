@@ -1,0 +1,37 @@
+{
+  "head": "077330858142949ae57b9ad9462868e4b7b2ff88",
+  "tree": "c8674632ad7136fcd2d320405201c304d1247216",
+  "cwd": "/workspace/scratch/4d30fa819181/circula",
+  "status_before": "",
+  "command": [
+    "golangci-lint",
+    "run",
+    "--timeout",
+    "10m",
+    "--concurrency",
+    "1"
+  ],
+  "environment_overrides": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOTMPDIR": "/workspace/scratch/4d30fa819181/runtime/go-tmp",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1"
+  },
+  "started_at_utc": "2026-11-20T08:50:27.671282+00:00",
+  "finished_at_utc": "2026-11-20T08:52:10.426321+00:00",
+  "elapsed_seconds": 102.755,
+  "exit_code": 1,
+  "timed_out": false,
+  "head_after": "077330858142949ae57b9ad9462868e4b7b2ff88",
+  "tree_after": "c8674632ad7136fcd2d320405201c304d1247216",
+  "status_after": "",
+  "source_unchanged": true,
+  "test_and_subtest_events": {},
+  "packages": {},
+  "skipped_tests": [],
+  "failed_tests": []
+}

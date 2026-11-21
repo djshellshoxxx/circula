@@ -31,8 +31,14 @@ go test ./internal/service -run NONE -bench Argon2id -benchtime 20x -count 3 -be
 - `BenchmarkArgon2idHash`: one hash (registration, password change, reset).
 - `BenchmarkArgon2idVerify`: one verification, the cost of every sign-in attempt. Unknown logins verify against a dummy
   hash of the same cost (SEC-005), so failed and successful attempts cost the same.
-- `BenchmarkArgon2idVerifyParallel`: verifications on every CPU at once (`GOMAXPROCS` goroutines). Its ns/op is wall time
-  divided by verifications, so `1e9 / ns/op` is the sign-in throughput of one instance under load.
+- `BenchmarkArgon2idVerifyParallel`: raw verifications on every CPU at once (`GOMAXPROCS` goroutines), using an isolated
+  test admission scope with one ticket per worker. Its ns/op is wall time divided by completed verifications. It measures
+  the cryptographic primitive, not application sign-in throughput or the production admission limit.
+
+The application now admits at most two password-work operations per process, with no queued waiters. A password change
+keeps its one admission across verification and replacement hashing. See [password-work admission](password-work-admission.md)
+for the shared backup/startup coverage, cancellation behavior and historical-PHC compatibility. This is an operation-count
+bound; hashes with historical parameters can require more memory than the current 64 MiB default.
 
 ## Measured on the build machine (2026-11-04)
 
@@ -50,11 +56,12 @@ Reading:
 
 - One sign-in costs about 120 to 190 ms of CPU and 64 MiB of memory here, within the common 0.1 to 1 s guidance for
   interactive logins.
-- Parallel verification is slower per operation than serial (about 200 ms against 120 ms): each verification already
-  uses two lanes, so four at once oversubscribe the four vCPUs and compete for memory bandwidth. One instance therefore
-  sustains roughly 5 sign-in verifications per second, with peak hashing memory of about `GOMAXPROCS x 64 MiB`
-  (256 MiB here). The per-login throttle and the sign-in rate limits (SEC-006, `rate-signin-*` settings) bound how much
-  of that an attacker can consume.
+- Parallel verification in this historical primitive benchmark was slower per operation than serial (about 200 ms
+  against 120 ms): each verification already used two lanes, so four at once oversubscribed the four vCPUs and competed
+  for memory bandwidth. The four-worker benchmark completed roughly five verifications per second with about
+  `GOMAXPROCS x 64 MiB` of simultaneous hashing memory (256 MiB here). These pre-admission measurements do not establish
+  the current application's throughput or memory ceiling. The process admission bound complements the unchanged
+  per-login throttle and sign-in request limits (SEC-006, `rate-signin-*` settings).
 - On smaller hardware (for example a single-board computer with 1 to 2 GiB RAM) the memory term matters more than the
   time term. Choosing that hardware, and the parameters for it, is the owner's DEC-006 decision; record the result in
   docs/DECISIONS.md (DEC-065) once made.

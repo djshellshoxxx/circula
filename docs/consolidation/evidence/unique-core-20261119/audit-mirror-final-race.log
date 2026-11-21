@@ -1,0 +1,26 @@
+=== RUN   TestAuditMirrorDoesNotHoldTransactionAcknowledgement
+--- PASS: TestAuditMirrorDoesNotHoldTransactionAcknowledgement (0.70s)
+=== RUN   TestAuditMirrorBoundedQueuePreservesOrder
+--- PASS: TestAuditMirrorBoundedQueuePreservesOrder (0.02s)
+=== RUN   TestAuditMirrorRejectsRawAndEncodedOversize
+--- PASS: TestAuditMirrorRejectsRawAndEncodedOversize (0.00s)
+=== RUN   TestAuditMirrorWriteFailuresAreObservable
+--- PASS: TestAuditMirrorWriteFailuresAreObservable (0.00s)
+=== RUN   TestAuditMirrorShutdownBoundsBlockedWrite
+--- PASS: TestAuditMirrorShutdownBoundsBlockedWrite (0.00s)
+=== RUN   TestAuditMirrorShutdownBoundsBlockedClose
+--- PASS: TestAuditMirrorShutdownBoundsBlockedClose (0.00s)
+=== RUN   TestAuditMirrorConcurrentAdmissionAndClose
+--- PASS: TestAuditMirrorConcurrentAdmissionAndClose (0.00s)
+=== RUN   TestMetricsPostingAndReplayCounters
+--- PASS: TestMetricsPostingAndReplayCounters (0.00s)
+=== RUN   TestMetricsExposeRequiredSeriesWithRouteTemplates
+--- PASS: TestMetricsExposeRequiredSeriesWithRouteTemplates (0.76s)
+=== RUN   TestAuditMirrorLines
+--- PASS: TestAuditMirrorLines (0.00s)
+PASS
+ok  	github.com/djshellshoxxx/circula/cmd/circula	2.555s
+=== RUN   TestAuditSinkAfterCommitOnly
+--- PASS: TestAuditSinkAfterCommitOnly (0.78s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	1.810s

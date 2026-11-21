@@ -10,7 +10,7 @@ import (
 	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
-// UX-047, PER-022, UX-030: the actual shell supplies complete text messages,
+// UX-028, UX-047, PER-022, UX-030: the actual shell supplies complete text messages,
 // keeps its server time element, and requires no script for the snapshot label.
 func TestProgressiveCatalogueTemplate(t *testing.T) {
 	when := time.Date(2026, time.November, 19, 12, 0, 0, 0, time.UTC)
@@ -22,6 +22,8 @@ func TestProgressiveCatalogueTemplate(t *testing.T) {
 	}
 	body := b.String()
 	for _, want := range []string{
+		`id="page-loading" class="page-loading" role="status" aria-live="polite" aria-atomic="true"`,
+		`data-navigation-message="Loading the next page. Please wait." data-submission-message="Sending your request. Please wait."></p>`,
 		`<p id="figure-freshness">Page generated ` + string(stamp) + `. Figures are a snapshot and do not update automatically.</p>`,
 		`id="figure-stale" class="notice" role="status" hidden`,
 		`data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}"`,
@@ -43,13 +45,19 @@ func TestProgressiveCatalogueTemplate(t *testing.T) {
 	if strings.Contains(body, "%!") {
 		t.Fatal("catalogue interpolation corrupted")
 	}
+	if strings.Index(body, `id="page-loading"`) > strings.Index(body, `<main id="main"`) {
+		t.Fatal("loading announcement must be outside the region that becomes busy")
+	}
+	if strings.Contains(body, `aria-busy="true"`) {
+		t.Fatal("the no-script page must start idle")
+	}
 }
 
 func TestProgressiveCatalogueEscapesAttributesAndTimeSurroundings(t *testing.T) {
 	const unsafe = `"><img src=x onerror="alert('x')"> & $&`
 	tpl := mustLoadTemplates()["login"].Funcs(template.FuncMap{
 		"msg": func(key string, args ...any) string {
-			if strings.HasPrefix(key, "freshness.") || strings.HasPrefix(key, "session_warning.") {
+			if strings.HasPrefix(key, "freshness.") || strings.HasPrefix(key, "session_warning.") || strings.HasPrefix(key, "loading.") {
 				return unsafe + messages.Text(key, args...)
 			}
 			return messages.Text(key, args...)
@@ -69,7 +77,7 @@ func TestProgressiveCatalogueEscapesAttributesAndTimeSurroundings(t *testing.T) 
 	}
 	body := b.String()
 	escaped := template.HTMLEscapeString(unsafe)
-	for _, attribute := range []string{"data-offline-message", "data-history-message", "data-extendable-message", "data-fixed-message", "data-ended-message", "data-failed-message"} {
+	for _, attribute := range []string{"data-navigation-message", "data-submission-message", "data-offline-message", "data-history-message", "data-extendable-message", "data-fixed-message", "data-ended-message", "data-failed-message"} {
 		if !strings.Contains(body, attribute+`="`+escaped) {
 			t.Errorf("%s was not escaped", attribute)
 		}

@@ -101,7 +101,8 @@ func (s *Service) CreateAPIToken(ctx context.Context, actor domain.Actor, in Tok
 
 // AuthenticateToken resolves an API token to an Actor carrying the token's
 // scopes and optional network restriction.
-func (s *Service) AuthenticateToken(ctx context.Context, token string) (domain.Actor, error) {
+func (s *Service) AuthenticateToken(ctx context.Context, token string) (result domain.Actor, resultErr error) {
+	defer func() { s.observeAuthentication("api_token", resultErr) }()
 	if !strings.HasPrefix(token, tokenPrefix) {
 		return domain.Actor{}, domain.ErrUnauthenticated
 	}

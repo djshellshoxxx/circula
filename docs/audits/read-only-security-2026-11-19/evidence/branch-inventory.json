@@ -1,0 +1,895 @@
+{
+  "observed_at_utc": "2026-11-20T06:07:23.974372+00:00",
+  "scope": "Remote heads inventoried; semantic review coverage is separately recorded. This inventory predates the audit documentation branch.",
+  "branch_count": 145,
+  "branches": [
+    {
+      "name": "origin/audit/federation-readme-20261119",
+      "sha": "d55554408ef591371768259905c70ca58d68facb",
+      "committed_at": "2026-11-19T03:43:04-08:00",
+      "subject": "docs(federation): acknowledge isolated qualification workflow"
+    },
+    {
+      "name": "origin/audit/future-feed-cursors-20261119",
+      "sha": "db80ed34af09ad6b28e533da6d4b82b8250f3711",
+      "committed_at": "2026-11-19T03:57:03-08:00",
+      "subject": "merge(future-feed): compose reviewed completion with settled core"
+    },
+    {
+      "name": "origin/audit/future-notifications-binding-20261119",
+      "sha": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+      "committed_at": "2026-11-19T00:51:46-08:00",
+      "subject": "Merge reviewed core footer fixture repair into isolated future notifications"
+    },
+    {
+      "name": "origin/audit/future-notifications-bounded-core-20261119",
+      "sha": "3bdef17a87b421b1b43a666d58453749a7b06d02",
+      "committed_at": "2026-11-19T15:52:59-08:00",
+      "subject": "Merge pull request #123 from djshellshoxxx/repair/fux104-final-ci-20261119"
+    },
+    {
+      "name": "origin/audit/future-pwa-browser-20261119",
+      "sha": "0b2bb7a4dea18dbb3f125f41565b096d637e47f3",
+      "committed_at": "2026-11-19T15:53:05-08:00",
+      "subject": "Merge pull request #124 from djshellshoxxx/repair/fux101-final-ci-20261119"
+    },
+    {
+      "name": "origin/audit/gov021-final-core-refresh-20261119",
+      "sha": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "committed_at": "2026-11-19T03:45:41-08:00",
+      "subject": "Refresh held GOV021 on the reviewed core consolidation"
+    },
+    {
+      "name": "origin/audit/gov021-fixture-20261119",
+      "sha": "d922d4f880059f939aeca40cbcb77c60201ff0c7",
+      "committed_at": "2026-11-19T00:18:16-08:00",
+      "subject": "test(gov-021): include administrator recovery in accessibility sweeps"
+    },
+    {
+      "name": "origin/audit/sec026-independent-20261119",
+      "sha": "45b596f12876e3f91c30b996457f7096e1fffe24",
+      "committed_at": "2026-11-19T03:45:41-08:00",
+      "subject": "Refresh isolated SEC026 on core consolidation and repair its CI fixtures"
+    },
+    {
+      "name": "origin/chatgpt/circula-consolidation-review-20261111",
+      "sha": "02f9f0a7bb87f54611e2fe0b0837a519d2bcca9e",
+      "committed_at": "2026-11-11T23:20:42-07:00",
+      "subject": "docs: record reversal pagination implementation and pending verification"
+    },
+    {
+      "name": "origin/chatgpt/circula-departure-pagination-20261115",
+      "sha": "8abff32c1b4a30507497d1e43dc4f88d0c7e6eab",
+      "committed_at": "2026-11-15T18:26:34-07:00",
+      "subject": "test(departure): verify all 501 proposals cancelled on departure"
+    },
+    {
+      "name": "origin/chatgpt/circula-erasure-notification-20261115",
+      "sha": "26b57163d96534e79e3d35d471573d609af8a415",
+      "committed_at": "2026-11-15T18:23:38-07:00",
+      "subject": "fix(privacy): stop deleting unrelated members' notifications by name substring"
+    },
+    {
+      "name": "origin/chatgpt/circula-expiry-starvation-20261115",
+      "sha": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "committed_at": "2026-11-15T18:40:01-07:00",
+      "subject": "fix(departure): cancel all open proposals beyond first 500 (#54)"
+    },
+    {
+      "name": "origin/chatgpt/circula-ledger-auth-guard-20261115",
+      "sha": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca",
+      "committed_at": "2026-11-15T18:20:48-07:00",
+      "subject": "fix(ledger): reject reversal posting on inactive or administrator-required network"
+    },
+    {
+      "name": "origin/chatgpt/circula-mfa-decider-20261115",
+      "sha": "4ffb5c78d6b44e6f964f1018ed2fea16cd742abd",
+      "committed_at": "2026-11-15T18:23:25-07:00",
+      "subject": "test(auth): verify decider MFA rejection and enrolled-admin success"
+    },
+    {
+      "name": "origin/chatgpt/circula-qa042-traceability-audit-20261114",
+      "sha": "fe832faced826ed2234fcd9ba0ce7f7321f04df5",
+      "committed_at": "2026-11-14T18:30:55-07:00",
+      "subject": "docs(qa042): record scope, tests and remaining traceability work"
+    },
+    {
+      "name": "origin/chatgpt/circula-secure-json-write-20261115",
+      "sha": "e02085a6aa1a1394f874b304fdf0961cc0888423",
+      "committed_at": "2026-11-15T18:16:30-07:00",
+      "subject": "style: format security regression tests"
+    },
+    {
+      "name": "origin/chatgpt/circula-security-audit-20261115",
+      "sha": "36a80335abf54ec8d965cb350b157443ef7f2fec",
+      "committed_at": "2026-11-15T05:09:17-07:00",
+      "subject": "docs(security): record privacy and erasure audit findings"
+    },
+    {
+      "name": "origin/chatgpt/consolidation-delta-qualification-20261114",
+      "sha": "8f742877fb53cc39aea5e189a5452d924d8c08c8",
+      "committed_at": "2026-11-14T02:29:04-07:00",
+      "subject": "docs: qualify unique Circula consolidation deltas against PR 33"
+    },
+    {
+      "name": "origin/chatgpt/favorites-owner-scoped-collection-20261116",
+      "sha": "372a8f97ae01c0af3b4a96c4a5ce8b1bcc75cd8d",
+      "committed_at": "2026-11-16T20:35:12-07:00",
+      "subject": "test(favorites): cover owner isolation ordering blocked targets and removal"
+    },
+    {
+      "name": "origin/chatgpt/feed-signed-cursors-20261116",
+      "sha": "7a528c611bffdf92ef9f8cbddb98e8b088eb5036",
+      "committed_at": "2026-11-16T20:36:19-07:00",
+      "subject": "test(feed): validate HMAC cursor integrity and network isolation"
+    },
+    {
+      "name": "origin/chatgpt/zero-codex-continuation-spec-20261109",
+      "sha": "3d9c56196625fc0c158b4652cbe2b9716c7af97b",
+      "committed_at": "2026-11-09T21:10:30-07:00",
+      "subject": "docs: define isolated ChatGPT zero-Codex continuation lane"
+    },
+    {
+      "name": "origin/chatgpt/zero-codex/audit-20261110-a",
+      "sha": "2e729346d6297075b6ff1f7828d48681d48320b6",
+      "committed_at": "2026-11-10T17:52:56-07:00",
+      "subject": "audit: document rotation 13 announcement model and authorization review"
+    },
+    {
+      "name": "origin/chatgpt/zero-codex/ci-macos-race-budget-20261110",
+      "sha": "2078bf0964353892e80214b4601211e36818b889",
+      "committed_at": "2026-11-10T11:56:14-07:00",
+      "subject": "ci: bound macOS Intel SQLite race-test concurrency and timeout"
+    },
+    {
+      "name": "origin/chatgpt/zero-codex/ci-macos15-retirement-20261110",
+      "sha": "1760551f5b03a89ec64d09269d631e72f2e95959",
+      "committed_at": "2026-11-10T10:53:42-07:00",
+      "subject": "ci: replace retired macOS 14 test runner with macOS 15 Intel"
+    },
+    {
+      "name": "origin/chatgpt/zero-codex/cookie-policy-adapter-20261110-b",
+      "sha": "7e8481004801c01aea5d22f4720e1ead7381c4f7",
+      "committed_at": "2026-11-10T17:51:03-07:00",
+      "subject": "style(test): gofmt secure-cookie adapter regression without assertion changes"
+    },
+    {
+      "name": "origin/chatgpt/zero-codex/decidable-expiry-20261110-a",
+      "sha": "b61a8e719030ff56044d71fee632b5ba824d7698",
+      "committed_at": "2026-11-10T14:50:18-07:00",
+      "subject": "fix(service): suppress expired dual-control decision hints"
+    },
+    {
+      "name": "origin/chatgpt/zero-codex/docs-20261110-a",
+      "sha": "a376a4ed592451d90d2ff7b4d3db1489a2231f96",
+      "committed_at": "2026-11-10T17:53:58-07:00",
+      "subject": "docs: log source-pinned CI, wiki navigation and pending format fix"
+    },
+    {
+      "name": "origin/chatgpt/zero-codex/qualify-pr19-20261110-a",
+      "sha": "63b033d842a2fa40b56ff9d79e69c259db951c83",
+      "committed_at": "2026-11-10T17:55:11-07:00",
+      "subject": "docs: handoff PR28 gofmt correction, audit rotation 13 and wiki evidence"
+    },
+    {
+      "name": "origin/chatgpt/zero-codex/terms-return-20261110-b",
+      "sha": "7620d7f51913363dd013b80cc682eb670eeff3a5",
+      "committed_at": "2026-11-10T07:54:52-07:00",
+      "subject": "fix(web): preserve validated local return path on terms retry"
+    },
+    {
+      "name": "origin/checkpoint/circula-handoff-20261025",
+      "sha": "3d0080a9c43680f69f81217af3b42374e7160bf8",
+      "committed_at": "2026-10-28T16:34:40Z",
+      "subject": "docs: record archive publication and restart status [skip ci]"
+    },
+    {
+      "name": "origin/claude/aud4-auth-fixes",
+      "sha": "82dc18e07f6b22b9c34ef026f833391705b30067",
+      "committed_at": "2026-11-18T02:47:56-08:00",
+      "subject": "Merge verified main after PR84 and regenerate authentication traceability"
+    },
+    {
+      "name": "origin/claude/aud4-f02-reviewer-reset-policy",
+      "sha": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+      "committed_at": "2026-11-18T09:08:55Z",
+      "subject": "docs: regenerate traceability for the new regression tests"
+    },
+    {
+      "name": "origin/claude/aud4-f03-dispute-timelines",
+      "sha": "b6275747df66ede81ee4267e2cd6a2595f3bd680",
+      "committed_at": "2026-11-18T02:58:20-08:00",
+      "subject": "Merge reviewed auth prerequisite into dispute timeline integration"
+    },
+    {
+      "name": "origin/claude/awesome-darwin-y6eaiz",
+      "sha": "827e651fe151f49659cc20aefe85d4af67bdaa97",
+      "committed_at": "2026-10-30T02:20:06-07:00",
+      "subject": "Merge PR #12: preserve interim audit evidence and unapplied fix packets"
+    },
+    {
+      "name": "origin/claude/backup-path-hardening",
+      "sha": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+      "committed_at": "2026-11-18T08:08:28Z",
+      "subject": "fix(backup): require a trusted destination owner and re-check work identity (AUD4-D02 review G03/G04)"
+    },
+    {
+      "name": "origin/claude/charming-gauss-19fbfa",
+      "sha": "8b4c8ba23c99d4418348d76ff8cb38a72e7b958d",
+      "committed_at": "2026-11-12T04:47:16Z",
+      "subject": "Merge branch 'wk/container' into claude/quirky-einstein-l9ni8m"
+    },
+    {
+      "name": "origin/claude/circula-beta-completion-1npjw6",
+      "sha": "bffcede8c7dca0d702e1a5cd5b5e8b5d363c7c3b",
+      "committed_at": "2026-11-11T05:33:44Z",
+      "subject": "docs: beta readiness report, handoff, fixed dispute deadline in guides"
+    },
+    {
+      "name": "origin/claude/circula-build",
+      "sha": "fc488445af5f43165a7103f1c1fd12483b39d448",
+      "committed_at": "2026-10-21T12:11:05Z",
+      "subject": "test: wait for the failure log line instead of racing the metric (Windows flake)"
+    },
+    {
+      "name": "origin/claude/circula-completeness",
+      "sha": "fcd9fc5878482e1e4d340a3448a0d2294a33eb5b",
+      "committed_at": "2026-11-11T00:53:14Z",
+      "subject": "docs: handoff, remaining work and completion plan"
+    },
+    {
+      "name": "origin/claude/circula-consolidation-audit-0sydm1",
+      "sha": "0e5296a71f3f3802f36e14d847c0abf7b1dbf882",
+      "committed_at": "2026-11-18T02:47:59-08:00",
+      "subject": "docs: record verified PR84 merge and refresh audit evidence from main"
+    },
+    {
+      "name": "origin/claude/circula-finish",
+      "sha": "d350474e49522c34213d90a66904b296b9509f6c",
+      "committed_at": "2026-10-21T12:38:18Z",
+      "subject": "docs: security audit 3, SEC-011 appendix"
+    },
+    {
+      "name": "origin/claude/circula-pr-consolidation-q6q18n",
+      "sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "committed_at": "2026-11-18T02:52:07Z",
+      "subject": "docs: record the PR closure log"
+    },
+    {
+      "name": "origin/claude/circula-security-features",
+      "sha": "f8278a047392541a077d57c560823471053d1e1d",
+      "committed_at": "2026-10-21T11:46:42Z",
+      "subject": "security: audit 2 fixes (SA2-01..05), docs/audit/SECURITY-AUDIT-2.md"
+    },
+    {
+      "name": "origin/claude/compassionate-cannon-txdlz1",
+      "sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+      "committed_at": "2026-11-17T06:09:32Z",
+      "subject": "docs(legal): regenerate dependency list after bumps"
+    },
+    {
+      "name": "origin/claude/cool-gauss-vdxlod",
+      "sha": "64fa4f685780b93a349a862e3741df5b4db067cc",
+      "committed_at": "2026-11-16T13:29:59Z",
+      "subject": "build: set CGO_ENABLED=1 explicitly for test-race"
+    },
+    {
+      "name": "origin/claude/cool-ramanujan-n2peag",
+      "sha": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e",
+      "committed_at": "2026-11-14T23:23:00-07:00",
+      "subject": "docs: record QA-042 drift audit integration"
+    },
+    {
+      "name": "origin/claude/fnet-204-signed-cursors",
+      "sha": "0952c94a5dbab4044d7673ce9d51cec9063ab97f",
+      "committed_at": "2026-11-18T07:44:07Z",
+      "subject": "feat(feed): bind signed cursors to viewer and filter, add expiry and key rotation"
+    },
+    {
+      "name": "origin/claude/gov-021-admin-recovery",
+      "sha": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "committed_at": "2026-11-19T01:20:25-08:00",
+      "subject": "Merge PR #91: qualify the existing GOV-021 accessibility fixture"
+    },
+    {
+      "name": "origin/claude/gracious-ptolemy-dscc7v",
+      "sha": "1d165989e2176e214536dd22b05f7b3a4cb2f48f",
+      "committed_at": "2026-11-11T05:32:24Z",
+      "subject": "build: move Go toolchain to 1.26.11 for net/http advisory GO-2026-6859"
+    },
+    {
+      "name": "origin/claude/happy-babbage-dcumwz",
+      "sha": "dc97f7d5b0ae64306a8e2b1e57ec83f233d3d09d",
+      "committed_at": "2026-11-16T13:18:08Z",
+      "subject": "fix(cmd): restore os import lost when merging main into the beta follow-up"
+    },
+    {
+      "name": "origin/claude/happy-noether-444cum",
+      "sha": "34ccb81a54ab63875d4a5305076437d6b3221049",
+      "committed_at": "2026-11-11T01:21:27Z",
+      "subject": "docs: handoff at the 2026-11-11 project pause"
+    },
+    {
+      "name": "origin/claude/kind-einstein-v5ycss",
+      "sha": "3bfb2f78fb0aad03ec3533af5985c394d64c1898",
+      "committed_at": "2026-11-14T10:06:46Z",
+      "subject": "Add low-cost continuation prompt for foundational specs"
+    },
+    {
+      "name": "origin/claude/lucid-archimedes-upisa8",
+      "sha": "d2c1c6090a053b62dc75002464dc96bb542d6c78",
+      "committed_at": "2026-11-14T10:19:35Z",
+      "subject": "docs(specs): review fixes - remove stale refs, link 11 to 09"
+    },
+    {
+      "name": "origin/claude/quirky-babbage-y9fpmm",
+      "sha": "af69702be08aaf14cbe9a705ddf7f08796d5e976",
+      "committed_at": "2026-11-15T05:12:42Z",
+      "subject": "QA-042: regenerate traceability matrix from specs and tests; drift check in hygiene"
+    },
+    {
+      "name": "origin/claude/quirky-einstein-l9ni8m",
+      "sha": "4a8db9e80509d23d3937c68575c632f4650576aa",
+      "committed_at": "2026-11-16T02:42:38Z",
+      "subject": "docs: handoff for the 2026-11-16 beta follow-up"
+    },
+    {
+      "name": "origin/claude/relaxed-hopper-8q4vhq",
+      "sha": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "committed_at": "2026-11-11T01:21:17Z",
+      "subject": "Add specification checker script and document how to run it"
+    },
+    {
+      "name": "origin/claude/sec-026-abuse-signals",
+      "sha": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "committed_at": "2026-11-18T09:15:33Z",
+      "subject": "Merge remote-tracking branch 'origin/main' into claude/sec-026-abuse-signals"
+    },
+    {
+      "name": "origin/claude/sharp-archimedes-tu76rh",
+      "sha": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+      "committed_at": "2026-11-18T08:57:24Z",
+      "subject": "Merge the main-merged branch head into the A3-F10 logging fix"
+    },
+    {
+      "name": "origin/claude/sweet-turing-m3ftja",
+      "sha": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "committed_at": "2026-10-21T03:25:54Z",
+      "subject": "Close QA coverage gaps in doc 12; regenerate traceability"
+    },
+    {
+      "name": "origin/claude/ux-047-auth-catalogue",
+      "sha": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+      "committed_at": "2026-11-18T07:39:52Z",
+      "subject": "UX-047: migrate authentication and account-security messages to the catalogue"
+    },
+    {
+      "name": "origin/claude/vibrant-brahmagupta-3uofnj",
+      "sha": "33b200e00c088c86ffb0d0d8176f1575376a9b49",
+      "committed_at": "2026-10-30T05:05:21Z",
+      "subject": "Add continuation prompt for audit remediation and integration"
+    },
+    {
+      "name": "origin/codex/api036-completion-20261119",
+      "sha": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "committed_at": "2026-11-19T03:16:09-08:00",
+      "subject": "test(sessions): cover committed inserts between keyset pages"
+    },
+    {
+      "name": "origin/codex/api036-cursor-hardening-20261119",
+      "sha": "94fcd018ac4227ea5a5eb803478b3bb0a1aa3677",
+      "committed_at": "2026-11-19T02:20:42-08:00",
+      "subject": "fix(api): bound cursor decoding and require canonical encodings"
+    },
+    {
+      "name": "origin/codex/api036-qualification-20261119",
+      "sha": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+      "committed_at": "2026-11-19T04:53:48-08:00",
+      "subject": "docs(audit): preserve API-036 combined Core qualification receipts"
+    },
+    {
+      "name": "origin/codex/circula-checkpoint-recovery-20261116",
+      "sha": "12175ec348d5234c27e1c72dc8df96a091cd111c",
+      "committed_at": "2026-11-16T11:36:05-07:00",
+      "subject": "test: cover the proposal queue in axe and target-size sweeps"
+    },
+    {
+      "name": "origin/codex/circula-common-ui-catalog-20261116",
+      "sha": "a112c979932bc7b9e209455d3df14dfebc60243a",
+      "committed_at": "2026-11-16T14:45:21-07:00",
+      "subject": "feat: catalogue common UI messages and correct dashboard unit labels"
+    },
+    {
+      "name": "origin/codex/circula-consolidate-20261030",
+      "sha": "7643fb616208cc318939ded809e6cada66bb7415",
+      "committed_at": "2026-10-30T04:19:09-07:00",
+      "subject": "Merge current plan readiness receipt into owned development branch"
+    },
+    {
+      "name": "origin/codex/circula-core-checkpoint-20261116",
+      "sha": "15375a8dc87544849b4a85fa128ce77be1103814",
+      "committed_at": "2026-11-16T08:35:09-07:00",
+      "subject": "Close historical audit gaps and separate repository contracts from SQLite"
+    },
+    {
+      "name": "origin/codex/circula-core-completion-20261116",
+      "sha": "e3c60a62c065567ff67fc2e219a724b6fd91ca76",
+      "committed_at": "2026-11-16T09:15:26-07:00",
+      "subject": "test(contract): distinguish operation labels from API keys"
+    },
+    {
+      "name": "origin/codex/circula-evidence-20261116",
+      "sha": "f6ea3213e663c7e37d678b018861b6703947e3e0",
+      "committed_at": "2026-11-16T10:52:19-07:00",
+      "subject": "docs: record 100000-sequence run and final qualification evidence"
+    },
+    {
+      "name": "origin/codex/circula-financial-messages-20261116",
+      "sha": "cf5abf5cfb00638e1772a7e34014a352048d6b35",
+      "committed_at": "2026-11-16T13:43:13-07:00",
+      "subject": "feat: catalogue financial text and fix plural-unit balance speech"
+    },
+    {
+      "name": "origin/codex/circula-integration-plan-20261030",
+      "sha": "127943ba7aa2cb154d3e65d13279e739b901416f",
+      "committed_at": "2026-10-31T03:46:14Z",
+      "subject": "docs: record validated consolidation and bounded runtime handoff"
+    },
+    {
+      "name": "origin/codex/circula-message-catalogs-20261116",
+      "sha": "96059bb4b8ae23ad6e4e45428bf69288bec4c182",
+      "committed_at": "2026-11-16T12:42:36-07:00",
+      "subject": "feat: introduce English UI catalogue and localized overview counts"
+    },
+    {
+      "name": "origin/codex/circula-noscript-qa",
+      "sha": "ba57512918195423b25bc7958ff0b8af6df7ed7a",
+      "committed_at": "2026-11-02T15:43:25Z",
+      "subject": "docs: preserve measured Home navigation and remaining runtime handover [skip ci]"
+    },
+    {
+      "name": "origin/codex/circula-qualification-20261116",
+      "sha": "dc89212a8bf1e1207e5443ffc719670623de70e1",
+      "committed_at": "2026-11-16T10:03:59-07:00",
+      "subject": "test: qualify real Linux WAL commit write failure and recovery"
+    },
+    {
+      "name": "origin/codex/circula-responsive-qa",
+      "sha": "04e11989b811b4541a20b4e06e7a020beabb6af3",
+      "committed_at": "2026-11-02T11:12:16Z",
+      "subject": "docs: record validated accessibility QA and restart state [skip ci]"
+    },
+    {
+      "name": "origin/codex/circula-resume-20261024",
+      "sha": "f4bfe6bc3f81c94b859abeae902ae862ea6e143e",
+      "committed_at": "2026-10-30T02:19:36-07:00",
+      "subject": "Merge PR #10: historical balances, independent approvals and support guidance"
+    },
+    {
+      "name": "origin/codex/circula-staging-refresh-docs",
+      "sha": "9c0bc500cb19f11f18694c76d134f4bfebf896e7",
+      "committed_at": "2026-11-01T06:03:30Z",
+      "subject": "docs: record verified draft publication and restart state [skip ci]"
+    },
+    {
+      "name": "origin/codex/circula-support-boundaries-20261028",
+      "sha": "837d51b0d5374822b28f1b3a9206f9e2d23bd60c",
+      "committed_at": "2026-10-28T16:37:04Z",
+      "subject": "docs: finalize restart handoffs and exact-source CI receipts [skip ci]"
+    },
+    {
+      "name": "origin/codex/dashboard-amounts-meter-20261116",
+      "sha": "d53196cc6907f27222661246a7767bb0aa123a76",
+      "committed_at": "2026-11-16T16:42:20-07:00",
+      "subject": "fix(web): inflect individual dashboard amounts and cap the debt meter safely"
+    },
+    {
+      "name": "origin/consolidation/http-persistence-regressions-20261116",
+      "sha": "050798c9cf94598efd0fff15f7a8a74bb3c4f4a1",
+      "committed_at": "2026-11-16T16:46:54-07:00",
+      "subject": "Recover HTTP acceptance and SQLite persistence tests from historical branches"
+    },
+    {
+      "name": "origin/consolidation/recover-future-specifications",
+      "sha": "3a776e6304551c21ff372a8ae962606108dde4ff",
+      "committed_at": "2026-11-16T16:43:42-07:00",
+      "subject": "docs: recover the 15 historical future-module specifications"
+    },
+    {
+      "name": "origin/dependabot/go_modules/github.com/getkin/kin-openapi-0.153.0",
+      "sha": "3fa76cdb590182eaff42fc4044cf3538275eea6b",
+      "committed_at": "2026-11-16T01:16:47Z",
+      "subject": "build(deps): bump github.com/getkin/kin-openapi from 0.151.0 to 0.153.0"
+    },
+    {
+      "name": "origin/dependabot/go_modules/golang.org/x/text-0.44.0",
+      "sha": "4a6ea9ab3dff3bdf1f3597e98abd449b203afb11",
+      "committed_at": "2026-11-17T00:59:33Z",
+      "subject": "build(deps): bump golang.org/x/text from 0.43.0 to 0.44.0"
+    },
+    {
+      "name": "origin/docs/fnet-203-optional-trade-receipts",
+      "sha": "3d6ed55b2e44d31f7350814d87ba44564e8344c0",
+      "committed_at": "2026-11-14T22:38:58-07:00",
+      "subject": "docs(specs): index future FNET-203 specifications"
+    },
+    {
+      "name": "origin/docs/foundational-spec-shells",
+      "sha": "d96f2e75634bff074d26965ae93c2fe00c6f7f24",
+      "committed_at": "2026-10-20T22:09:23-07:00",
+      "subject": "docs: add foundational spec shells"
+    },
+    {
+      "name": "origin/docs/foundational-specifications",
+      "sha": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+      "committed_at": "2026-10-20T19:06:30-07:00",
+      "subject": "Add polycentric crypto-libertarian future ideas"
+    },
+    {
+      "name": "origin/docs/future-usability-network-specs-20261111",
+      "sha": "f4a051c1c1af815e7bb6a902929108e155145c97",
+      "committed_at": "2026-11-10T23:16:25-07:00",
+      "subject": "docs: record eight adoption feature ideas and reuse candidates"
+    },
+    {
+      "name": "origin/docs/readme-and-wiki",
+      "sha": "db7826495ec2e8bd3f5459afa5f619cdc8fe8def",
+      "committed_at": "2026-10-21T09:35:05Z",
+      "subject": "Add README stating repository status and wiki stub"
+    },
+    {
+      "name": "origin/feature/core-catalogue-continuation-20261119",
+      "sha": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+      "committed_at": "2026-11-19T04:41:17-08:00",
+      "subject": "feat(core): complete confirmation flows and reconcile qualified source evidence"
+    },
+    {
+      "name": "origin/feature/fnet-204-completion-parallel",
+      "sha": "a8aecfe8782df4782af256bbcecdf5fd1469f783",
+      "committed_at": "2026-11-19T03:07:07-08:00",
+      "subject": "docs(feed): record exact-source qualification and preserve integration hold"
+    },
+    {
+      "name": "origin/fix/fnet207-ci-proven-20261119",
+      "sha": "ccf30e6a819d570d90d2aa02c91ec8d635040563",
+      "committed_at": "2026-11-19T13:17:05-08:00",
+      "subject": "ci: correct fixed-execution fuzz workflow lines without altering other steps"
+    },
+    {
+      "name": "origin/future/fnet-201-matching-20261116",
+      "sha": "12850290c6bca7720853c33689662d751aced160",
+      "committed_at": "2026-11-16T03:10:23-07:00",
+      "subject": "FNET-201: document pinned upstream research and adaptation plan; isolated feature remains on integration hold"
+    },
+    {
+      "name": "origin/future/fnet-202-favorites-20261116",
+      "sha": "efc9d696eea2dd3260ecb6c5091802ef31e20572",
+      "committed_at": "2026-11-17T06:36:14Z",
+      "subject": "feat(favorites): require explicit opt-in gate; fix CSP inline-style and Origin:null found in Chromium; add browser check script"
+    },
+    {
+      "name": "origin/future/fnet-203-receipts-20261116",
+      "sha": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+      "committed_at": "2026-11-16T03:10:31-07:00",
+      "subject": "FNET-203: document pinned upstream research and adaptation plan; isolated feature remains on integration hold"
+    },
+    {
+      "name": "origin/future/fnet-204-feed-20261116",
+      "sha": "5d3819c3b3af031b75eceb5251da0226a4ecee77",
+      "committed_at": "2026-11-16T03:10:35-07:00",
+      "subject": "FNET-204: document pinned upstream research and adaptation plan; isolated feature remains on integration hold"
+    },
+    {
+      "name": "origin/future/fnet-205-analytics-20261116",
+      "sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+      "committed_at": "2026-11-16T03:10:38-07:00",
+      "subject": "FNET-205: document pinned upstream research and adaptation plan; isolated feature remains on integration hold"
+    },
+    {
+      "name": "origin/future/fnet-206-areas-20261116",
+      "sha": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+      "committed_at": "2026-11-16T03:10:42-07:00",
+      "subject": "FNET-206: document pinned upstream research and adaptation plan; isolated feature remains on integration hold"
+    },
+    {
+      "name": "origin/future/fnet-207-recurring-20261116",
+      "sha": "94deb0a20df07a3b38c8a905254645d6cd3019f2",
+      "committed_at": "2026-11-19T15:52:37-08:00",
+      "subject": "Merge pull request #97 from djshellshoxxx/master/fnet207-recurring-remote-20261119"
+    },
+    {
+      "name": "origin/future/fnet-208-governance-20261116",
+      "sha": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+      "committed_at": "2026-11-16T03:13:43-07:00",
+      "subject": "FNET-208: document pinned upstream research and adaptation plan; isolated feature remains on integration hold"
+    },
+    {
+      "name": "origin/future/fnet-209-federation-20261116",
+      "sha": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+      "committed_at": "2026-11-16T03:13:47-07:00",
+      "subject": "FNET-209: document pinned upstream research and adaptation plan; isolated feature remains on integration hold"
+    },
+    {
+      "name": "origin/future/fux-101-pwa-20261116",
+      "sha": "3415fe24df7b87a2803552b37ca31bf898f7aa8e",
+      "committed_at": "2026-11-19T17:50:01-08:00",
+      "subject": "Merge pull request #95 from djshellshoxxx/audit/future-pwa-browser-20261119"
+    },
+    {
+      "name": "origin/future/fux-102-qr-20261116",
+      "sha": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+      "committed_at": "2026-11-17T06:36:00Z",
+      "subject": "feat(fux-102): require explicit per-network opt-in gate; add XSS escaping test; licence notices for test driver graph"
+    },
+    {
+      "name": "origin/future/fux-103-discovery-20261116",
+      "sha": "34d0f889631e2d133149a89a276cf9c71fd261a9",
+      "committed_at": "2026-11-17T06:34:33Z",
+      "subject": "feat(fux-103): add operator CLI with help, self-test, migrate, taxonomy, retention and verify"
+    },
+    {
+      "name": "origin/future/fux-104-notifications-20261116",
+      "sha": "9d861d51b6ca0f3393795a126928fdf4317ca4eb",
+      "committed_at": "2026-11-19T17:50:05-08:00",
+      "subject": "Merge pull request #100 from djshellshoxxx/audit/future-notifications-bounded-core-20261119"
+    },
+    {
+      "name": "origin/future/fux-105-messaging-20261116",
+      "sha": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+      "committed_at": "2026-11-16T03:06:31-07:00",
+      "subject": "FUX-105: document pinned upstream research and adaptation plan; isolated feature remains on integration hold"
+    },
+    {
+      "name": "origin/future/fux-106-onboarding-20261116",
+      "sha": "473cab2fb45a7b67ea0001f9fdc7833ffda45eb9",
+      "committed_at": "2026-11-17T06:27:12Z",
+      "subject": "FUX-106: add isolated practice origin server with sessions, CSRF, exports"
+    },
+    {
+      "name": "origin/future/module-catalog-20261116",
+      "sha": "dfa4779d05a47bc0397110ecfbb14659ce3884d7",
+      "committed_at": "2026-11-16T03:30:21-07:00",
+      "subject": "docs: preserve agent evidence and workspace recovery checkpoint after environment outage"
+    },
+    {
+      "name": "origin/haiku/circula-consolidation",
+      "sha": "6fbfa13fb696d38e8e120377c0eee09af1ac44f0",
+      "committed_at": "2026-11-11T05:34:25Z",
+      "subject": "Merge H02a WIP slices web-ux, e2e-axe, e2e-flows (up to 504c1fe from haiku/h02a)"
+    },
+    {
+      "name": "origin/integration/admin-grant-notice-pagination-20261117",
+      "sha": "cb25b41febd43273cd4aa856072406b210089d81",
+      "committed_at": "2026-11-17T21:55:36-08:00",
+      "subject": "fix: notify administrators beyond the first member page"
+    },
+    {
+      "name": "origin/integration/backup-private-staging-20261117",
+      "sha": "faed4906f5419f573181bd7cf3ffdf0bdfb9992b",
+      "committed_at": "2026-11-17T23:11:34-08:00",
+      "subject": "Merge current main and reviewed browser repair into backup qualification"
+    },
+    {
+      "name": "origin/integration/browser-parity-clock-20261117",
+      "sha": "2f6b3e4f1b70d8c787c4de886cf085f5a3295002",
+      "committed_at": "2026-11-17T23:07:15-08:00",
+      "subject": "test: retain content identity across colour-mode page requests"
+    },
+    {
+      "name": "origin/integration/circula-master-consolidation-20261119",
+      "sha": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+      "committed_at": "2026-11-19T06:30:31-08:00",
+      "subject": "docs: preserve complete consolidation inventory and qualification evidence"
+    },
+    {
+      "name": "origin/integration/comprehensive-audit-20261119",
+      "sha": "839e86935767288e594914ad711486616a604eca",
+      "committed_at": "2026-11-19T04:21:33-08:00",
+      "subject": "docs(audit): close publication inventory and qualification record"
+    },
+    {
+      "name": "origin/integration/consolidation-execution-record-20261118",
+      "sha": "73244357ca136874452a6cd826ffa91ac8c3c434",
+      "committed_at": "2026-11-18T02:34:27-08:00",
+      "subject": "docs: record verified consolidation and remaining integration gates"
+    },
+    {
+      "name": "origin/integration/core-completion-audits-20261119",
+      "sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "committed_at": "2026-11-19T18:21:22-08:00",
+      "subject": "merge(core): consolidate completed UI with current main qualification repairs"
+    },
+    {
+      "name": "origin/integration/core-consolidation-20261119",
+      "sha": "9674b1a9d86d702e412779295db8425e9e5a8c82",
+      "committed_at": "2026-11-19T11:29:37-08:00",
+      "subject": "Merge pull request #119 from djshellshoxxx/repair/core99-currenthead-ci-20261119"
+    },
+    {
+      "name": "origin/integration/core-recovery-20261119",
+      "sha": "f29ebb01ff681a1276f385b8b568e41355b83505",
+      "committed_at": "2026-11-19T03:12:59-08:00",
+      "subject": "Verify committed export interruption and preserve refreshed consolidation evidence"
+    },
+    {
+      "name": "origin/integration/core-ui-completion-20261119",
+      "sha": "7462138fb4f7110ea4f705c6f09742a2b5a253e4",
+      "committed_at": "2026-11-19T06:29:03-08:00",
+      "subject": "Complete Core recovery verification and repair CI fixtures"
+    },
+    {
+      "name": "origin/integration/erasure-fixture-stability-20261117",
+      "sha": "fc31dc9a6b8c102fe612f47bc543e94e8114df0f",
+      "committed_at": "2026-11-17T22:11:20-08:00",
+      "subject": "test: make erasure privacy fixtures deterministic"
+    },
+    {
+      "name": "origin/integration/release-threshold-check-20261117",
+      "sha": "ec98caba7328790ef36f0f2c144644bc05155d6b",
+      "committed_at": "2026-11-17T22:03:43-08:00",
+      "subject": "fix(ci): validate required release threshold decision rows"
+    },
+    {
+      "name": "origin/integration/store-untrusted-schema-20261117",
+      "sha": "b1cd8f38450ae966cfea99d59a131175d7b798dd",
+      "committed_at": "2026-11-17T23:10:26-08:00",
+      "subject": "Merge current main and reviewed browser repair into SQLite qualification"
+    },
+    {
+      "name": "origin/integration/throttle-documentation-20261117",
+      "sha": "83de536ee373a7c4997222cf58ff563c53c8cbbc",
+      "committed_at": "2026-11-17T22:04:51-08:00",
+      "subject": "docs(security): reconcile authentication and erasure implementation"
+    },
+    {
+      "name": "origin/main",
+      "sha": "aa01563fcc891da60fefebb8335eca27855678e8",
+      "committed_at": "2026-11-19T12:56:21-08:00",
+      "subject": "Merge pull request #99 from djshellshoxxx/integration/core-consolidation-20261119"
+    },
+    {
+      "name": "origin/master/fnet207-recurring-remote-20261119",
+      "sha": "9bf260d63f454868e27d2d85a3d9fb5dce4beeae",
+      "committed_at": "2026-11-19T14:22:43-08:00",
+      "subject": "Merge pull request #110 from djshellshoxxx/fix/fnet207-ci-proven-20261119"
+    },
+    {
+      "name": "origin/master/fnet209-utf8-20261119",
+      "sha": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+      "committed_at": "2026-11-19T03:18:55-08:00",
+      "subject": "fix(federation): reject malformed signed strings before encoding"
+    },
+    {
+      "name": "origin/master/fux102-camera-lifecycle-20261119",
+      "sha": "a91bb5fdc97fc540a1617538073e92509ceba485",
+      "committed_at": "2026-11-19T07:28:27-08:00",
+      "subject": "fix(core): restore accepted notification redaction and regression coverage"
+    },
+    {
+      "name": "origin/master/fux106-retention-20261119",
+      "sha": "1c4b03f5383fdffa9a30f6393159b41b85cd2e24",
+      "committed_at": "2026-11-19T07:28:25-08:00",
+      "subject": "fix(core): restore accepted notification redaction and regression coverage"
+    },
+    {
+      "name": "origin/master/messaging-windows-private-storage-20261119",
+      "sha": "28b707433a55ca27345cf08a39b999925882f51c",
+      "committed_at": "2026-11-19T07:28:37-08:00",
+      "subject": "merge: reconcile Windows messaging repair with the accepted Core baseline"
+    },
+    {
+      "name": "origin/master/notification-transport-tests-20261119",
+      "sha": "f831c45de9137b20abe3d31590433bda6348112b",
+      "committed_at": "2026-11-19T06:06:38-08:00",
+      "subject": "ci(notifications): qualify real transport adapters on three native systems"
+    },
+    {
+      "name": "origin/master/recover-analytics-20261119",
+      "sha": "9eb06fc9b56905133aa9ec2d2786b8f80dbcf94c",
+      "committed_at": "2026-11-19T07:28:26-08:00",
+      "subject": "fix(core): restore accepted notification redaction and regression coverage"
+    },
+    {
+      "name": "origin/master/recover-areas-20261119",
+      "sha": "52cf9c3afadb950e4dd428807319e3c96f3004a9",
+      "committed_at": "2026-11-19T07:28:29-08:00",
+      "subject": "fix(core): restore accepted notification redaction and regression coverage"
+    },
+    {
+      "name": "origin/master/recover-federation-20261119",
+      "sha": "bb8d113d3a8e80597f611417410e7d78151247e2",
+      "committed_at": "2026-11-19T07:28:30-08:00",
+      "subject": "fix(core): restore accepted notification redaction and regression coverage"
+    },
+    {
+      "name": "origin/master/recover-governance-20261119",
+      "sha": "711833c510b14e84c3a7441b3b63f2f990bc8368",
+      "committed_at": "2026-11-19T07:28:26-08:00",
+      "subject": "fix(core): restore accepted notification redaction and regression coverage"
+    },
+    {
+      "name": "origin/master/recover-messaging-20261119",
+      "sha": "d12805cac1d6c52d94b04800a53d6911bd8ab94f",
+      "committed_at": "2026-11-19T07:28:27-08:00",
+      "subject": "fix(core): restore accepted notification redaction and regression coverage"
+    },
+    {
+      "name": "origin/master/recover-receipts-20261119",
+      "sha": "6186416ddd83c365405a798130999cb1e4df0f31",
+      "committed_at": "2026-11-19T07:28:28-08:00",
+      "subject": "fix(core): restore accepted notification redaction and regression coverage"
+    },
+    {
+      "name": "origin/master/recover-recurring-20261119",
+      "sha": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48",
+      "committed_at": "2026-11-19T07:28:28-08:00",
+      "subject": "fix(core): restore accepted notification redaction and regression coverage"
+    },
+    {
+      "name": "origin/nodata/doc-sweep-20261118",
+      "sha": "866adc8f2c30abd294843e43a2ba42a6fe5f7b67",
+      "committed_at": "2026-11-18T02:44:52-08:00",
+      "subject": "docs: refresh from verified main and describe actual backup logging"
+    },
+    {
+      "name": "origin/planning/future-cli-specs-20261110",
+      "sha": "8e2372c064258fb8c53554ae8f6b81957932e885",
+      "committed_at": "2026-11-10T22:04:23-07:00",
+      "subject": "docs: propose future command-line interface specification"
+    },
+    {
+      "name": "origin/repair/core99-currenthead-ci-20261119",
+      "sha": "cb5920df14b716751195584f7adf9c9e43c65615",
+      "committed_at": "2026-11-19T10:34:38-08:00",
+      "subject": "test(e2e): select confirmation checkbox over same-named error link"
+    },
+    {
+      "name": "origin/repair/fnet204-feed-final-ci-20261119",
+      "sha": "6c49dbccc90c1a2be03fec05fe6e5fa9292d801c",
+      "committed_at": "2026-11-19T19:48:49-08:00",
+      "subject": "ci(feed): correct two evidence digests against unchanged bytes"
+    },
+    {
+      "name": "origin/repair/fnet204-qualifier-evidence-digest-20261119",
+      "sha": "6c49dbccc90c1a2be03fec05fe6e5fa9292d801c",
+      "committed_at": "2026-11-19T19:48:49-08:00",
+      "subject": "ci(feed): correct two evidence digests against unchanged bytes"
+    },
+    {
+      "name": "origin/repair/fux101-final-ci-20261119",
+      "sha": "aab3bfda4812c4e99882c8efd00cd2d9328a444e",
+      "committed_at": "2026-11-19T14:30:36-08:00",
+      "subject": "ci: restore accepted Core deferred SQLite metadata error fixture"
+    },
+    {
+      "name": "origin/repair/fux104-final-ci-20261119",
+      "sha": "409a00b0b36daa343cd70521b5acc2c9af9eb7c0",
+      "committed_at": "2026-11-19T14:30:35-08:00",
+      "subject": "ci: restore accepted Core deferred SQLite metadata error fixture"
+    },
+    {
+      "name": "origin/work/spec-completion",
+      "sha": "d39bfef12d4ac1430815fa49ad799fb1c4bf9964",
+      "committed_at": "2026-10-22T01:44:55-07:00",
+      "subject": "Record passing race regression and next specification reconciliation tasks"
+    }
+  ],
+  "snapshots": [
+    {
+      "ref": "main",
+      "sha": "aa01563fcc891da60fefebb8335eca27855678e8",
+      "tracked_files": 1442,
+      "production_go_files": 283,
+      "migrations": 21,
+      "has_future_directory": false
+    },
+    {
+      "ref": "PR125",
+      "sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "tracked_files": 1719,
+      "production_go_files": 283,
+      "migrations": 21,
+      "has_future_directory": false
+    }
+  ]
+}

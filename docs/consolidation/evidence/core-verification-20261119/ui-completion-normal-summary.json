@@ -1,0 +1,117 @@
+{
+  "head": "e0d27cc7cb73299219439919b260991b824d594a",
+  "source_digest": "9345085d1e2cb966e89c6334ffbceb690769d5caf061b9d105b921a8102287dc",
+  "exit_code": 0,
+  "dirty": false,
+  "command": [
+    "go",
+    "test",
+    "-json",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout",
+    "20m",
+    "./..."
+  ],
+  "passing_test_and_subtest_events": 3080,
+  "skipped_test_and_subtest_events": 6,
+  "package_results": [
+    {
+      "Time": "2026-11-19T13:30:34.450781422Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:31:00.853438618Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/api",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:31:12.549162576Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/contract",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:31:13.175706786Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/domain",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:31:13.652863877Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/histbal",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:31:14.076478707Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/httpx",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:31:14.425794847Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/logx",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:31:14.720616357Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/repository",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:32:52.600788812Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:33:06.678379871Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/store",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:33:06.680808255Z",
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/internal/storetest",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:33:06.680831359Z",
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/internal/testutil",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:33:54.18273982Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:33:55.331021103Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:33:58.026396735Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/sbom",
+      "Test": ""
+    },
+    {
+      "Time": "2026-11-19T13:33:59.844891309Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": ""
+    }
+  ]
+}

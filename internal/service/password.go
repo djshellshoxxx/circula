@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/subtle"
 	_ "embed" // commonpw.txt
@@ -13,6 +14,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/passwordwork"
 	"golang.org/x/crypto/argon2"
 )
 
@@ -37,12 +39,15 @@ func DefaultArgon2Params() Argon2Params {
 	return Argon2Params{MemoryKiB: 64 * 1024, Time: 3, Threads: 2, KeyLen: 32, SaltLen: 16}
 }
 
-func hashPassword(pw string, p Argon2Params) (string, error) {
+func hashPassword(ctx context.Context, work *passwordwork.Ticket, pw string, p Argon2Params) (string, error) {
 	salt := make([]byte, p.SaltLen)
 	if _, err := rand.Read(salt); err != nil {
 		return "", err
 	}
-	key := argon2id([]byte(pw), salt, p)
+	key, err := argon2id(ctx, work, []byte(pw), salt, p)
+	if err != nil {
+		return "", err
+	}
 	return fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s", argon2.Version, p.MemoryKiB, p.Time,
 		p.Threads, phc64.EncodeToString(salt), phc64.EncodeToString(key)), nil
 }
@@ -53,12 +58,18 @@ func hashPassword(pw string, p Argon2Params) (string, error) {
 // BR-05) without relying on wall-clock time.
 var argonObserver atomic.Pointer[func(Argon2Params)]
 
-// argon2id is the single place the product evaluates Argon2id.
-func argon2id(pw, salt []byte, p Argon2Params) []byte {
-	if f := argonObserver.Load(); f != nil {
-		(*f)(p)
-	}
-	return argon2.IDKey(pw, salt, p.Time, p.MemoryKiB, p.Threads, p.KeyLen)
+// argon2id is the service's single Argon2id boundary. Backup passphrase
+// derivation uses the same process admission through internal/passwordwork.
+func argon2id(ctx context.Context, work *passwordwork.Ticket, pw, salt []byte, p Argon2Params) ([]byte, error) {
+	return work.Run(ctx, func() []byte {
+		if f := argonObserver.Load(); f != nil {
+			(*f)(p)
+		}
+		if ctx.Err() != nil {
+			return nil
+		}
+		return argon2.IDKey(pw, salt, p.Time, p.MemoryKiB, p.Threads, p.KeyLen)
+	})
 }
 
 // parsePHC decodes an Argon2id PHC string. ok is false for anything that is
@@ -94,25 +105,31 @@ func parsePHC(encoded string) (p Argon2Params, salt, want []byte, ok bool) {
 // verifyPassword checks pw against a PHC string using the parameters stored in
 // the hash, in constant time. It does no hashing work for an unusable hash;
 // sign-in uses Service.verifyLoginPassword, which does.
-func verifyPassword(pw, encoded string) bool {
+func verifyPassword(ctx context.Context, work *passwordwork.Ticket, pw, encoded string) (bool, error) {
+	if err := ctx.Err(); err != nil {
+		return false, err
+	}
 	p, salt, want, ok := parsePHC(encoded)
 	if !ok {
-		return false
+		return false, nil
 	}
-	got := argon2id([]byte(pw), salt, p)
-	return subtle.ConstantTimeCompare(got, want) == 1
+	got, err := argon2id(ctx, work, []byte(pw), salt, p)
+	if err != nil {
+		return false, err
+	}
+	return subtle.ConstantTimeCompare(got, want) == 1, nil
 }
 
 // verifyLoginPassword is verifyPassword for sign-in. A stored hash that cannot
 // be evaluated (an erased person's marker, a damaged row) still costs one
 // Argon2id evaluation with the current parameters, exactly like an unknown
 // login, so response time does not single such an account out (SEC-005, BR-05).
-func (s *Service) verifyLoginPassword(pw, encoded string) bool {
+func (s *Service) verifyLoginPassword(ctx context.Context, work *passwordwork.Ticket, pw, encoded string) (bool, error) {
 	if _, _, _, ok := parsePHC(encoded); !ok {
-		verifyPassword(pw, s.dummyHash) // equalise effort
-		return false
+		_, err := verifyPassword(ctx, work, pw, s.dummyHash) // equalise effort
+		return false, err
 	}
-	return verifyPassword(pw, encoded)
+	return verifyPassword(ctx, work, pw, encoded)
 }
 
 //go:embed commonpw.txt

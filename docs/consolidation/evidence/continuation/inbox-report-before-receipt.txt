@@ -1,0 +1,4 @@
+2026-11-19, base 5da8bc7, Go 1.26.11
+Messages fail-before: TestInboxReportMessages failed on unknown UI message inbox.unread_count (exit 1).
+Production-file inbox render fail-before: TestInboxCatalogueCountsAndActions failed on missing 1,000 unread., missing complete aria-label for Mark as read, and 1 unread. split by strong markup (exit 1; 0.889s).
+Both outcomes were observed in tool output before runtime restart. Original /tmp logs were lost in the restart; this is a receipt, not a reconstruction of raw logs.

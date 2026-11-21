@@ -5,6 +5,61 @@
   if (el) { el.focus(); }
 })();
 
+// UX-028: announce ordinary page loads without replacing navigation or form
+// submission. Successful controls, native validation and submitter values stay
+// under browser control; attachment forms explicitly opt out.
+(function () {
+  var status = document.getElementById('page-loading');
+  var main = document.getElementById('main');
+  if (!status || !main) { return; }
+  var pending = null;
+  function reset() {
+    clearTimeout(pending);
+    pending = null;
+    status.textContent = '';
+    main.removeAttribute('aria-busy');
+  }
+  function localURL(href) {
+    try {
+      var url = new URL(href || window.location.href, window.location.href);
+      return (url.protocol === 'http:' || url.protocol === 'https:') && url.origin === window.location.origin ? url : null;
+    } catch (_) { return null; }
+  }
+  function sameWindow(target) { return !target || target.toLowerCase() === '_self'; }
+  function announce(event, message) {
+    clearTimeout(pending);
+    // Update before native navigation can suspend timers while awaiting the
+    // document response. Keep the next-task check so later listeners can
+    // cancel an in-place interaction without leaving the page busy.
+    status.textContent = status.getAttribute(message);
+    main.setAttribute('aria-busy', 'true');
+    pending = setTimeout(function () {
+      pending = null;
+      if (event.defaultPrevented) { reset(); }
+    }, 0);
+  }
+  document.addEventListener('click', function (event) {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) { return; }
+    var link = event.target.closest && event.target.closest('a[href]');
+    if (!link || link.hasAttribute('download') || link.closest('[data-loading-ignore]') || !sameWindow(link.getAttribute('target'))) { return; }
+    var url = localURL(link.getAttribute('href'));
+    if (!url || (url.href.indexOf('#') !== -1 && url.pathname === window.location.pathname && url.search === window.location.search)) { return; }
+    announce(event, 'data-navigation-message');
+  });
+  document.addEventListener('submit', function (event) {
+    var form = event.target;
+    var submitter = event.submitter;
+    if (event.defaultPrevented || form.tagName !== 'FORM' || form.closest('[data-loading-ignore]') || (submitter && submitter.hasAttribute('data-loading-ignore'))) { return; }
+    function option(name) {
+      return submitter && submitter.hasAttribute('form' + name) ? submitter.getAttribute('form' + name) : form.getAttribute(name);
+    }
+    var method = (option('method') || 'get').toLowerCase();
+    if ((method !== 'get' && method !== 'post') || !sameWindow(option('target')) || !localURL(option('action'))) { return; }
+    announce(event, method === 'get' ? 'data-navigation-message' : 'data-submission-message');
+  });
+  window.addEventListener('pageshow', reset);
+})();
+
 // PER-022: retain the last server timestamp when connectivity fails or a saved
 // page returns from browser history. Coming online is not proof of a refresh.
 (function () {

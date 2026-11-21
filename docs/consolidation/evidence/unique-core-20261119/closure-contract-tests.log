@@ -1,0 +1,7 @@
+=== RUN   TestClosureCheckpointMatchesOpenAPI
+--- PASS: TestClosureCheckpointMatchesOpenAPI (0.18s)
+=== RUN   TestAPIMatchesOpenAPI
+    contract_test.go:612: operations exercised: 88; distinct (operation,status) pairs: 170
+--- PASS: TestAPIMatchesOpenAPI (0.65s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/contract	0.851s

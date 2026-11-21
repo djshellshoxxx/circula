@@ -1,0 +1,26 @@
+=== RUN   TestFailedRollbackDiscardsConnection
+=== RUN   TestFailedRollbackDiscardsConnection/error
+=== RUN   TestFailedRollbackDiscardsConnection/panic
+--- PASS: TestFailedRollbackDiscardsConnection (0.02s)
+    --- PASS: TestFailedRollbackDiscardsConnection/error (0.01s)
+    --- PASS: TestFailedRollbackDiscardsConnection/panic (0.01s)
+=== RUN   TestMigrationMetadataReadFailureStopsBeforeDDL
+--- PASS: TestMigrationMetadataReadFailureStopsBeforeDDL (1.07s)
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_succeeds
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_fails
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_succeeds
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_fails
+--- PASS: TestMigrationWriteFailureRollsBackAndRecovers (5.70s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_succeeds (1.76s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_fails (1.20s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_succeeds (1.35s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_fails (1.39s)
+=== RUN   TestCommitAcknowledgmentFailurePreservesPostingAndReplay
+=== RUN   TestCommitAcknowledgmentFailurePreservesPostingAndReplay/before_commit
+=== RUN   TestCommitAcknowledgmentFailurePreservesPostingAndReplay/after_successful_commit
+--- PASS: TestCommitAcknowledgmentFailurePreservesPostingAndReplay (6.19s)
+    --- PASS: TestCommitAcknowledgmentFailurePreservesPostingAndReplay/before_commit (3.35s)
+    --- PASS: TestCommitAcknowledgmentFailurePreservesPostingAndReplay/after_successful_commit (2.83s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	14.008s

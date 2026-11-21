@@ -1,0 +1,426 @@
+{
+  "milestone": "AUTH-04 shared process password-work admission",
+  "recorded_at": "2026-11-20T16:35:13.918367+00:00",
+  "base_commit": "21933a3c650690db5a8e1e44cc236d8d1b5cdb24",
+  "branch": "fix/core-password-admission-20261120",
+  "audit_commit": "896d69f472652ed54c051ec82efcb7f162d1d2c4",
+  "go_version": "go1.26.11 linux/amd64",
+  "environment": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "512MiB"
+  },
+  "test_runs": [
+    {
+      "log": "service-focused.jsonl",
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-race",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./internal/service",
+        "-run",
+        "Test(PasswordAdmission|VerifyPasswordRejectsDegenerateParams|HashPasswordPHCFormat|DefaultArgon2ParamsMatchBenchmarkDoc|LoginThrottleIsAtomicUnderConcurrency|LoginRefusalsDoEqualWork|RecoveryRefusalsDoEqualWork|RecoverCodeRace|LoginStraddlingPasswordChangeGetsNoSession|ChangePasswordReplacesOnlyTheVerifiedHash|PasswordProtectedChangesRejectSupersededPassword|AuthenticationObserver|PasswordRecoveryRestoresCurrentPasswordAttemptBudget)"
+      ],
+      "extra_environment": {},
+      "exit_code": 0,
+      "first_event": "2026-11-20T08:19:18.922125284-08:00",
+      "last_event": "2026-11-20T08:22:19.45587719-08:00",
+      "top_level_tests": {
+        "pass": 20,
+        "fail": 0,
+        "skip": 0
+      },
+      "test_and_subtest_events": {
+        "pass": 50,
+        "fail": 0,
+        "skip": 0
+      },
+      "benchmark_names": [],
+      "skipped_tests": [],
+      "packages": [
+        {
+          "Package": "github.com/djshellshoxxx/circula/internal/service",
+          "Action": "pass",
+          "Elapsed": 180.534
+        }
+      ],
+      "sha256": "1e8f7013771216867f033a616bd12b80a3d7c2dbbe171225c3d5bc7699e8dd21"
+    },
+    {
+      "log": "adapters-backup-race.jsonl",
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-race",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./cmd/circula",
+        "./internal/api",
+        "./internal/web",
+        "-run",
+        "Test(BackupPasswordAdmission|BackupCryptPassphrase|PasswordAdmission|UnavailableCodeMapsTo503|BusyMapsTo503|APIChangePassword|APIPasswordGuessesLimited|LoginTradeFlow|AuthenticationObserverSeesHTMLCredentialValidation)"
+      ],
+      "extra_environment": {},
+      "exit_code": 0,
+      "first_event": "2026-11-20T08:24:22.385138787-08:00",
+      "last_event": "2026-11-20T08:25:14.139203037-08:00",
+      "top_level_tests": {
+        "pass": 11,
+        "fail": 0,
+        "skip": 0
+      },
+      "test_and_subtest_events": {
+        "pass": 11,
+        "fail": 0,
+        "skip": 0
+      },
+      "benchmark_names": [],
+      "skipped_tests": [],
+      "packages": [
+        {
+          "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+          "Action": "pass",
+          "Elapsed": 2.583
+        },
+        {
+          "Package": "github.com/djshellshoxxx/circula/internal/api",
+          "Action": "pass",
+          "Elapsed": 8.048
+        },
+        {
+          "Package": "github.com/djshellshoxxx/circula/internal/web",
+          "Action": "pass",
+          "Elapsed": 8.648
+        }
+      ],
+      "sha256": "95feaef5a8153040fb4732232112349bf0d9518be93d38c2d5429038d48f85c9"
+    },
+    {
+      "log": "admission-final-race.jsonl",
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-race",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./internal/passwordwork",
+        "./internal/service",
+        "-run",
+        "Test(Admission|Ticket|ProcessDefault|PasswordAdmission|LoginStraddlingPasswordChangeGetsNoSession|ChangePasswordReplacesOnlyTheVerifiedHash|PasswordProtectedChangesRejectSupersededPassword)"
+      ],
+      "extra_environment": {},
+      "exit_code": 0,
+      "first_event": "2026-11-20T08:26:18.060763235-08:00",
+      "last_event": "2026-11-20T08:27:27.819977546-08:00",
+      "top_level_tests": {
+        "pass": 17,
+        "fail": 0,
+        "skip": 0
+      },
+      "test_and_subtest_events": {
+        "pass": 44,
+        "fail": 0,
+        "skip": 0
+      },
+      "benchmark_names": [],
+      "skipped_tests": [],
+      "packages": [
+        {
+          "Package": "github.com/djshellshoxxx/circula/internal/passwordwork",
+          "Action": "pass",
+          "Elapsed": 1.051
+        },
+        {
+          "Package": "github.com/djshellshoxxx/circula/internal/service",
+          "Action": "pass",
+          "Elapsed": 31.27
+        }
+      ],
+      "sha256": "ee998afa10f70a6387532bcd5547e522ef1bb511f330bddb6d729bf34842ca90"
+    },
+    {
+      "log": "credentials-fixtures.jsonl",
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./internal/service",
+        "-run",
+        "Test.*(Password|Recovery|Recover|MFA|Auth|Login|Throttle)|TestStressConcurrentRegisterAndRedeem|TestQA001(InvariantSequences|IsolatedReplay)"
+      ],
+      "extra_environment": {
+        "CIRCULA_QA001_SEQUENCES": "4",
+        "CIRCULA_QA001_SHARDS": "4"
+      },
+      "exit_code": 0,
+      "first_event": "2026-11-20T08:28:49.256955105-08:00",
+      "last_event": "2026-11-20T08:28:59.099836251-08:00",
+      "top_level_tests": {
+        "pass": 96,
+        "fail": 0,
+        "skip": 1
+      },
+      "test_and_subtest_events": {
+        "pass": 219,
+        "fail": 0,
+        "skip": 1
+      },
+      "benchmark_names": [],
+      "skipped_tests": [
+        "TestLoginTimingStatistical"
+      ],
+      "packages": [
+        {
+          "Package": "github.com/djshellshoxxx/circula/internal/service",
+          "Action": "pass",
+          "Elapsed": 9.843
+        }
+      ],
+      "sha256": "0db8196fa23e345e8a7cc2c8eea05263daade82f984e169851d8aae0b74b257d"
+    },
+    {
+      "log": "limiter-final-race.jsonl",
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-race",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./internal/passwordwork"
+      ],
+      "extra_environment": {},
+      "exit_code": 0,
+      "first_event": "2026-11-20T08:33:51.660140364-08:00",
+      "last_event": "2026-11-20T08:33:52.733366518-08:00",
+      "top_level_tests": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 0
+      },
+      "test_and_subtest_events": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 0
+      },
+      "benchmark_names": [],
+      "skipped_tests": [],
+      "packages": [
+        {
+          "Package": "github.com/djshellshoxxx/circula/internal/passwordwork",
+          "Action": "pass",
+          "Elapsed": 1.073
+        }
+      ],
+      "sha256": "7f97e6c91795830f813015211f2bd51ff66b2310e83bfa6d56ab8a2f7993cc21"
+    },
+    {
+      "log": "benchmark-smoke.jsonl",
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./internal/service",
+        "-run",
+        "^$",
+        "-bench",
+        "^BenchmarkArgon2id",
+        "-benchtime=1x"
+      ],
+      "extra_environment": {},
+      "exit_code": 0,
+      "first_event": "2026-11-20T08:33:55.040069257-08:00",
+      "last_event": "2026-11-20T08:33:56.029238786-08:00",
+      "top_level_tests": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "test_and_subtest_events": {
+        "pass": 0,
+        "fail": 0,
+        "skip": 0
+      },
+      "benchmark_names": [
+        "BenchmarkArgon2idHash",
+        "BenchmarkArgon2idVerify",
+        "BenchmarkArgon2idVerifyParallel"
+      ],
+      "skipped_tests": [],
+      "packages": [
+        {
+          "Package": "github.com/djshellshoxxx/circula/internal/service",
+          "Action": "pass",
+          "Elapsed": 0.989
+        }
+      ],
+      "sha256": "8d5d3a3a37f31c7c29d549c0be9e2bd69d53520f2281de99417a5cdaf5217f45"
+    }
+  ],
+  "unique_top_level_tests": {
+    "pass": 116,
+    "fail": 0,
+    "skip": 1
+  },
+  "unique_test_and_subtest_names": {
+    "pass": 239,
+    "fail": 0,
+    "skip": 1
+  },
+  "lint": {
+    "tool": "golangci-lint 2.15.0 built with go1.27.0",
+    "command": [
+      "/tmp/circula-runtime-4d30/bin/golangci-lint",
+      "run",
+      "--concurrency=1",
+      "--timeout=3m",
+      "--new-from-rev=HEAD",
+      "./internal/passwordwork",
+      "./internal/service",
+      "./cmd/circula",
+      "./internal/api",
+      "./internal/web"
+    ],
+    "path_prefix": "/tmp/circula-runtime-4d30/go/bin",
+    "final_exit_code": 0,
+    "final_log": "lint.log",
+    "issues": 0,
+    "prior_attempts": [
+      {
+        "log": "lint-env-failure.log",
+        "exit_code": 3,
+        "reason": "Go executable was not on PATH for the linter child process; corrected PATH."
+      },
+      {
+        "log": "lint-source-before.log",
+        "exit_code": 1,
+        "reason": "SA4000 on the test identity comparison Process()!=Process(); replaced by two named return values and reran lint and limiter race tests."
+      }
+    ]
+  },
+  "formatting": {
+    "command": "gofmt -l on modified/new Go files",
+    "file_count": 22,
+    "exit_code": 0,
+    "differences": [],
+    "git_diff_check_exit_code": 0,
+    "git_diff_cached_check_exit_code": 0
+  },
+  "source_files_sha256": [
+    {
+      "path": "cmd/circula/backup_admission_test.go",
+      "sha256": "c9e4063053ba982c285fe48f3e4c0a1b1482daa182707d0d5d2e6491846333e3"
+    },
+    {
+      "path": "cmd/circula/backupcrypt.go",
+      "sha256": "ea0e4cebb1addb8060174e7a2bb907d4316aa5ce5548078444422058c3d6ef71"
+    },
+    {
+      "path": "internal/api/password_admission_test.go",
+      "sha256": "511ac134956a6e4a508bb11db174d91888a888b318ed0371f1786d1800926a47"
+    },
+    {
+      "path": "internal/domain/errors.go",
+      "sha256": "052c23c063cce47a40cab5bec046b15ff9aedf6cf30f6fc59fc6e1673085c8a0"
+    },
+    {
+      "path": "internal/passwordwork/admission.go",
+      "sha256": "06545b732d2b2cfa29f9a835f8953feed599970e3d231e84de6b0c6e25b4276b"
+    },
+    {
+      "path": "internal/passwordwork/admission_test.go",
+      "sha256": "753fea398c933cbd341a1c79c5ac40616a5ff75d76b6548750b47805d357cbf1"
+    },
+    {
+      "path": "internal/service/aud4_auth_test.go",
+      "sha256": "7dd7d65a9ef576d125ec141804645a24bef8e0f424e5b015761f91d184df9dfe"
+    },
+    {
+      "path": "internal/service/auth.go",
+      "sha256": "31253321c3ff3cefca81f511b7e5f40ad3d499b1ac7532db95227ec110c5eb25"
+    },
+    {
+      "path": "internal/service/hardening_test.go",
+      "sha256": "4939ab6c65a69e89b3e07d7a400a43ce1e37fb1b149b7dd34b4a69048e637359"
+    },
+    {
+      "path": "internal/service/mfa.go",
+      "sha256": "052021ef51bfa106d00ad313c7ce2ffe379d361f200f3e07548b3657785d8d1d"
+    },
+    {
+      "path": "internal/service/password.go",
+      "sha256": "eeff52f61d3de41d1f7def9cebea3ab4336f38b438b780ef3e5ef9391e7cb336"
+    },
+    {
+      "path": "internal/service/password_admission_test.go",
+      "sha256": "c9caf755a25ba17db19a0eeeeec6234353f935fe79d57a6395d7a821a37ec936"
+    },
+    {
+      "path": "internal/service/password_bench_test.go",
+      "sha256": "49901809bebafbfd419a8aa227d61ee93cecbe4baf1445a9d812d6a9952abfa2"
+    },
+    {
+      "path": "internal/service/password_proof_test.go",
+      "sha256": "fe93600a31f11fbbd204d7f34aa9de49b03bfc4643cf150fb073df97d99941c5"
+    },
+    {
+      "path": "internal/service/password_vectors_test.go",
+      "sha256": "eeae1318b10fe2ec752afd4b5435730bf58aaf26860d58c1e252851b1e2bc78e"
+    },
+    {
+      "path": "internal/service/qa001_harness_test.go",
+      "sha256": "c6b5a9794d683b6c6e7aae52dfb2a0b44beb51d144439d2935f8c259fae55494"
+    },
+    {
+      "path": "internal/service/recovery.go",
+      "sha256": "9222abe6956402955ab687bf168da8472c9372c3f6e4da10ccd1b5b4f3820acf"
+    },
+    {
+      "path": "internal/service/recovery_test.go",
+      "sha256": "e5bc73b269d53931f71b84185522f7404281834bb7a1a51651ea3c516c71befc"
+    },
+    {
+      "path": "internal/service/service.go",
+      "sha256": "2899d21b0b27dab459d069b102d710bf8e44175a06f1166866b13de9e5da8007"
+    },
+    {
+      "path": "internal/service/stress_test.go",
+      "sha256": "b001346410c4d5f466638c7def01e71bed7ac3331500f285cc3501ef028bb3e2"
+    },
+    {
+      "path": "internal/web/password_admission_test.go",
+      "sha256": "937a4bdeef529fa48a0d8d9ca1434f597376e8b07dca12ca8dbac682c877c1f4"
+    },
+    {
+      "path": "internal/web/render.go",
+      "sha256": "72804c2ff40fbd1c7d9b9d4a60514ed05ea3efcfa5c18684a721534d1c10ab08"
+    }
+  ],
+  "qualification_notes": [
+    "The first focused service race run preceded explicit isolated New(2) reentrant fixtures and the added replacement-cancellation test. admission-final-race reran these changes successfully.",
+    "The final limiter race run follows the test-only SA4000 fix; production behavior did not change after the successful service and adapter runs.",
+    "Benchmark smoke ran each of the three variants once with GOMAXPROCS=1. It is not a throughput, capacity, exhaustion or minimum-hardware benchmark.",
+    "Only TestLoginTimingStatistical skipped: it requires CIRCULA_TIMING_TEST opt-in.",
+    "No new fuzz campaign, full-repository suite, vulnerability scan or provider CI was run in this isolated milestone; the parent consolidation will qualify the combined branch.",
+    "No database schema, dependency versions or future modules changed. No remote mutation, deployment or release performed.",
+    "Integration secret scanning matched nine source-file digest map entries as credential-shaped text. Their representation was changed to explicit path/sha256 rows without changing any path or digest. Scanner rules and original execution logs remain unchanged; final integration scan is recorded separately."
+  ]
+}

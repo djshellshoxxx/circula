@@ -2,26 +2,61 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/integrity"
 	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // LedgerReport is the result of VerifyLedger (DAT-020, ARC-015).
 type LedgerReport struct {
-	NetworkID   string
-	OK          bool
-	Findings    []string
-	LedgerSeq   int64
-	AuditEvents int64
-	Started     time.Time
-	Finished    time.Time
+	NetworkID        string
+	OK               bool
+	Findings         []string
+	LedgerSeq        int64
+	AuditEvents      int64
+	Started          time.Time
+	Finished         time.Time
+	HistoricalLimits *store.HistoricalLimitCoverage
 	// RunID is the consistency_runs id; set only by RecordConsistencyRun /
 	// VerifyAndRecordLedger.
 	RunID string
+}
+
+// AuditReport is the read-only verification result for the platform audit
+// scope. It carries no network ledger totals or persistent consistency run.
+type AuditReport struct {
+	OK          bool
+	Findings    []string
+	AuditEvents int64
+	Started     time.Time
+	Finished    time.Time
+}
+
+// VerifyPlatformAudit checks the complete platform audit chain, including its
+// recorded head, in one read snapshot. Only the platform operator may inspect
+// this scope. Empty history is valid when no head has been recorded.
+func (s *Service) VerifyPlatformAudit(ctx context.Context, actor domain.Actor) (*AuditReport, error) {
+	if err := requireSystem(actor); err != nil {
+		return nil, err
+	}
+	rep := &LedgerReport{}
+	err := s.view(ctx, func(tx store.Tx) error {
+		rep.Started = s.now()
+		if err := s.verifyAuditChain(tx, "", rep); err != nil {
+			return err
+		}
+		rep.OK = len(rep.Findings) == 0
+		rep.Finished = s.now()
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &AuditReport{OK: rep.OK, Findings: rep.Findings, AuditEvents: rep.AuditEvents,
+		Started: rep.Started, Finished: rep.Finished}, nil
 }
 
 // VerifyLedger runs the consistency check for one network. It is READ-ONLY
@@ -38,6 +73,9 @@ type LedgerReport struct {
 // equal the sum of their reversals (DOM-020); and the audit hash chain is
 // contiguous, unmodified and ends at the recorded head so tail truncation is
 // detected (DAT-030, SA-09). Administrators or System only.
+// Forward debits are also checked against immutable posting-time limit
+// inputs. Explicit legacy markers report unavailable historical coverage,
+// separately from findings; current limits never reinterpret older postings.
 func (s *Service) VerifyLedger(ctx context.Context, actor domain.Actor, netID string) (*LedgerReport, error) {
 	rep := &LedgerReport{NetworkID: netID}
 	err := s.view(ctx, func(tx store.Tx) error {
@@ -49,37 +87,12 @@ func (s *Service) VerifyLedger(ctx context.Context, actor domain.Actor, netID st
 			return err
 		}
 		rep.Started = s.now()
-		add := func(f string, a ...any) { rep.Findings = append(rep.Findings, fmt.Sprintf(f, a...)) }
-		mm, err := tx.BalanceMismatches(netID)
+		checked, err := integrity.CheckLedger(tx, netID, integrity.Options{})
 		if err != nil {
 			return err
 		}
-		for _, m := range mm {
-			add("account %s cached balance %d != sum of entries %d", m.AccountID, m.Cached, m.Summed)
-		}
-		probs, err := tx.TxProblems(netID)
-		if err != nil {
-			return err
-		}
-		rep.Findings = append(rep.Findings, probs...)
-		bal, ent, err := tx.Totals(netID)
-		if err != nil {
-			return err
-		}
-		if bal != 0 || ent != 0 {
-			add("network totals not zero: balances %d, entries %d", bal, ent)
-		}
-		rev, err := tx.ReversalMismatches(netID)
-		if err != nil {
-			return err
-		}
-		rep.Findings = append(rep.Findings, rev...)
-		if err := s.verifyAuditChain(tx, netID, rep); err != nil {
-			return err
-		}
-		if rep.LedgerSeq, err = tx.LedgerSeq(netID); err != nil {
-			return err
-		}
+		rep.Findings, rep.LedgerSeq, rep.AuditEvents = checked.Findings, checked.LedgerSeq, checked.AuditEvents
+		rep.HistoricalLimits = checked.HistoricalLimits
 		rep.OK = len(rep.Findings) == 0
 		rep.Finished = s.now()
 		return nil
@@ -123,7 +136,7 @@ func (s *Service) recordConsistencyRun(ctx context.Context, actor domain.Actor, 
 		}
 		id := s.id()
 		if err := tx.InsertConsistencyRun(store.ConsistencyRun{ID: id, NetworkID: rep.NetworkID, Started: rep.Started,
-			Finished: rep.Finished, OK: rep.OK, Findings: strings.Join(rep.Findings, "\n")}); err != nil {
+			Finished: rep.Finished, OK: rep.OK, Findings: strings.Join(rep.Findings, "\n"), HistoricalLimits: rep.HistoricalLimits}); err != nil {
 			return err
 		}
 		rep.RunID = id
@@ -132,8 +145,16 @@ func (s *Service) recordConsistencyRun(ctx context.Context, actor domain.Actor, 
 		if quiet && rep.OK && (prev == nil || prev.OK) {
 			return nil
 		}
+		after := map[string]any{"status": map[bool]string{true: "ok", false: "findings"}[rep.OK]}
+		if coverage := rep.HistoricalLimits; coverage != nil {
+			after["historical_limit_coverage"] = coverage.Status
+			after["checked_debits"] = coverage.CheckedDebits
+			after["system_debits"] = coverage.SystemDebits
+			after["legacy_unverified_debits"] = coverage.LegacyUnverifiedDebits
+			after["unverifiable_debits"] = coverage.UnverifiableDebits
+		}
 		return s.audit(tx, p, auditEntry{Type: p.actorType(domain.ActorAdmin), Action: domain.ActVerify, TargetType: "network", TargetID: rep.NetworkID,
-			After: map[string]any{"status": map[bool]string{true: "ok", false: "findings"}[rep.OK]}})
+			After: after})
 	})
 }
 
@@ -151,41 +172,11 @@ func (s *Service) VerifyAndRecordLedger(ctx context.Context, actor domain.Actor,
 }
 
 func (s *Service) verifyAuditChain(tx store.Tx, netID string, rep *LedgerReport) error {
-	var after int64
-	prev := ""
-	for {
-		evs, err := tx.ListAudit(netID, store.AuditFilter{AfterSeq: after, Limit: 500})
-		if err != nil {
-			return err
-		}
-		if len(evs) == 0 {
-			break
-		}
-		for _, e := range evs {
-			rep.AuditEvents++
-			switch {
-			case e.Seq != after+1:
-				rep.Findings = append(rep.Findings, fmt.Sprintf("audit sequence gap before %d", e.Seq))
-			case e.PrevHash != prev:
-				rep.Findings = append(rep.Findings, fmt.Sprintf("audit event %d breaks the hash chain", e.Seq))
-			case AuditHash(e) != e.Hash:
-				rep.Findings = append(rep.Findings, fmt.Sprintf("audit event %d content does not match its hash", e.Seq))
-			}
-			after, prev = e.Seq, e.Hash
-		}
-	}
-	// The chain must end exactly at the head recorded in the same unit as the
-	// last append; this catches deletion of the newest events (SA-09).
-	hs, hh, found, err := tx.AuditHead(netID)
+	checked, err := integrity.CheckAudit(tx, netID, integrity.Options{})
 	if err != nil {
 		return err
 	}
-	switch {
-	case !found && after > 0:
-		rep.Findings = append(rep.Findings, fmt.Sprintf("audit head record missing (chain ends at %d)", after))
-	case found && (hs != after || hh != prev):
-		rep.Findings = append(rep.Findings, fmt.Sprintf(
-			"audit chain ends at event %d but the recorded head is %d: events were removed or the head was altered", after, hs))
-	}
+	rep.Findings = append(rep.Findings, checked.Findings...)
+	rep.AuditEvents += checked.AuditEvents
 	return nil
 }

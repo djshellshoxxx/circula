@@ -1,0 +1,12 @@
+=== RUN   TestVerifyExportRequiresCompletedDeflateStream
+=== RUN   TestVerifyExportRequiresCompletedDeflateStream/members.csv/incomplete
+=== RUN   TestVerifyExportRequiresCompletedDeflateStream/members.csv/complete
+=== RUN   TestVerifyExportRequiresCompletedDeflateStream/manifest.json/incomplete
+=== RUN   TestVerifyExportRequiresCompletedDeflateStream/manifest.json/complete
+--- PASS: TestVerifyExportRequiresCompletedDeflateStream (0.00s)
+    --- PASS: TestVerifyExportRequiresCompletedDeflateStream/members.csv/incomplete (0.00s)
+    --- PASS: TestVerifyExportRequiresCompletedDeflateStream/members.csv/complete (0.00s)
+    --- PASS: TestVerifyExportRequiresCompletedDeflateStream/manifest.json/incomplete (0.00s)
+    --- PASS: TestVerifyExportRequiresCompletedDeflateStream/manifest.json/complete (0.00s)
+PASS
+ok  	command-line-arguments	0.010s

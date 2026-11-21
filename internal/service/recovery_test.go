@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/passwordwork"
 	"github.com/djshellshoxxx/circula/internal/service"
 	tu "github.com/djshellshoxxx/circula/internal/testutil"
 )
@@ -213,7 +214,9 @@ func codesFor2(t *testing.T, e *tu.Env) []string {
 
 // Race: the same code used in parallel (even for different new passwords) has exactly one winner.
 func TestRecoverCodeRace(t *testing.T) {
-	e := tu.NewEnv(t)
+	// All eight operations reach the existing single-use-code race; admission
+	// has its own deterministic coverage with a smaller capacity.
+	e := tu.NewEnvConfig(t, nil, func(c *service.Config) { c.PasswordWork = tu.Must(passwordwork.New(8)) })
 	ana := e.Person("ana@example.org")
 	codes := codesFor(t, e, ana)
 	var wins atomic.Int32

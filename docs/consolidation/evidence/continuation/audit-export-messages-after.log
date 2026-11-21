@@ -1,0 +1,286 @@
+=== RUN   TestAuditCheckSummaryKeepsExactReference
+--- PASS: TestAuditCheckSummaryKeepsExactReference (0.00s)
+=== RUN   TestAuditExportMessages
+--- PASS: TestAuditExportMessages (0.00s)
+=== RUN   TestAuthenticationMessages
+--- PASS: TestAuthenticationMessages (0.00s)
+=== RUN   TestInboxReportMessages
+=== RUN   TestInboxReportMessages/inbox.unread_count/0_unread.
+=== RUN   TestInboxReportMessages/inbox.unread_count/1_unread.
+=== RUN   TestInboxReportMessages/inbox.unread_count/1,000_unread.
+=== RUN   TestInboxReportMessages/inbox.no_unread/No_unread_notifications.
+=== RUN   TestInboxReportMessages/inbox.all_read/All_notifications_are_marked_as_read.
+=== RUN   TestInboxReportMessages/inbox.dispute_opened/A_dispute_was_opened_on_a_trade_with_you_(Quality)
+=== RUN   TestInboxReportMessages/inbox.dispute_response/Opened_19_Nov_2026,_12:00_UTC._You_can_add_your_response.
+=== RUN   TestInboxReportMessages/inbox.mark_read_named/Mark_as_read:_Zoë_100%_$&_"><img_src=x>
+=== RUN   TestInboxReportMessages/report.target_listing/Listing:_Zoë_100%_$&_"><img_src=x>
+=== RUN   TestInboxReportMessages/report.target_member/Member:_Zoë_100%_$&_"><img_src=x>
+=== RUN   TestInboxReportMessages/report.subject/You_are_reporting:_Zoë_100%_$&_"><img_src=x>.
+=== RUN   TestInboxReportMessages/report.about/Looks_like_a_scam_about_listing_Zoë_100%_$&_"><img_src=x>
+=== RUN   TestInboxReportMessages/report.reported_by/Reported_by_Zoë_100%_$&_"><img_src=x>
+=== RUN   TestInboxReportMessages/report.mark_handled_named/Mark_handled:_report_from_Zoë_100%_$&_"><img_src=x>
+=== RUN   TestInboxReportMessages/report.handling_note/Note:_Zoë_100%_$&_"><img_src=x>
+=== RUN   TestInboxReportMessages/report.duplicate/Not_sent._You_already_have_an_open_report_about_this._An_administrator_will_look_at_it._Nothing_changed.
+=== RUN   TestInboxReportMessages/report.throttled/Not_sent._You_have_sent_many_reports_today._Try_again_tomorrow._Nothing_changed.
+=== RUN   TestInboxReportMessages/report.sent/Report_sent._Administrators_will_review_it._It_does_not_change_anything_for_the_person_you_reported,_and_they_are_not_told_who_reported.
+=== RUN   TestInboxReportMessages/report.handled/Report_marked_as_handled._The_reporter_was_told_it_was_reviewed.
+=== RUN   TestInboxReportMessages/report.explanation/A_report_goes_to_the_network_administrators._It_does_not_hide,_suspend_or_change_anything_by_itself,_and_the_person_you_report_is_not_told_who_reported.
+=== RUN   TestInboxReportMessages/report.queue_explanation/Reports_from_members_about_listings_and_members._Handling_a_report_here_only_records_that_you_looked_at_it;_use_the_member_and_policy_tools_to_act._The_reporter_is_shown_to_administrators_only.
+--- PASS: TestInboxReportMessages (0.00s)
+    --- PASS: TestInboxReportMessages/inbox.unread_count/0_unread. (0.00s)
+    --- PASS: TestInboxReportMessages/inbox.unread_count/1_unread. (0.00s)
+    --- PASS: TestInboxReportMessages/inbox.unread_count/1,000_unread. (0.00s)
+    --- PASS: TestInboxReportMessages/inbox.no_unread/No_unread_notifications. (0.00s)
+    --- PASS: TestInboxReportMessages/inbox.all_read/All_notifications_are_marked_as_read. (0.00s)
+    --- PASS: TestInboxReportMessages/inbox.dispute_opened/A_dispute_was_opened_on_a_trade_with_you_(Quality) (0.00s)
+    --- PASS: TestInboxReportMessages/inbox.dispute_response/Opened_19_Nov_2026,_12:00_UTC._You_can_add_your_response. (0.00s)
+    --- PASS: TestInboxReportMessages/inbox.mark_read_named/Mark_as_read:_Zoë_100%_$&_"><img_src=x> (0.00s)
+    --- PASS: TestInboxReportMessages/report.target_listing/Listing:_Zoë_100%_$&_"><img_src=x> (0.00s)
+    --- PASS: TestInboxReportMessages/report.target_member/Member:_Zoë_100%_$&_"><img_src=x> (0.00s)
+    --- PASS: TestInboxReportMessages/report.subject/You_are_reporting:_Zoë_100%_$&_"><img_src=x>. (0.00s)
+    --- PASS: TestInboxReportMessages/report.about/Looks_like_a_scam_about_listing_Zoë_100%_$&_"><img_src=x> (0.00s)
+    --- PASS: TestInboxReportMessages/report.reported_by/Reported_by_Zoë_100%_$&_"><img_src=x> (0.00s)
+    --- PASS: TestInboxReportMessages/report.mark_handled_named/Mark_handled:_report_from_Zoë_100%_$&_"><img_src=x> (0.00s)
+    --- PASS: TestInboxReportMessages/report.handling_note/Note:_Zoë_100%_$&_"><img_src=x> (0.00s)
+    --- PASS: TestInboxReportMessages/report.duplicate/Not_sent._You_already_have_an_open_report_about_this._An_administrator_will_look_at_it._Nothing_changed. (0.00s)
+    --- PASS: TestInboxReportMessages/report.throttled/Not_sent._You_have_sent_many_reports_today._Try_again_tomorrow._Nothing_changed. (0.00s)
+    --- PASS: TestInboxReportMessages/report.sent/Report_sent._Administrators_will_review_it._It_does_not_change_anything_for_the_person_you_reported,_and_they_are_not_told_who_reported. (0.00s)
+    --- PASS: TestInboxReportMessages/report.handled/Report_marked_as_handled._The_reporter_was_told_it_was_reviewed. (0.00s)
+    --- PASS: TestInboxReportMessages/report.explanation/A_report_goes_to_the_network_administrators._It_does_not_hide,_suspend_or_change_anything_by_itself,_and_the_person_you_report_is_not_told_who_reported. (0.00s)
+    --- PASS: TestInboxReportMessages/report.queue_explanation/Reports_from_members_about_listings_and_members._Handling_a_report_here_only_records_that_you_looked_at_it;_use_the_member_and_policy_tools_to_act._The_reporter_is_shown_to_administrators_only. (0.00s)
+=== RUN   TestReportAroundUsesKnownLabelsAndOneElementSlot
+=== RUN   TestReportAroundUsesKnownLabelsAndOneElementSlot/wrong_argument_count
+=== RUN   TestReportAroundUsesKnownLabelsAndOneElementSlot/wrong_argument_count#01
+=== RUN   TestReportAroundUsesKnownLabelsAndOneElementSlot/wrong_argument_count#02
+--- PASS: TestReportAroundUsesKnownLabelsAndOneElementSlot (0.00s)
+    --- PASS: TestReportAroundUsesKnownLabelsAndOneElementSlot/wrong_argument_count (0.00s)
+    --- PASS: TestReportAroundUsesKnownLabelsAndOneElementSlot/wrong_argument_count#01 (0.00s)
+    --- PASS: TestReportAroundUsesKnownLabelsAndOneElementSlot/wrong_argument_count#02 (0.00s)
+=== RUN   TestMarketplaceMessages
+=== RUN   TestMarketplaceMessages/directory.results/0_members_found.
+=== RUN   TestMarketplaceMessages/directory.results/1_member_found.
+=== RUN   TestMarketplaceMessages/directory.results/1,000_members_found.
+=== RUN   TestMarketplaceMessages/directory.member_reference/(member_reference_1234-5678)
+=== RUN   TestMarketplaceMessages/directory.propose_with/Propose_a_trade_with_Zoë_100%
+=== RUN   TestMarketplaceMessages/listing.owner_price/By_Zoë_<hours>_100%_·_price_90071992547409.93_Hours
+=== RUN   TestMarketplaceMessages/listing.by_owner/By_Zoë
+=== RUN   TestMarketplaceMessages/listing.price/price_1.00_credit
+=== RUN   TestMarketplaceMessages/listing.price_help/Price:_enter_a_positive_amount_with_up_to_1_decimal_place,_for_example_125.0.
+=== RUN   TestMarketplaceMessages/listing.price_help/Price:_enter_a_positive_amount_with_up_to_2_decimal_places,_for_example_12.50.
+=== RUN   TestMarketplaceMessages/listing.edit_named/Edit_Repair_&_care
+=== RUN   TestMarketplaceMessages/listing.report_named/Report_Repair_&_care
+=== RUN   TestMarketplaceMessages/listing.propose_about/Propose_a_trade_about_Repair_&_care
+=== RUN   TestMarketplaceMessages/profile.listings_by/Listings_by_Zoë_100%
+=== RUN   TestMarketplaceMessages/profile.empty/Zoë_has_no_active_listings.
+=== RUN   TestMarketplaceMessages/profile.propose_with/Propose_a_trade_with_Zoë
+=== RUN   TestMarketplaceMessages/profile.report/Report_Zoë
+--- PASS: TestMarketplaceMessages (0.00s)
+    --- PASS: TestMarketplaceMessages/directory.results/0_members_found. (0.00s)
+    --- PASS: TestMarketplaceMessages/directory.results/1_member_found. (0.00s)
+    --- PASS: TestMarketplaceMessages/directory.results/1,000_members_found. (0.00s)
+    --- PASS: TestMarketplaceMessages/directory.member_reference/(member_reference_1234-5678) (0.00s)
+    --- PASS: TestMarketplaceMessages/directory.propose_with/Propose_a_trade_with_Zoë_100% (0.00s)
+    --- PASS: TestMarketplaceMessages/listing.owner_price/By_Zoë_<hours>_100%_·_price_90071992547409.93_Hours (0.00s)
+    --- PASS: TestMarketplaceMessages/listing.by_owner/By_Zoë (0.00s)
+    --- PASS: TestMarketplaceMessages/listing.price/price_1.00_credit (0.00s)
+    --- PASS: TestMarketplaceMessages/listing.price_help/Price:_enter_a_positive_amount_with_up_to_1_decimal_place,_for_example_125.0. (0.00s)
+    --- PASS: TestMarketplaceMessages/listing.price_help/Price:_enter_a_positive_amount_with_up_to_2_decimal_places,_for_example_12.50. (0.00s)
+    --- PASS: TestMarketplaceMessages/listing.edit_named/Edit_Repair_&_care (0.00s)
+    --- PASS: TestMarketplaceMessages/listing.report_named/Report_Repair_&_care (0.00s)
+    --- PASS: TestMarketplaceMessages/listing.propose_about/Propose_a_trade_about_Repair_&_care (0.00s)
+    --- PASS: TestMarketplaceMessages/profile.listings_by/Listings_by_Zoë_100% (0.00s)
+    --- PASS: TestMarketplaceMessages/profile.empty/Zoë_has_no_active_listings. (0.00s)
+    --- PASS: TestMarketplaceMessages/profile.propose_with/Propose_a_trade_with_Zoë (0.00s)
+    --- PASS: TestMarketplaceMessages/profile.report/Report_Zoë (0.00s)
+=== RUN   TestOverviewMessages
+=== RUN   TestOverviewMessages/0_membership_requests_are_waiting
+=== PAUSE TestOverviewMessages/0_membership_requests_are_waiting
+=== RUN   TestOverviewMessages/1_membership_request_is_waiting
+=== PAUSE TestOverviewMessages/1_membership_request_is_waiting
+=== RUN   TestOverviewMessages/1,000_membership_requests_are_waiting
+=== PAUSE TestOverviewMessages/1,000_membership_requests_are_waiting
+=== RUN   TestOverviewMessages/1_open_proposal_has_waited_at_least_48_hours_for_an_answer
+=== PAUSE TestOverviewMessages/1_open_proposal_has_waited_at_least_48_hours_for_an_answer
+=== RUN   TestOverviewMessages/2_open_proposals_have_waited_at_least_72_hours_for_an_answer
+=== PAUSE TestOverviewMessages/2_open_proposals_have_waited_at_least_72_hours_for_an_answer
+=== RUN   TestOverviewMessages/1_dispute_is_open_or_under_review
+=== PAUSE TestOverviewMessages/1_dispute_is_open_or_under_review
+=== RUN   TestOverviewMessages/0_disputes_are_open_or_under_review
+=== PAUSE TestOverviewMessages/0_disputes_are_open_or_under_review
+=== RUN   TestOverviewMessages/1_dispute_is_decided_but_the_reversal_is_not_yet_posted
+=== PAUSE TestOverviewMessages/1_dispute_is_decided_but_the_reversal_is_not_yet_posted
+=== RUN   TestOverviewMessages/2_disputes_are_decided_but_the_reversal_is_not_yet_posted
+=== PAUSE TestOverviewMessages/2_disputes_are_decided_but_the_reversal_is_not_yet_posted
+=== RUN   TestOverviewMessages/1_active_member_is_at_or_beyond_their_credit_limit
+=== PAUSE TestOverviewMessages/1_active_member_is_at_or_beyond_their_credit_limit
+=== RUN   TestOverviewMessages/2_active_members_are_at_or_beyond_their_credit_limit
+=== PAUSE TestOverviewMessages/2_active_members_are_at_or_beyond_their_credit_limit
+=== RUN   TestOverviewMessages/1_invitation_ends_within_72_hours
+=== PAUSE TestOverviewMessages/1_invitation_ends_within_72_hours
+=== RUN   TestOverviewMessages/2_invitations_end_within_48_hours
+=== PAUSE TestOverviewMessages/2_invitations_end_within_48_hours
+=== CONT  TestOverviewMessages/1,000_membership_requests_are_waiting
+=== CONT  TestOverviewMessages/1_invitation_ends_within_72_hours
+=== CONT  TestOverviewMessages/2_active_members_are_at_or_beyond_their_credit_limit
+=== CONT  TestOverviewMessages/1_active_member_is_at_or_beyond_their_credit_limit
+=== CONT  TestOverviewMessages/2_disputes_are_decided_but_the_reversal_is_not_yet_posted
+=== CONT  TestOverviewMessages/1_dispute_is_decided_but_the_reversal_is_not_yet_posted
+=== CONT  TestOverviewMessages/2_invitations_end_within_48_hours
+=== CONT  TestOverviewMessages/1_dispute_is_open_or_under_review
+=== CONT  TestOverviewMessages/0_disputes_are_open_or_under_review
+=== CONT  TestOverviewMessages/1_open_proposal_has_waited_at_least_48_hours_for_an_answer
+=== CONT  TestOverviewMessages/2_open_proposals_have_waited_at_least_72_hours_for_an_answer
+=== CONT  TestOverviewMessages/1_membership_request_is_waiting
+=== CONT  TestOverviewMessages/0_membership_requests_are_waiting
+--- PASS: TestOverviewMessages (0.00s)
+    --- PASS: TestOverviewMessages/1,000_membership_requests_are_waiting (0.00s)
+    --- PASS: TestOverviewMessages/1_invitation_ends_within_72_hours (0.00s)
+    --- PASS: TestOverviewMessages/2_active_members_are_at_or_beyond_their_credit_limit (0.00s)
+    --- PASS: TestOverviewMessages/1_active_member_is_at_or_beyond_their_credit_limit (0.00s)
+    --- PASS: TestOverviewMessages/2_disputes_are_decided_but_the_reversal_is_not_yet_posted (0.00s)
+    --- PASS: TestOverviewMessages/1_dispute_is_decided_but_the_reversal_is_not_yet_posted (0.00s)
+    --- PASS: TestOverviewMessages/2_invitations_end_within_48_hours (0.00s)
+    --- PASS: TestOverviewMessages/1_dispute_is_open_or_under_review (0.00s)
+    --- PASS: TestOverviewMessages/0_disputes_are_open_or_under_review (0.00s)
+    --- PASS: TestOverviewMessages/1_open_proposal_has_waited_at_least_48_hours_for_an_answer (0.00s)
+    --- PASS: TestOverviewMessages/2_open_proposals_have_waited_at_least_72_hours_for_an_answer (0.00s)
+    --- PASS: TestOverviewMessages/1_membership_request_is_waiting (0.00s)
+    --- PASS: TestOverviewMessages/0_membership_requests_are_waiting (0.00s)
+=== RUN   TestProposalMessageIsPlainText
+--- PASS: TestProposalMessageIsPlainText (0.00s)
+=== RUN   TestUnknownMessageFailsVisibly
+--- PASS: TestUnknownMessageFailsVisibly (0.00s)
+=== RUN   TestEveryCatalogueEntryFormats
+--- PASS: TestEveryCatalogueEntryFormats (0.01s)
+=== RUN   TestProgressiveMessages
+=== RUN   TestProgressiveMessages/freshness.snapshot
+=== RUN   TestProgressiveMessages/freshness.offline
+=== RUN   TestProgressiveMessages/freshness.history
+=== RUN   TestProgressiveMessages/session_warning.extendable
+=== RUN   TestProgressiveMessages/session_warning.fixed
+--- PASS: TestProgressiveMessages (0.00s)
+    --- PASS: TestProgressiveMessages/freshness.snapshot (0.00s)
+    --- PASS: TestProgressiveMessages/freshness.offline (0.00s)
+    --- PASS: TestProgressiveMessages/freshness.history (0.00s)
+    --- PASS: TestProgressiveMessages/session_warning.extendable (0.00s)
+    --- PASS: TestProgressiveMessages/session_warning.fixed (0.00s)
+=== RUN   TestAroundRejectsMissingRepeatedOrInvalidSlots
+=== RUN   TestAroundRejectsMissingRepeatedOrInvalidSlots/No_placeholder.
+=== RUN   TestAroundRejectsMissingRepeatedOrInvalidSlots/One_\x00_and_another_\x00.
+=== RUN   TestAroundRejectsMissingRepeatedOrInvalidSlots/Invalid_%!d(string=\x00).
+=== RUN   TestAroundRejectsMissingRepeatedOrInvalidSlots/common.skip
+=== RUN   TestAroundRejectsMissingRepeatedOrInvalidSlots/queue.party_proposal
+=== RUN   TestAroundRejectsMissingRepeatedOrInvalidSlots/overview.pending
+--- PASS: TestAroundRejectsMissingRepeatedOrInvalidSlots (0.00s)
+    --- PASS: TestAroundRejectsMissingRepeatedOrInvalidSlots/No_placeholder. (0.00s)
+    --- PASS: TestAroundRejectsMissingRepeatedOrInvalidSlots/One_\x00_and_another_\x00. (0.00s)
+    --- PASS: TestAroundRejectsMissingRepeatedOrInvalidSlots/Invalid_%!d(string=\x00). (0.00s)
+    --- PASS: TestAroundRejectsMissingRepeatedOrInvalidSlots/common.skip (0.00s)
+    --- PASS: TestAroundRejectsMissingRepeatedOrInvalidSlots/queue.party_proposal (0.00s)
+    --- PASS: TestAroundRejectsMissingRepeatedOrInvalidSlots/overview.pending (0.00s)
+=== RUN   TestTradeMessages
+=== RUN   TestTradeMessages/trade.sentence.pay/You_pay_Zoë_100%_<img_src=x>_90071992547409.93_Hours
+=== RUN   TestTradeMessages/trade.sentence.receive/Zoë_pays_you_1.00_credit
+=== RUN   TestTradeMessages/trade.sentence.other/Ana_pays_Ben_90071992547409.93_credits
+=== RUN   TestTradeMessages/trade.member_with_reference/Zoë_100%_(member_reference_1234-5678)
+=== RUN   TestTradeMessages/trade.amount_value/90071992547409.93_<hours>&
+=== RUN   TestTradeMessages/trade.propose.amount_help/Amount:_enter_a_number_with_up_to_0_decimal_places,_for_example_1250.
+=== RUN   TestTradeMessages/trade.propose.amount_help/Amount:_enter_a_number_with_up_to_1_decimal_place,_for_example_125.0.
+=== RUN   TestTradeMessages/trade.propose.amount_help/Amount:_enter_a_number_with_up_to_2_decimal_places,_for_example_12.50.
+=== RUN   TestTradeMessages/trade.propose.amount_hint/Amount_in_credits,_up_to_1_decimal_place.
+=== RUN   TestTradeMessages/trade.propose.amount_hint/Amount_in_credits,_up_to_2_decimal_places.
+=== RUN   TestTradeMessages/trade.propose.amount_decimals/Amount:_this_network_allows_at_most_1_decimal_place._Remove_the_extra_digits.
+=== RUN   TestTradeMessages/trade.propose.amount_decimals/Amount:_this_network_allows_at_most_2_decimal_places._Remove_the_extra_digits.
+=== RUN   TestTradeMessages/trade.propose.sent/Trade_sent_to_Zoë_<b>100%</b>._It_is_pending_until_they_respond;_pending_trades_are_not_part_of_your_balance.
+=== RUN   TestTradeMessages/trade.review.too_much/This_is_more_than_your_available_to_spend_(90071992547409.93)._It_will_be_refused_if_you_send_it._Go_back_and_enter_a_smaller_amount.
+=== RUN   TestTradeMessages/trade.review.reserved/−90071992547409.93_(the_amount_is_set_aside_while_the_trade_is_pending)
+=== RUN   TestTradeMessages/trade.review.awaiting/90071992547409.93_(it_rises_only_once_the_trade_is_accepted)
+=== RUN   TestTradeMessages/trade.review.expiry/after_0_days_if_not_answered
+=== RUN   TestTradeMessages/trade.review.expiry/after_1_day_if_not_answered
+=== RUN   TestTradeMessages/trade.review.expiry/after_1,000_days_if_not_answered
+=== RUN   TestTradeMessages/trade.note_value/Note:_Care_&_repair_100%
+=== RUN   TestTradeMessages/trade.action.title/Cancel_this_trade?
+=== RUN   TestTradeMessages/trade.action.confirm/Decline_this_trade
+=== RUN   TestTradeMessages/trade.action.completed_balance/Trade_completed._Your_balance_is_now_−90071992547409.93_·_In_debt.
+=== RUN   TestTradeMessages/trade.history.reason/Reason:_<script>100%</script>
+=== RUN   TestTradeMessages/trade.history.reverses/Reverses_the_original_entry
+=== RUN   TestTradeMessages/trade.history.adjusts/Adjusts_the_original_entry
+--- PASS: TestTradeMessages (0.00s)
+    --- PASS: TestTradeMessages/trade.sentence.pay/You_pay_Zoë_100%_<img_src=x>_90071992547409.93_Hours (0.00s)
+    --- PASS: TestTradeMessages/trade.sentence.receive/Zoë_pays_you_1.00_credit (0.00s)
+    --- PASS: TestTradeMessages/trade.sentence.other/Ana_pays_Ben_90071992547409.93_credits (0.00s)
+    --- PASS: TestTradeMessages/trade.member_with_reference/Zoë_100%_(member_reference_1234-5678) (0.00s)
+    --- PASS: TestTradeMessages/trade.amount_value/90071992547409.93_<hours>& (0.00s)
+    --- PASS: TestTradeMessages/trade.propose.amount_help/Amount:_enter_a_number_with_up_to_0_decimal_places,_for_example_1250. (0.00s)
+    --- PASS: TestTradeMessages/trade.propose.amount_help/Amount:_enter_a_number_with_up_to_1_decimal_place,_for_example_125.0. (0.00s)
+    --- PASS: TestTradeMessages/trade.propose.amount_help/Amount:_enter_a_number_with_up_to_2_decimal_places,_for_example_12.50. (0.00s)
+    --- PASS: TestTradeMessages/trade.propose.amount_hint/Amount_in_credits,_up_to_1_decimal_place. (0.00s)
+    --- PASS: TestTradeMessages/trade.propose.amount_hint/Amount_in_credits,_up_to_2_decimal_places. (0.00s)
+    --- PASS: TestTradeMessages/trade.propose.amount_decimals/Amount:_this_network_allows_at_most_1_decimal_place._Remove_the_extra_digits. (0.00s)
+    --- PASS: TestTradeMessages/trade.propose.amount_decimals/Amount:_this_network_allows_at_most_2_decimal_places._Remove_the_extra_digits. (0.00s)
+    --- PASS: TestTradeMessages/trade.propose.sent/Trade_sent_to_Zoë_<b>100%</b>._It_is_pending_until_they_respond;_pending_trades_are_not_part_of_your_balance. (0.00s)
+    --- PASS: TestTradeMessages/trade.review.too_much/This_is_more_than_your_available_to_spend_(90071992547409.93)._It_will_be_refused_if_you_send_it._Go_back_and_enter_a_smaller_amount. (0.00s)
+    --- PASS: TestTradeMessages/trade.review.reserved/−90071992547409.93_(the_amount_is_set_aside_while_the_trade_is_pending) (0.00s)
+    --- PASS: TestTradeMessages/trade.review.awaiting/90071992547409.93_(it_rises_only_once_the_trade_is_accepted) (0.00s)
+    --- PASS: TestTradeMessages/trade.review.expiry/after_0_days_if_not_answered (0.00s)
+    --- PASS: TestTradeMessages/trade.review.expiry/after_1_day_if_not_answered (0.00s)
+    --- PASS: TestTradeMessages/trade.review.expiry/after_1,000_days_if_not_answered (0.00s)
+    --- PASS: TestTradeMessages/trade.note_value/Note:_Care_&_repair_100% (0.00s)
+    --- PASS: TestTradeMessages/trade.action.title/Cancel_this_trade? (0.00s)
+    --- PASS: TestTradeMessages/trade.action.confirm/Decline_this_trade (0.00s)
+    --- PASS: TestTradeMessages/trade.action.completed_balance/Trade_completed._Your_balance_is_now_−90071992547409.93_·_In_debt. (0.00s)
+    --- PASS: TestTradeMessages/trade.history.reason/Reason:_<script>100%</script> (0.00s)
+    --- PASS: TestTradeMessages/trade.history.reverses/Reverses_the_original_entry (0.00s)
+    --- PASS: TestTradeMessages/trade.history.adjusts/Adjusts_the_original_entry (0.00s)
+=== RUN   TestTradeMessagesRemainPlainText
+--- PASS: TestTradeMessagesRemainPlainText (0.00s)
+=== RUN   TestValidationMessages
+=== RUN   TestValidationMessages/validation.label.related_transaction_id
+=== RUN   TestValidationMessages/validation.detail.choice_required
+=== RUN   TestValidationMessages/validation.detail.choice_invalid
+=== RUN   TestValidationMessages/validation.choice.related_transaction_id
+=== RUN   TestValidationMessages/validation.field.message
+=== RUN   TestValidationMessages/validation.field.message#01
+=== RUN   TestValidationMessages/validation.fix.decimals
+=== RUN   TestValidationMessages/validation.fix.decimals#01
+=== RUN   TestValidationMessages/validation.fix.number
+=== RUN   TestValidationMessages/validation.refusal.insufficient_credit
+=== RUN   TestValidationMessages/validation.refusal.insufficient_credit_available
+=== RUN   TestValidationMessages/validation.refusal.amount_exceeds
+=== RUN   TestValidationMessages/validation.refusal.blocked
+=== RUN   TestValidationMessages/validation.refusal.fields
+--- PASS: TestValidationMessages (0.00s)
+    --- PASS: TestValidationMessages/validation.label.related_transaction_id (0.00s)
+    --- PASS: TestValidationMessages/validation.detail.choice_required (0.00s)
+    --- PASS: TestValidationMessages/validation.detail.choice_invalid (0.00s)
+    --- PASS: TestValidationMessages/validation.choice.related_transaction_id (0.00s)
+    --- PASS: TestValidationMessages/validation.field.message (0.00s)
+    --- PASS: TestValidationMessages/validation.field.message#01 (0.00s)
+    --- PASS: TestValidationMessages/validation.fix.decimals (0.00s)
+    --- PASS: TestValidationMessages/validation.fix.decimals#01 (0.00s)
+    --- PASS: TestValidationMessages/validation.fix.number (0.00s)
+    --- PASS: TestValidationMessages/validation.refusal.insufficient_credit (0.00s)
+    --- PASS: TestValidationMessages/validation.refusal.insufficient_credit_available (0.00s)
+    --- PASS: TestValidationMessages/validation.refusal.amount_exceeds (0.00s)
+    --- PASS: TestValidationMessages/validation.refusal.blocked (0.00s)
+    --- PASS: TestValidationMessages/validation.refusal.fields (0.00s)
+=== RUN   TestAdminResetMessages
+=== RUN   TestAdminResetMessages/admin.reset.action
+=== RUN   TestAdminResetMessages/admin.reset.confirm_title
+=== RUN   TestAdminResetMessages/admin.member_action.heading
+=== RUN   TestAdminResetMessages/admin.reset.for_member
+=== RUN   TestAdminResetMessages/admin.reset.instructions
+=== RUN   TestAdminResetMessages/admin.reset.self_refused
+=== RUN   TestAdminResetMessages/admin.reset.throttled
+=== RUN   TestAdminResetMessages/admin.reset.shown_once
+--- PASS: TestAdminResetMessages (0.00s)
+    --- PASS: TestAdminResetMessages/admin.reset.action (0.00s)
+    --- PASS: TestAdminResetMessages/admin.reset.confirm_title (0.00s)
+    --- PASS: TestAdminResetMessages/admin.member_action.heading (0.00s)
+    --- PASS: TestAdminResetMessages/admin.reset.for_member (0.00s)
+    --- PASS: TestAdminResetMessages/admin.reset.instructions (0.00s)
+    --- PASS: TestAdminResetMessages/admin.reset.self_refused (0.00s)
+    --- PASS: TestAdminResetMessages/admin.reset.throttled (0.00s)
+    --- PASS: TestAdminResetMessages/admin.reset.shown_once (0.00s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/web/messages	1.060s

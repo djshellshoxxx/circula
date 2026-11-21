@@ -1,0 +1,102 @@
+{
+  "source": [
+    "71a7de15906140f32afe4722cbe4a1a595528742",
+    "18840263d87a89b3ee74fc4b7789fa584adb7a29"
+  ],
+  "end_head": "71a7de15906140f32afe4722cbe4a1a595528742",
+  "command": "CGO_ENABLED=1 GOMAXPROCS=1 GOMEMLIMIT=600MiB go test -json -p 1 -count=1 -timeout 20m ./...",
+  "packages": [
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "action": "pass",
+      "elapsed": 154.206
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/api",
+      "action": "pass",
+      "elapsed": 32.727
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/contract",
+      "action": "pass",
+      "elapsed": 6.4879999999999995
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/domain",
+      "action": "pass",
+      "elapsed": 0.135
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/histbal",
+      "action": "pass",
+      "elapsed": 0.003
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/httpx",
+      "action": "pass",
+      "elapsed": 0.008
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/logx",
+      "action": "pass",
+      "elapsed": 0.01
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/repository",
+      "action": "pass",
+      "elapsed": 0.272
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "action": "pass",
+      "elapsed": 111.246
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/store",
+      "action": "pass",
+      "elapsed": 11.337
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/storetest",
+      "action": "skip",
+      "elapsed": 0
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/testutil",
+      "action": "skip",
+      "elapsed": 0
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/web",
+      "action": "pass",
+      "elapsed": 37.218
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "action": "pass",
+      "elapsed": 0.012
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/scripts/sbom",
+      "action": "pass",
+      "elapsed": 0.126
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "action": "pass",
+      "elapsed": 2.422
+    }
+  ],
+  "test_terminal_counts": {
+    "pass": 2319,
+    "skip": 6
+  },
+  "skipped_tests": [
+    "TestBackupStagingRefusesForeignOwnedParent",
+    "TestBackupWorkLeaseChild",
+    "TestRestoreSwapCrashChild",
+    "TestLoginTimingStatistical",
+    "TestLoadConcurrentTrades",
+    "TestQA010CrashChild"
+  ]
+}

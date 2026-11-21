@@ -1,0 +1,28 @@
+--- FAIL: TestMemberReadFailureAbortsAndRecovers (4.35s)
+    --- FAIL: TestMemberReadFailureAbortsAndRecovers/network (0.98s)
+        member_read_failure_test.go:60: late member read error not propagated: <nil>
+        member_read_failure_test.go:63: incomplete member read returned 1 records
+        member_read_failure_test.go:73: write committed after incomplete member read: flag=1
+        member_read_failure_test.go:85: uncommitted flag survived for member member-a
+        member_read_failure_test.go:85: uncommitted flag survived for member member-a
+    --- FAIL: TestMemberReadFailureAbortsAndRecovers/memberships (0.99s)
+        member_read_failure_test.go:60: late member read error not propagated: <nil>
+        member_read_failure_test.go:63: incomplete member read returned 1 records
+        member_read_failure_test.go:73: write committed after incomplete member read: flag=1
+        member_read_failure_test.go:85: uncommitted flag survived for member member-a
+        member_read_failure_test.go:85: uncommitted flag survived for member member-a
+    --- FAIL: TestMemberReadFailureAbortsAndRecovers/forward_page (1.16s)
+        member_read_failure_test.go:60: late member read error not propagated: <nil>
+        member_read_failure_test.go:63: incomplete member read returned 1 records
+        member_read_failure_test.go:73: write committed after incomplete member read: flag=1
+        member_read_failure_test.go:85: uncommitted flag survived for member member-a
+        member_read_failure_test.go:85: uncommitted flag survived for member member-a
+    --- FAIL: TestMemberReadFailureAbortsAndRecovers/backward_page (1.22s)
+        member_read_failure_test.go:60: late member read error not propagated: <nil>
+        member_read_failure_test.go:63: incomplete member read returned 1 records
+        member_read_failure_test.go:73: write committed after incomplete member read: flag=1
+        member_read_failure_test.go:85: uncommitted flag survived for member member-a
+        member_read_failure_test.go:85: uncommitted flag survived for member member-a
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/store	4.370s
+FAIL

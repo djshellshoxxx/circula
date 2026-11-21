@@ -1,8 +1,9 @@
 {{define "content"}}
 {{with .D}}
+{{if .TransactionID}}<p>{{msg "report.related_disputes_for" .TransactionID}}</p>{{end}}
 {{if .Rows}}
-<ul class="rows">{{range .Rows}}<li><a href="/n/{{$.Slug}}/disputes/{{.ID}}">Dispute: {{.Category}}</a> &middot; <span class="tag">{{.Status}}</span> &middot; opened {{.Opened}}</li>{{end}}</ul>
-{{template "pager" dict "Next" .Next "Href" (printf "/n/%s/disputes?after=" $.Slug)}}
-{{else}}<p>You have no disputes. To contest a completed trade, open it from your <a href="/n/{{$.Slug}}/trades">trades</a> and choose Raise a dispute.</p>{{end}}
+<ul class="rows">{{range .Rows}}<li><a href="/n/{{$.Slug}}/disputes/{{.ID}}">{{msg "dispute.row" .Category}}</a> &middot; <span class="tag">{{.Status}}</span> &middot; {{$opened := .Opened}}{{with msgAround "dispute.opened_at"}}{{.Before}}{{$opened}}{{.After}}{{end}}</li>{{end}}</ul>
+{{if .TransactionID}}{{template "pager" dict "Next" .Next "Href" (printf "/n/%s/disputes?transaction_id=%s&after=" $.Slug .TransactionID)}}{{else}}{{template "pager" dict "Next" .Next "Href" (printf "/n/%s/disputes?after=" $.Slug)}}{{end}}
+{{else}}<p>{{with msgAround "dispute.empty"}}{{.Before}}<a href="/n/{{$.Slug}}/trades">{{msg "dispute.trades"}}</a>{{.After}}{{end}}</p>{{end}}
 {{end}}
 {{end}}

@@ -1,0 +1,11 @@
+?   	github.com/djshellshoxxx/circula/internal/integrity	[no test files]
+=== RUN   TestHistoricalCreditMigrationFreezesExactLegacyEntryMembership
+--- PASS: TestHistoricalCreditMigrationFreezesExactLegacyEntryMembership (1.15s)
+=== RUN   TestHistoricalCreditCheckDetectsSeededInvalidForwardDebit
+--- PASS: TestHistoricalCreditCheckDetectsSeededInvalidForwardDebit (1.11s)
+=== RUN   TestHistoricalCreditReadFailureCannotReturnPartialCoverage
+--- PASS: TestHistoricalCreditReadFailureCannotReturnPartialCoverage (1.15s)
+=== RUN   TestHistoricalCreditMigrationRollbackPreservesOriginalSchema
+--- PASS: TestHistoricalCreditMigrationRollbackPreservesOriginalSchema (1.33s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	5.763s

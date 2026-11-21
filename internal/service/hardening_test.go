@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/passwordwork"
 	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/store"
 	tu "github.com/djshellshoxxx/circula/internal/testutil"
@@ -124,9 +125,11 @@ func TestVerifyLedgerDoesNotTakeWriteGate(t *testing.T) {
 // AUTH-01 / SA-04: parallel guesses are each counted; at most throttleAfter
 // are ever evaluated, however many run at once.
 func TestLoginThrottleIsAtomicUnderConcurrency(t *testing.T) {
-	e := tu.NewEnv(t)
-	e.Person("ana@example.org")
 	const n = 40
+	// Isolate the durable guessing invariant from process admission. The
+	// production default is covered by password_admission_test.go.
+	e := tu.NewEnvConfig(t, nil, func(c *service.Config) { c.PasswordWork = tu.Must(passwordwork.New(n)) })
+	e.Person("ana@example.org")
 	var unauth, limited, other atomic.Int32
 	var wg sync.WaitGroup
 	start := make(chan struct{})

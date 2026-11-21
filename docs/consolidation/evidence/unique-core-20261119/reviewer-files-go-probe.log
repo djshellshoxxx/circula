@@ -1,0 +1,5 @@
+ordinary partial-files summary retained; file=members.json bytes=25 rows=0 integrity=PASS
+null element retains struct: [{"name":"first","rows":1,"bytes":0,"sha256":""}]
+shorter array retains hidden backing slot: [{"name":"first","rows":1,"bytes":0,"sha256":""},{"name":"second","rows":2,"bytes":0,"sha256":""}]
+empty array resets backing state: [{"name":"","rows":0,"bytes":0,"sha256":""}]
+null array resets backing state: [{"name":"","rows":0,"bytes":0,"sha256":""}]

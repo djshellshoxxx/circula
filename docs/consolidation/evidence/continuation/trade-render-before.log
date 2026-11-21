@@ -1,0 +1,42 @@
+--- FAIL: TestTradeAmountUnitTemplates (1.00s)
+    --- FAIL: TestTradeAmountUnitTemplates/singular (0.13s)
+        --- FAIL: TestTradeAmountUnitTemplates/singular/trade_detail (0.06s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>1.00 credit</dd>"
+        --- FAIL: TestTradeAmountUnitTemplates/singular/trade_accept (0.07s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>1.00 credit</dd>"
+    --- FAIL: TestTradeAmountUnitTemplates/already_plural_singular (0.13s)
+        --- FAIL: TestTradeAmountUnitTemplates/already_plural_singular/trade_accept (0.07s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>1.00 Hours</dd>"
+            trade_catalog_test.go:65: unit was double-suffixed or rendered as markup
+        --- FAIL: TestTradeAmountUnitTemplates/already_plural_singular/trade_detail (0.06s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>1.00 Hours</dd>"
+            trade_catalog_test.go:65: unit was double-suffixed or rendered as markup
+    --- FAIL: TestTradeAmountUnitTemplates/already_plural (0.14s)
+        --- FAIL: TestTradeAmountUnitTemplates/already_plural/trade_accept (0.09s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>2.50 Hours</dd>"
+            trade_catalog_test.go:65: unit was double-suffixed or rendered as markup
+        --- FAIL: TestTradeAmountUnitTemplates/already_plural/trade_detail (0.05s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>2.50 Hours</dd>"
+            trade_catalog_test.go:65: unit was double-suffixed or rendered as markup
+    --- FAIL: TestTradeAmountUnitTemplates/zero_decimal_singular (0.14s)
+        --- FAIL: TestTradeAmountUnitTemplates/zero_decimal_singular/trade_accept (0.06s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>1 credit</dd>"
+        --- FAIL: TestTradeAmountUnitTemplates/zero_decimal_singular/trade_detail (0.07s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>1 credit</dd>"
+    --- FAIL: TestTradeAmountUnitTemplates/zero_decimal_plural (0.11s)
+        --- FAIL: TestTradeAmountUnitTemplates/zero_decimal_plural/trade_accept (0.05s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>2 Hours</dd>"
+            trade_catalog_test.go:65: unit was double-suffixed or rendered as markup
+        --- FAIL: TestTradeAmountUnitTemplates/zero_decimal_plural/trade_detail (0.06s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>2 Hours</dd>"
+            trade_catalog_test.go:65: unit was double-suffixed or rendered as markup
+    --- FAIL: TestTradeAmountUnitTemplates/HTML-sensitive_unit (0.12s)
+        --- FAIL: TestTradeAmountUnitTemplates/HTML-sensitive_unit/trade_accept (0.06s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>1.00 <hours>&</dd>"
+            trade_catalog_test.go:68: custom unit was not preserved and escaped
+        --- FAIL: TestTradeAmountUnitTemplates/HTML-sensitive_unit/trade_detail (0.06s)
+            trade_catalog_test.go:60: trade page lacks "<dt>Amount</dt><dd>1.00 <hours>&</dd>"
+            trade_catalog_test.go:68: custom unit was not preserved and escaped
+FAIL
+FAIL	command-line-arguments	1.009s
+FAIL

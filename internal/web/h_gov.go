@@ -8,6 +8,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 func init() {
@@ -53,7 +54,7 @@ func (s *server) termsPage(w http.ResponseWriter, r *http.Request, c *rc) {
 	if v.Current != nil {
 		d.Paras = paragraphs(v.Current.Body)
 	}
-	s.render(w, r, c, "terms", 200, &page{Title: "Network rules and terms", D: d})
+	s.render(w, r, c, "terms", 200, &page{Title: messages.Text("terms.title"), D: d})
 }
 
 func (s *server) termsAccept(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -69,21 +70,21 @@ func (s *server) termsAccept(w http.ResponseWriter, r *http.Request, c *rc) {
 		if v.Current != nil {
 			d.Paras = paragraphs(v.Current.Body)
 		}
-		s.render(w, r, c, "terms", 422, &page{Title: "Network rules and terms", D: d,
-			Summary: "Not saved. Tick the box to say you accept these terms. Nothing changed.",
-			Errors:  []fieldErr{{"accept", "Accept: tick the box to accept these terms."}}})
+		s.render(w, r, c, "terms", 422, &page{Title: messages.Text("terms.title"), D: d,
+			Summary: messages.Text("terms.accept_required"),
+			Errors:  []fieldErr{{"accept", messages.Text("terms.accept_field")}}})
 		return
 	}
 	if err := s.svc.AcceptTerms(r.Context(), c.actor, c.netID(), ver); err != nil {
 		if domain.CodeOf(err) == domain.CodeValidation || domain.CodeOf(err) == domain.CodeInvalidState {
-			s.setFlash(w, r, "These terms changed while you were reading. Please read the new version.")
+			s.setFlash(w, r, messages.Text("terms.changed"))
 			http.Redirect(w, r, c.base()+"/terms", http.StatusSeeOther)
 			return
 		}
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "You accepted version "+strconv.Itoa(ver)+" of the network terms.")
+	s.setFlash(w, r, messages.Text("terms.accepted_flash", strconv.Itoa(ver)))
 	dest := c.base() + "/trades"
 	if n := safeNext(r.PostFormValue("next")); n != "" {
 		dest = n
@@ -122,9 +123,9 @@ func fmtAny(v any) string {
 		return strconv.FormatInt(x, 10)
 	case bool:
 		if x {
-			return "yes"
+			return messages.Text("rules.yes")
 		}
-		return "no"
+		return messages.Text("rules.no")
 	}
 	return ""
 }
@@ -142,9 +143,9 @@ func ruleRows(log []service.PolicyLogEntry, dec int) []ruleRow {
 		sort.Strings(keys)
 		for _, k := range keys {
 			if prev, ok := e.Previous[k]; ok {
-				row.Lines = append(row.Lines, label(k)+": "+fmtChangeValue(k, prev, dec)+" to "+fmtChangeValue(k, e.Changes[k], dec))
+				row.Lines = append(row.Lines, messages.Text("rules.change", label(k), fmtChangeValue(k, prev, dec), fmtChangeValue(k, e.Changes[k], dec)))
 			} else {
-				row.Lines = append(row.Lines, label(k)+": "+fmtChangeValue(k, e.Changes[k], dec))
+				row.Lines = append(row.Lines, messages.Text("rules.initial_value", label(k), fmtChangeValue(k, e.Changes[k], dec)))
 			}
 		}
 		out = append(out, row)
@@ -169,7 +170,7 @@ func (s *server) rulesPage(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, c, "rules", 200, &page{Title: "Network rules", D: &rulesData{Rows: ruleRows(log, c.Net.Policy.Decimals), Terms: tv.Current,
+	s.render(w, r, c, "rules", 200, &page{Title: messages.Text("rules.title"), D: &rulesData{Rows: ruleRows(log, c.Net.Policy.Decimals), Terms: tv.Current,
 		CanLeave: c.Me.Status == domain.MemberActive || c.Me.Status == domain.MemberSuspended}})
 }
 
@@ -185,7 +186,7 @@ func (s *server) adminTermsRender(w http.ResponseWriter, r *http.Request, c *rc,
 		s.fail(w, r, err)
 		return
 	}
-	p.Title = "Network terms"
+	p.Title = messages.Text("terms.admin.title")
 	d := &termsData{Terms: v.Current}
 	if v.Current != nil {
 		d.Paras = paragraphs(v.Current.Body)
@@ -209,7 +210,7 @@ func (s *server) adminTermsPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.adminTermsRender(w, r, c, 422, &page{V: v, Summary: sum, Errors: fe})
 		return
 	}
-	s.setFlash(w, r, "Published version "+strconv.Itoa(t.Version)+". Members were told and must accept it before their next trade.")
+	s.setFlash(w, r, messages.Text("terms.admin.published_flash", strconv.Itoa(t.Version)))
 	http.Redirect(w, r, c.base()+"/admin/terms", http.StatusSeeOther)
 }
 
@@ -223,7 +224,7 @@ func (s *server) policyCancel(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "The scheduled change was cancelled. The rules in force stay as they are.")
+	s.setFlash(w, r, messages.Text("rules.cancelled_flash"))
 	http.Redirect(w, r, c.base()+"/admin/policy", http.StatusSeeOther)
 }
 
@@ -239,7 +240,7 @@ func (s *server) leaveRender(w http.ResponseWriter, r *http.Request, c *rc, stat
 		s.fail(w, r, err)
 		return
 	}
-	p.Title = "Leave this network"
+	p.Title = messages.Text("leave.title")
 	p.D = pv
 	s.render(w, r, c, "leave", status, p)
 }
@@ -247,8 +248,8 @@ func (s *server) leaveRender(w http.ResponseWriter, r *http.Request, c *rc, stat
 func (s *server) leavePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	v := formValues(r)
 	if v["confirm"] != "1" {
-		s.leaveRender(w, r, c, 422, &page{V: v, Summary: "Not done. Tick the box to confirm that you want to leave. Nothing changed.",
-			Errors: []fieldErr{{"confirm", "Confirm: tick the box to leave this network."}}})
+		s.leaveRender(w, r, c, 422, &page{V: v, Summary: messages.Text("leave.confirm_required"),
+			Errors: []fieldErr{{"confirm", messages.Text("leave.confirm_error")}}})
 		return
 	}
 	_, err := s.svc.DepartMember(r.Context(), c.actor, c.netID(), service.DepartInput{Reason: strings.TrimSpace(v["reason"])})
@@ -261,6 +262,6 @@ func (s *server) leavePost(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.leaveRender(w, r, c, http.StatusConflict, &page{V: v, Summary: sum, Errors: fe})
 		return
 	}
-	s.setFlash(w, r, "You have left "+c.Net.Name+". You can still read your history and download your data from the History page.")
+	s.setFlash(w, r, messages.Text("leave.left", c.Net.Name))
 	http.Redirect(w, r, c.base()+"/history", http.StatusSeeOther)
 }

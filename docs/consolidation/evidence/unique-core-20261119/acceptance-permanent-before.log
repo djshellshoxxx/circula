@@ -1,0 +1,6 @@
+=== RUN   TestTradeAcceptanceConcurrentReplayAtBalanceBoundary
+    trade_acceptance_replay_test.go:76: same-key acceptance returned 422 , want successful redirect to /n/town/trades/018f0000-0000-7000-8000-000000000018
+--- FAIL: TestTradeAcceptanceConcurrentReplayAtBalanceBoundary (1.05s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web	1.099s
+FAIL

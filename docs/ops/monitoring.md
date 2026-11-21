@@ -32,25 +32,80 @@ No label carries a member, network, balance or personal data.
 | `circula_process_start_time_seconds`, `circula_uptime_seconds` | gauge | Process start time and uptime. |
 | `circula_http_requests_total{route,class}` | counter | Requests by route template (`/api/`, `/`, `/healthz`, `/readyz`, `/metrics`) and status class (`2xx`...). |
 | `circula_http_request_duration_seconds_{sum,count}{route}` | counter | Latency by route template. |
+| `circula_http_request_duration_by_status_seconds_{sum,count}{route,class}` | counter | Latency by route template and response status class; the original route aggregate remains available. |
 | `circula_http_auth_failures_total` | counter | Responses with status 401. |
 | `circula_http_rate_limited_total` | counter | Responses with status 429. |
+| `circula_authentication_failures_total{reason}` | counter | Failed service credential operations by fixed operation class; excludes throttle refusals and storage errors. |
+| `circula_authentication_throttled_total{reason}` | counter | Service credential operations refused by an authentication throttle, by fixed operation class. |
 | `circula_job_runs_total{job,result}` | counter | Scheduled jobs: `expiry`, `verify`, `backup`; result `ok` or `failed`. |
 | `circula_migrations_total{result}` | counter | Migration runs at start-up (`applied`, `failed`, `refused`). |
-| `circula_ledger_verification_ok` | gauge | Last ledger verification: `1` pass, `0` fail, `-1` not run in this process. |
+| `circula_ledger_verification_ok` | gauge | Last network ledger and platform audit verification: `1` pass, `0` fail, `-1` not run in this process. |
 | `circula_ledger_verification_failing_networks` | gauge | Networks that failed the last verification. |
 | `circula_ledger_verification_timestamp_seconds` | gauge | Time of the last verification. |
 | `circula_backup_last_success_timestamp_seconds` | gauge | Time of the last successful backup in this process (`0` if none). |
 | `circula_ledger_postings_total` | counter | Ledger postings committed since start (OPS-014). |
+| `circula_ledger_posting_attempts_total` | counter | Central posting attempts, including refused reversal-capacity preflights; a durable replay adds no attempt. |
+| `circula_ledger_posting_failures_total{reason}` | counter | Observed unsuccessful attempts, including enclosing-unit failures, using fixed reason classes. |
 | `circula_idempotent_replays_total` | counter | Retries answered from a stored idempotency record since start (OPS-014). |
 | `circula_frozen_networks` | gauge | Networks refusing writes after a ledger verification failure (CMD-07). Alert when above 0. |
 | `circula_maintenance_mode` | gauge | `1` while maintenance mode is active (OPS-024). |
 | `circula_schema_version`, `circula_schema_pending_migrations` | gauge | Applied schema version and migrations the binary knows that the database lacks. |
 | `circula_database_size_bytes`, `circula_database_wal_size_bytes` | gauge | Sizes of the database and WAL files. |
+| `circula_audit_mirror_enabled` | gauge | `1` when the optional best-effort audit mirror is configured. |
+| `circula_audit_mirror_pending_records` | gauge | Admitted records still queued or in a delivery attempt. Remains readable when the destination is stalled. |
+| `circula_audit_mirror_written_total` | counter | Complete record writes that returned successfully. This does not certify remote durability. |
+| `circula_audit_mirror_write_failures_total` | counter | Write errors and short writes. A failed attempt may leave a partial line. |
+| `circula_audit_mirror_dropped_total{reason}` | counter | Records skipped without a write attempt: `queue_full`, `oversize`, `encoding`, `closed`, or `shutdown`. |
 
-Metrics that the specification requires but the service cannot yet count (refused posting attempts, authentication
-failures as seen by the service) are listed under known gaps in [README.md](README.md#known-gaps).
+When the mirror is configured, monitor increases in its write-failure and dropped-record counters and a pending count
+that does not drain. Investigate the destination and retain the database audit history; a gap in the mirror can reflect
+its documented best-effort loss policy. The FIFO is limited to 256 records of 16 KiB each and shutdown drains for at most
+two seconds. Counters reset with the process, so retain scrapes and application logs if you need the history. See
+[audit mirror configuration](configuration.md#audit-mirror-rb-012) for ordering, size and shutdown semantics.
+
+Posting attempts begin at the central financial posting boundary; earlier authentication, input and authorization
+refusals add no posting attempt. Credential operations have the separate metrics described below, and HTTP responses
+remain visible in the HTTP metrics. A reversal refused by its capacity preflight also counts, including when
+the surrounding dispute decision commits a `posting_pending` state. Attempts that otherwise finish posting are only
+successful when their enclosing write unit returns success. A later audit, idempotency or COMMIT error counts as an
+observed failure; this does not prove that an uncertain COMMIT wrote nothing. Retry through the ordinary idempotent
+operation and verify ledger state rather than inferring balances from process-local counters.
+
+Posting failure classes are `credit_limit`, `validation`, `state`, `authorization`, `rate_limited`, `unavailable`, `cancelled`,
+`timeout`, and `internal`. Labels never include error messages, transaction/member/network IDs, names or amounts.
+Counters reset with the process; they are operational observations, not durable accounting records.
 
 The verification job runs hourly, and every start and every backup also verifies the ledger.
+
+### Authentication observations
+
+The service counters measure refused credential operations, including calls made without HTTP. Each public credential
+operation reports at most once after its transactions finish. A throttle refusal increments
+`circula_authentication_throttled_total` only; it does not also count as a failed credential check. The `reason` label
+identifies the operation, using only this fixed vocabulary:
+
+| Class | Credential operation |
+|---|---|
+| `password` | First-factor sign-in through `LoginStep` (including its `Login` wrapper). |
+| `mfa` | Completing a sign-in challenge with a second factor. |
+| `recovery` | Recovering a forgotten password with an account recovery code. |
+| `session` | Resolving a session, including an expired or revoked session. |
+| `api_token` | Resolving an API token, including an expired or revoked token. |
+| `password_proof` | Proving the current password for a password change or account recovery-code generation. |
+| `mfa_management` | Proving the current password or factor during MFA enrolment, confirmation, disablement or MFA recovery-code regeneration. |
+| `other` | An unexpected class supplied to the metrics observer; raw input is never exported as a label. |
+
+Failures use typed authentication refusals. MFA management also uses its existing typed `password` or `code` field
+validation errors, so an HTML 422 refusal is observed. The successful first password step that asks for an MFA challenge
+is not a failed check, and its password-only wrapper adds no second observation. New-password policy validation,
+authorization and state refusals, and storage or cancellation errors do not increase the credential-failure counter.
+Metric callbacks receive no passwords, codes, tokens, identities, addresses or error text.
+
+The original `circula_http_auth_failures_total` and `circula_http_rate_limited_total` still count HTTP 401 and 429
+responses. An HTTP request can perform several credential operations, and a refusal at the HTTP edge may perform none.
+A session refusal can also lead to a sign-in redirect, and an MFA-management refusal can return 422. Therefore the
+service counters are neither unique-person counts nor HTTP request counts. Do not add the HTTP and service counters:
+the same operation may contribute to both. All these counters reset when the process restarts.
 
 ## Alerts (OPS-015)
 
@@ -66,7 +121,7 @@ the level of the incident procedure, [incident-response.md](incident-response.md
 
 | Alert | Condition | Severity | Incident level | Owner role | First response |
 |---|---|---|---|---|---|
-| `CirculaLedgerVerificationFailed` | `circula_ledger_verification_ok == 0`, or `circula_ledger_verification_failing_networks > 0`, or `circula_frozen_networks > 0` | critical | `critical` | Platform operator; product architect informed | Follow SEC-030. The failing network is already frozen (read-only); the others serve. Do not restore over the live database. Take a backup, run `circula verify-ledger` (stop `serve` first) to capture the findings, then decide with the product architect. |
+| `CirculaLedgerVerificationFailed` | `circula_ledger_verification_ok == 0`, or `circula_ledger_verification_failing_networks > 0`, or `circula_frozen_networks > 0` | critical | `critical` | Platform operator; product architect informed | Follow SEC-030. A failing financial network is frozen (read-only). A platform audit failure raises this alert without freezing unrelated networks or increasing the failing-network count. Do not restore over the live database. Take a backup, run `circula verify-ledger` (stop `serve` first) to capture the findings, then decide with the product architect. |
 | `CirculaDown` | `up{job="circula"} == 0` for 5 minutes | critical | `critical` | Platform operator | Follow SEC-030. Check the process and the start-up error: a failed or refused migration, a held lock or a configuration error stops `serve` before it listens. |
 | `CirculaHealthCheckFailing` | `/healthz` answered only `503` for 5 minutes (from `circula_http_requests_total{route="/healthz"}`; needs a prober calling `/healthz`) | critical | `critical` | Platform operator | Follow SEC-030. Check the database file and the disk; see the disk-full and corruption rows below. |
 | `CirculaMigrationFailed` | `increase(circula_migrations_total{result=~"failed\|refused"}[1h]) > 0`. Today `serve` exits on a failed or refused migration before it listens, so `CirculaDown` is the alert that fires. | critical | `critical` | Platform operator | Follow SEC-030. The database is at its previous version. Read the start-up error, then follow [upgrade.md](upgrade.md). |

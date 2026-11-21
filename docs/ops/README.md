@@ -54,17 +54,24 @@ Production data must never be copied to development or CI.
 Roles are named in the alert and failure-mode tables. The platform operator role owns the instance; the product architect
 owns the specification. Names of people are kept outside this repository.
 
+## Operational visibility
+
+A network that fails ledger verification becomes read-only while other networks continue serving. Its administrator
+dashboard shows the freeze time and reason; members see a read-only notice without the administrator-only reason.
+Operators can follow `circula_frozen_networks` and the verification logs. Freeze state lives in process memory:
+start-up verification re-derives it after every restart, and the next passing periodic verification clears it. The
+displayed freeze time is the start of the freeze in the current process, not a durable incident timestamp (OPS-033).
+
+Service credential failures and authentication throttle refusals are counted separately by fixed operation classes,
+including direct service calls and HTML field-validation refusals. The existing HTTP 401/429 counters remain available.
+These measure credential operations and HTTP responses respectively, so their totals overlap and must not be added.
+See [monitoring](monitoring.md#authentication-observations) for coverage, exclusions and reset behavior (OPS-014).
+
 ## Known gaps
 
 These are not implemented in the current `circula` build. Each one is a deliberate deferral or a missing service hook. Do not
 rely on them until the gap is closed and this list is updated.
 
-- **Frozen-network visibility (OPS-033).** A network that fails verification is frozen (read-only) and the rest serve;
-  administrators see the refusal when they try to write, and operators see `circula_frozen_networks` and the error log.
-  There is no administrator dashboard indicator yet, and the frozen state is not stored (a restart re-derives it).
-- **Posting metrics (OPS-014).** Committed postings and idempotent replays are counted (`circula_ledger_postings_total`,
-  `circula_idempotent_replays_total`). Refused or failed posting attempts and authentication failures as seen by the
-  service are not; `/metrics` counts HTTP 401 and 429 responses instead.
 - **Mail (OPS-029, DEC-009).** No mail settings exist yet.
 - **Operator password input (OPS-009).** Setup, metrics, backup-signing, backup-encryption and MFA secrets already support
   dedicated `*-file` configuration options; see [configuration.md](configuration.md#secrets). The operator password

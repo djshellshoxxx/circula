@@ -77,7 +77,7 @@ func TestRecoveryAndPasswordPagesCatalogue(t *testing.T) {
 		t.Error("recover: login not escaped")
 	}
 
-	for n, want := range map[int]string{0: "<strong>0</strong> unused codes.", 1: "<strong>1</strong> unused code.", 2: "<strong>2</strong> unused codes."} {
+	for n, want := range map[int]string{0: "<strong>0</strong> unused codes.", 1: "<strong>1</strong> unused code.", 2: "<strong>2</strong> unused codes.", 1000: "<strong>1,000</strong> unused codes."} {
 		body = renderAuthPage(t, "recovery_codes", &page{Title: "Recovery codes", D: &recoveryCodesData{Remaining: n}})
 		wantAll(t, "recovery_codes", body, "Recovery codes let you set a new password if you forget it, without email. You have", want,
 			"Making new codes replaces all the old ones. You need your current password.", ">Current password</label>", ">Make new recovery codes</button>")

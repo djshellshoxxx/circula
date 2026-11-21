@@ -1,0 +1,8 @@
+{
+  "head": "63e40d8bd56254439bfae1b5b3e740c3e51b2196",
+  "scope": "environment-only about:blank preflight; no product E2E assertions",
+  "configuration": "unchanged e2e/playwright.config.js launchOptions",
+  "started_at_utc": "2026-11-20T06:33:43.123275+00:00",
+  "elapsed_seconds": 0.591,
+  "exit_code": 1
+}

@@ -304,7 +304,10 @@ Open **Network admin > Pause or close** (`/admin/network`).
   are told. On the date new trades, memberships, adjustments and grants stop, and open proposals are cancelled with
   a notice to both people. If a dispute is still open the network stays in a "closing" state until it is resolved.
   When the closure completes the system produces a final export of the ledger and records its SHA-256 checksum, shown
-  on this page; use `POST /api/v1/admin/network/closure/verify` to recompute it. Accounts with a non-zero balance are
+  on this page; use `POST /api/v1/admin/network/closure/verify` to recompute it. Version 1 checkpoints remain verifiable
+  after time passes or the service restarts. Older unversioned checkpoints keep their original checksum, but the
+  verifier explains that their unsaved generation timestamp prevents recomputation; this is not a ledger mismatch.
+  Keep original export packages for their independent manifest checks. Accounts with a non-zero balance are
   shown as a warning count: closing does not settle balances, so tell members how you expect to settle them. Members
   and you keep read and export access for 90 days after the closure. After that the members' personal data is
   anonymised (the ledger, balances and audit log stay). Download any export you need before then.

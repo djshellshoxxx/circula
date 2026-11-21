@@ -20,25 +20,38 @@ const (
 // ReportCategories are the accepted report categories.
 var ReportCategories = []string{"spam", "scam", "inappropriate", "harassment", "other"}
 
+func knownReportCategory(category string) bool {
+	for _, accepted := range ReportCategories {
+		if category == accepted {
+			return true
+		}
+	}
+	return false
+}
+
 // Report target types.
 const (
-	ReportListing = "listing"
-	ReportMember  = "member"
+	ReportListing     = "listing"
+	ReportMember      = "member"
+	ReportTransaction = "transaction"
 )
 
-// ReportInput files a report about a listing or a member (FR-024).
+// ReportInput files a report about a listing, member or two-member transaction
+// (FR-024, SEC-025).
 type ReportInput struct {
-	TargetType     string // listing | member
+	TargetType     string // listing | member | transaction
 	TargetID       string
 	Category       string
 	Note           string // optional, bounded
+	DisputeID      string `json:",omitempty"` // optional member/listing case context; omit to preserve legacy fingerprints
 	IdempotencyKey string `json:"-"`
 }
 
-// CreateReport lets an active member report a listing or another member. It
+// CreateReport lets an active member report a listing, another member, or a
+// transaction with another member in which the reporter is a party. It
 // changes nothing about the target: no hiding, suspension or flag. The reporter
-// is visible to administrators only (the queue is administrator-only and the
-// audit event is about the reporter, not the reported member). A second open
+// is visible to independent administrators only (the queue and audit read
+// exclude the reported member, even when they are an administrator). A second open
 // report by the same member about the same target is a conflict; more than
 // MaxReportsPerDay in 24 hours is rate-limited.
 func (s *Service) CreateReport(ctx context.Context, actor domain.Actor, netID string, in ReportInput) (*store.Report, error) {
@@ -64,11 +77,7 @@ func (s *Service) createReport(tx store.Tx, p *principal, in ReportInput) (strin
 	if err := p.requireNetworkActive(); err != nil {
 		return "", err
 	}
-	valid := false
-	for _, c := range ReportCategories {
-		valid = valid || c == in.Category
-	}
-	if !valid {
+	if !knownReportCategory(in.Category) {
 		return "", domain.Invalid("category", "must be one of "+strings.Join(ReportCategories, ", "))
 	}
 	note := strings.TrimSpace(in.Note)
@@ -98,8 +107,36 @@ func (s *Service) createReport(tx store.Tx, p *principal, in ReportInput) (strin
 		if m.ID == p.member.ID {
 			return "", domain.Invalid("target_id", "you cannot report yourself")
 		}
+	case ReportTransaction:
+		t, err := loadParty(tx, p, in.TargetID)
+		if err != nil {
+			return "", err
+		}
+		subjectID, ok := transactionReportSubject(t, p.member.ID)
+		if !ok {
+			return "", domain.Invalid("target_id", "transaction reports require two member parties")
+		}
+		if _, err := tx.GetMember(netID, subjectID); err != nil {
+			return "", err
+		}
 	default:
-		return "", domain.Invalid("target_type", "must be listing or member")
+		return "", domain.Invalid("target_type", "must be listing, member or transaction")
+	}
+	if in.DisputeID != "" {
+		if in.TargetType != ReportMember && in.TargetType != ReportListing {
+			return "", domain.Invalid("dispute_id", "case context is available for member or listing reports")
+		}
+		caseContext, err := reportDisputeContext(tx, p, in.DisputeID)
+		if err != nil {
+			return "", err
+		}
+		wantID := caseContext.MemberID
+		if in.TargetType == ReportListing {
+			wantID = caseContext.ListingID
+		}
+		if wantID == "" || in.TargetID != wantID {
+			return "", domain.Invalid("dispute_id", "the selected case does not match the report target")
+		}
 	}
 	now := s.now()
 	n, err := tx.CountReportsSince(netID, p.member.ID, now.Add(-24*time.Hour))
@@ -110,7 +147,7 @@ func (s *Service) createReport(tx store.Tx, p *principal, in ReportInput) (strin
 		return "", domain.Errf(domain.CodeRateLimited, "too many reports today; try again tomorrow")
 	}
 	r := store.Report{ID: s.id(), NetworkID: netID, ReporterID: p.member.ID, TargetType: in.TargetType, TargetID: in.TargetID,
-		Category: in.Category, Note: note, Status: "open", CreatedAt: now}
+		Category: in.Category, Note: note, Status: "open", CreatedAt: now, DisputeID: in.DisputeID}
 	if err := tx.InsertReport(r); err != nil {
 		if domain.CodeOf(err) == domain.CodeConflict {
 			return "", domain.Errf(domain.CodeConflict, "you already have an open report about this")
@@ -126,11 +163,85 @@ func (s *Service) createReport(tx store.Tx, p *principal, in ReportInput) (strin
 type ReportView struct {
 	*store.Report
 	ReporterName string
-	TargetLabel  string // member display name or listing title
+	TargetLabel  string // member display name, listing title or transaction ID
+}
+
+// transactionReportSubject resolves the non-reporting party only when both
+// accounts belong to distinct members. Reports involving a system account need
+// a separate subject contract; the creating administrator is not inferred to be
+// the subject. Transaction status and dispute deadlines do not limit reporting.
+func transactionReportSubject(t *domain.Transaction, reporterID string) (string, bool) {
+	if t.PayerMemberID == "" || t.PayeeMemberID == "" || t.PayerMemberID == t.PayeeMemberID {
+		return "", false
+	}
+	switch reporterID {
+	case t.PayerMemberID:
+		return t.PayeeMemberID, true
+	case t.PayeeMemberID:
+		return t.PayerMemberID, true
+	default:
+		return "", false
+	}
+}
+
+// requireIndependentReportReader is the subject-conflict check after the
+// caller's administrator authority has been established. Listing ownership,
+// transaction parties and member identities are resolved in this unit;
+// neither a new role nor an idempotent replay bypasses the restriction.
+// Existing system authority is unchanged. Unknown subjects fail closed.
+func requireIndependentReportReader(tx store.Tx, p *principal, r *store.Report) error {
+	if p.actor.System {
+		return nil
+	}
+	subjectID := r.TargetID
+	switch r.TargetType {
+	case ReportMember:
+	case ReportListing:
+		l, err := tx.GetListing(r.NetworkID, r.TargetID)
+		if err != nil {
+			return err
+		}
+		subjectID = l.MemberID
+	case ReportTransaction:
+		t, err := tx.GetTransaction(r.NetworkID, r.TargetID)
+		if err != nil {
+			return err
+		}
+		var ok bool
+		subjectID, ok = transactionReportSubject(t, r.ReporterID)
+		if !ok {
+			return domain.NotFound("report")
+		}
+	default:
+		return domain.NotFound("report")
+	}
+	subject, err := tx.GetMember(r.NetworkID, subjectID)
+	if err != nil {
+		return err
+	}
+	if p.member == nil || subject.ID == p.member.ID {
+		return domain.NotFound("report")
+	}
+	return nil
+}
+
+func loadIndependentReport(tx store.Tx, p *principal, id string) (*store.Report, error) {
+	if !domain.ValidRecordID(id) {
+		return nil, domain.NotFound("report")
+	}
+	r, err := tx.GetReport(p.net.ID, id)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireIndependentReportReader(tx, p, r); err != nil {
+		return nil, err
+	}
+	return r, nil
 }
 
 // ListReports lists the report queue, newest first, to administrators only.
-// status is "open", "handled" or "" for all.
+// Reports for which the caller is the subject are excluded before pagination.
+// status is "open", "handled" or "" for all visible reports.
 func (s *Service) ListReports(ctx context.Context, actor domain.Actor, netID, status string, pg Page) ([]ReportView, error) {
 	var out []ReportView
 	if status != "" && status != "open" && status != "handled" {
@@ -147,11 +258,15 @@ func (s *Service) ListReports(ctx context.Context, actor domain.Actor, netID, st
 		if err := validatePageIDs(pg.AfterID); err != nil {
 			return err
 		}
-		rs, err := tx.ListReports(netID, store.ReportFilter{Status: status, AfterID: pg.AfterID, Limit: clampPage(pg)})
+		rs, err := tx.ListReports(netID, store.ReportFilter{Status: status, AfterID: pg.AfterID, Limit: clampPage(pg),
+			ExcludeSubjectMemberID: p.memberID()})
 		if err != nil {
 			return err
 		}
 		for _, r := range rs {
+			if err := requireIndependentReportReader(tx, p, r); err != nil {
+				return err
+			}
 			v := ReportView{Report: r}
 			if m, err := tx.GetMember(netID, r.ReporterID); err == nil {
 				v.ReporterName = m.DisplayName
@@ -165,6 +280,8 @@ func (s *Service) ListReports(ctx context.Context, actor domain.Actor, netID, st
 				if l, err := tx.GetListing(netID, r.TargetID); err == nil {
 					v.TargetLabel = l.Title
 				}
+			case ReportTransaction:
+				v.TargetLabel = r.TargetID
 			}
 			out = append(out, v)
 		}
@@ -182,7 +299,8 @@ type HandleReportInput struct {
 
 // HandleReport marks an open report handled (administrators only), audits it
 // and tells the reporter that it was reviewed. It does not itself act on the
-// target; the administrator uses the normal, audited member and listing tools.
+// target; the administrator uses the normal, audited member, listing and
+// dispute tools.
 func (s *Service) HandleReport(ctx context.Context, actor domain.Actor, netID string, in HandleReportInput) (*store.Report, error) {
 	var out *store.Report
 	err := s.update(ctx, func(tx store.Tx) error {
@@ -194,12 +312,9 @@ func (s *Service) HandleReport(ctx context.Context, actor domain.Actor, netID st
 			return err
 		}
 		out, err = idempotent(s, tx, netID, actor, "report.handle", in.IdempotencyKey, in, func() (string, error) {
-			if !domain.ValidRecordID(in.ReportID) {
-				return "", domain.NotFound("report")
-			}
-			r, err := tx.GetReport(netID, in.ReportID)
+			r, err := loadIndependentReport(tx, p, in.ReportID)
 			if err != nil {
-				return "", domain.NotFound("report")
+				return "", err
 			}
 			if r.Status != "open" {
 				return "", domain.InvalidState("report is already handled")
@@ -220,7 +335,7 @@ func (s *Service) HandleReport(ctx context.Context, actor domain.Actor, netID st
 			return r.ID, s.audit(tx, p, auditEntry{Type: p.actorType(domain.ActorAdmin), Action: domain.ActReportHandled,
 				TargetType: "report", TargetID: r.ID, Reason: note, IdemRef: keyRef(in.IdempotencyKey),
 				Subjects: []string{r.ReporterID}, Before: map[string]any{"status": "open"}, After: map[string]any{"status": "handled"}})
-		}, func(id string) (*store.Report, error) { return tx.GetReport(netID, id) })
+		}, func(id string) (*store.Report, error) { return loadIndependentReport(tx, p, id) })
 		return err
 	})
 	return out, err

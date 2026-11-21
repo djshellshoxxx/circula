@@ -200,6 +200,18 @@
   "footer.help": {
     "other": "Help: credits, balances and statuses"
   },
+  "footer.about": {
+    "other": "About this network"
+  },
+  "about.title": {
+    "other": "About %[1]s"
+  },
+  "loading.navigation": {
+    "other": "Loading the next page. Please wait."
+  },
+  "loading.submission": {
+    "other": "Sending your request. Please wait."
+  },
   "terms.accept": {
     "other": "I have read and accept these terms"
   },
@@ -551,23 +563,17 @@
   "auth.login.submit": {
     "other": "Sign in"
   },
-  "auth.login.new_here": {
-    "other": "New here?"
+  "auth.login.create_prompt": {
+    "other": "New here? %[1]s. To join a network you need an invitation link from its administrator, or the network's join page."
   },
   "auth.login.create_link": {
     "other": "Create an account"
   },
-  "auth.login.join_info": {
-    "other": "To join a network you need an invitation link from its administrator, or the network's join page."
-  },
-  "auth.login.forgot": {
-    "other": "Forgot your password?"
+  "auth.login.recovery_prompt": {
+    "other": "Forgot your password? %[1]s with one of your recovery codes."
   },
   "auth.login.recover_link": {
     "other": "Recover your account"
-  },
-  "auth.login.recover_tail": {
-    "other": "with one of your recovery codes."
   },
   "auth.mfa_step.intro": {
     "other": "Your password was correct. Enter the 6-digit code from your authenticator app, or one unused recovery code. This step expires in 5 minutes."
@@ -582,7 +588,7 @@
     "other": "Create account"
   },
   "auth.register.have_account": {
-    "other": "Already have an account?"
+    "other": "Already have an account? %[1]s."
   },
   "auth.register.sign_in_link": {
     "other": "Sign in"
@@ -608,11 +614,12 @@
   "auth.codes.saved": {
     "other": "I have saved them"
   },
-  "auth.codes.purpose": {
-    "other": "Recovery codes let you set a new password if you forget it, without email."
+  "auth.codes.remaining": {
+    "one": "Recovery codes let you set a new password if you forget it, without email. You have %[2]s unused code.",
+    "other": "Recovery codes let you set a new password if you forget it, without email. You have %[2]s unused codes."
   },
-  "auth.codes.have": {
-    "other": "You have"
+  "auth.codes.count": {
+    "other": "%[1]d"
   },
   "auth.codes.replace_note": {
     "other": "Making new codes replaces all the old ones. You need your current password."
@@ -623,8 +630,8 @@
   "security.mfa.heading": {
     "other": "Two-step sign-in"
   },
-  "security.mfa.state_is": {
-    "other": "Two-step sign-in is"
+  "security.mfa.state": {
+    "other": "Two-step sign-in is %[1]s."
   },
   "security.mfa.on": {
     "other": "on"
@@ -675,13 +682,10 @@
     "other": "No security notices yet."
   },
   "auth.enrol.already_on": {
-    "other": "Two-step sign-in is already on. Manage it on the"
+    "other": "Two-step sign-in is already on. Manage it on the %[1]s page."
   },
   "auth.enrol.security_link": {
     "other": "account security"
-  },
-  "auth.enrol.page_word": {
-    "other": "page."
   },
   "auth.enrol.intro": {
     "other": "Two-step sign-in asks for a code from an authenticator app each time you sign in, in addition to your password."
@@ -699,7 +703,7 @@
     "other": "In your authenticator app choose to add an account by entering a key, and type this setup key. Choose time-based, 6 digits, 30 seconds."
   },
   "auth.enrol.uri_note": {
-    "other": "Apps that import links can use this address instead:"
+    "other": "Apps that import links can use this address instead: %[1]s"
   },
   "auth.enrol.step_confirm": {
     "other": "Enter the 6-digit code the app shows to confirm."
@@ -729,9 +733,1131 @@
     "one": "You have %[1]d unused recovery code.",
     "other": "You have %[1]d unused recovery codes."
   },
-  "auth.codes.unused": {
-    "one": "unused code",
-    "other": "unused codes"
+  "validation.label.cursor": {
+    "other": "Page position"
+  },
+  "validation.label.login": {
+    "other": "Login"
+  },
+  "validation.label.password": {
+    "other": "Password"
+  },
+  "validation.label.display_name": {
+    "other": "Display name"
+  },
+  "validation.label.amount": {
+    "other": "Amount"
+  },
+  "validation.label.counterparty_id": {
+    "other": "Counterparty"
+  },
+  "validation.label.direction": {
+    "other": "Direction"
+  },
+  "validation.label.title": {
+    "other": "Title"
+  },
+  "validation.label.price": {
+    "other": "Price"
+  },
+  "validation.label.member_id": {
+    "other": "Member"
+  },
+  "validation.label.related_transaction_id": {
+    "other": "Related trade reference"
+  },
+  "validation.label.reason": {
+    "other": "Reason"
+  },
+  "validation.label.reason_code": {
+    "other": "Reason for removal"
+  },
+  "validation.label.transaction_id": {
+    "other": "Trade reference"
+  },
+  "validation.label.rationale": {
+    "other": "Rationale"
+  },
+  "validation.label.category": {
+    "other": "Category"
+  },
+  "validation.label.name": {
+    "other": "Name"
+  },
+  "validation.label.slug": {
+    "other": "Web address name"
+  },
+  "validation.label.limit": {
+    "other": "Credit limit"
+  },
+  "validation.label.type": {
+    "other": "Type"
+  },
+  "validation.label.outcome": {
+    "other": "Outcome"
+  },
+  "validation.label.ttl": {
+    "other": "Valid for"
+  },
+  "validation.label.status": {
+    "other": "Status"
+  },
+  "validation.label.currency_name": {
+    "other": "Credit unit name"
+  },
+  "validation.label.default_credit_limit": {
+    "other": "Default credit limit"
+  },
+  "validation.label.max_tx_amount": {
+    "other": "Largest trade"
+  },
+  "validation.label.proposal_expiry_days": {
+    "other": "Proposal expiry (days)"
+  },
+  "validation.label.dispute_window_days": {
+    "other": "Dispute window (days)"
+  },
+  "validation.label.join_mode": {
+    "other": "Join mode"
+  },
+  "validation.label.departure_rule": {
+    "other": "Departure rule"
+  },
+  "validation.label.signup_grant": {
+    "other": "Sign-up grant"
+  },
+  "validation.label.limit_warning_days": {
+    "other": "Limit warning (days)"
+  },
+  "validation.label.response_period_days": {
+    "other": "Dispute response period"
+  },
+  "validation.label.re_review_window_days": {
+    "other": "Re-review window"
+  },
+  "validation.label.limit_warning_percent": {
+    "other": "Limit warning percent"
+  },
+  "validation.label.inactivity_days": {
+    "other": "Inactivity flag"
+  },
+  "validation.label.waive_reason": {
+    "other": "Reason for not waiting"
+  },
+  "validation.label.notice_days": {
+    "other": "Notice (days)"
+  },
+  "validation.label.notice_reason": {
+    "other": "Reason for shorter notice"
+  },
+  "validation.label.terms_version": {
+    "other": "Terms"
+  },
+  "validation.label.body": {
+    "other": "Terms text"
+  },
+  "validation.label.statement": {
+    "other": "Statement"
+  },
+  "validation.label.note": {
+    "other": "Note"
+  },
+  "validation.label.expires_at": {
+    "other": "Expiry"
+  },
+  "validation.label.confirm_open_grant_risk": {
+    "other": "Open joining with a sign-up grant"
+  },
+  "validation.label.description": {
+    "other": "Description"
+  },
+  "validation.label.response": {
+    "other": "Response"
+  },
+  "validation.label.time_zone": {
+    "other": "Time zone"
+  },
+  "validation.label.version": {
+    "other": "Terms version"
+  },
+  "validation.label.effective_at": {
+    "other": "Takes effect"
+  },
+  "validation.label.supersedes_id": {
+    "other": "Replaces announcement"
+  },
+  "validation.label.listing_id": {
+    "other": "Listing"
+  },
+  "validation.label.listing": {
+    "other": "Listings"
+  },
+  "validation.label.target_type": {
+    "other": "Report about"
+  },
+  "validation.label.target_id": {
+    "other": "Reported item"
+  },
+  "validation.label.dispute_id": {
+    "other": "Related dispute"
+  },
+  "validation.label.role": {
+    "other": "Role"
+  },
+  "validation.label.scopes": {
+    "other": "Token permissions"
+  },
+  "validation.label.code": {
+    "other": "Code"
+  },
+  "validation.label.format": {
+    "other": "File format"
+  },
+  "validation.label.scope": {
+    "other": "Export type"
+  },
+  "validation.label.kind": {
+    "other": "Challenge type"
+  },
+  "validation.label.decimals": {
+    "other": "Decimal places"
+  },
+  "validation.label.dual_control_threshold": {
+    "other": "Dual-control threshold"
+  },
+  "validation.label.threshold": {
+    "other": "Dual-control threshold"
+  },
+  "validation.label.report": {
+    "other": "Ledger report"
+  },
+  "validation.label.page": {
+    "other": "Page"
+  },
+  "validation.label.idempotency_key": {
+    "other": "Form key"
+  },
+  "validation.label.operator": {
+    "other": "Operator"
+  },
+  "validation.label.directory_visibility": {
+    "other": "Directory visibility"
+  },
+  "validation.label.ids": {
+    "other": "Notices"
+  },
+  "validation.choice.counterparty_id": {
+    "other": "Choose another active member from the list."
+  },
+  "validation.choice.member_id": {
+    "other": "Choose a member from the list."
+  },
+  "validation.choice.related_transaction_id": {
+    "other": "Choose a posted trade involving this member, or leave the reference empty."
+  },
+  "validation.choice.direction": {
+    "other": "Choose whether you pay or are paid."
+  },
+  "validation.choice.category": {
+    "other": "Choose one of the listed categories."
+  },
+  "validation.choice.outcome": {
+    "other": "Choose one of the listed outcomes."
+  },
+  "validation.choice.type": {
+    "other": "Choose one of the listed types."
+  },
+  "validation.choice.status": {
+    "other": "Choose one of the listed statuses."
+  },
+  "validation.choice.format": {
+    "other": "Choose CSV or JSON."
+  },
+  "validation.choice.listing_id": {
+    "other": "Start again from the other member's listing, or propose without one."
+  },
+  "validation.choice.terms_version": {
+    "other": "Read the terms shown, tick the box to accept them and try again."
+  },
+  "validation.choice.reason_code": {
+    "other": "Choose one of the listed reasons."
+  },
+  "validation.choice.confirm_open_grant_risk": {
+    "other": "Tick the box to confirm the risk, or choose another join mode or no sign-up grant, then try again."
+  },
+  "validation.detail.choice_required": {
+    "other": "nothing was chosen"
+  },
+  "validation.detail.choice_invalid": {
+    "other": "that choice is not on the list"
+  },
+  "validation.fix.required": {
+    "other": "Fill it in and try again."
+  },
+  "validation.fix.incorrect": {
+    "other": "Type it again carefully and try again."
+  },
+  "validation.fix.too_long": {
+    "other": "Shorten it and try again."
+  },
+  "validation.fix.control_characters": {
+    "other": "Remove hidden or special characters and try again."
+  },
+  "validation.fix.different": {
+    "other": "Choose a different one and try again."
+  },
+  "validation.fix.smaller": {
+    "other": "Enter a smaller amount and try again."
+  },
+  "validation.fix.check": {
+    "other": "Check the value and try again."
+  },
+  "validation.refusal.overflow": {
+    "other": "Not done. The amount is too large to record on these accounts. Try a smaller amount. Nothing changed."
+  },
+  "validation.refusal.no_fields": {
+    "other": "Not saved. Something entered was not accepted. Check the form and try again. Nothing changed."
+  },
+  "validation.refusal.fields": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "validation.refusal.counterparty_inactive": {
+    "other": "Not sent. The other member is not active in this network, so they cannot take part in a trade. Nothing changed."
+  },
+  "validation.refusal.key_reused": {
+    "other": "Not sent. This form was already used with different details. Reload the page and start again. Nothing changed."
+  },
+  "validation.refusal.key_required": {
+    "other": "Not sent. The form is missing its safety key. Reload the page and try again. Nothing changed."
+  },
+  "validation.refusal.suspended": {
+    "other": "Not done. Trading in this network is paused (suspended). You can still read balances and history and download your data. Nothing changed."
+  },
+  "validation.refusal.invalid_state": {
+    "other": "Not done. This item is no longer in a state that allows that. Reload to see its current state. Nothing changed."
+  },
+  "validation.refusal.conflict": {
+    "other": "Not saved. That value is not available. Choose a different one. Nothing changed."
+  },
+  "validation.refusal.rate_limited": {
+    "other": "Too many attempts. Wait a minute and try again. Nothing changed."
+  },
+  "validation.fix.decimals": {
+    "one": "Use at most %[1]d decimal place and try again.",
+    "other": "Use at most %[1]d decimal places and try again."
+  },
+  "validation.fix.number": {
+    "other": "Enter digits only, for example %[1]s."
+  },
+  "validation.field.message": {
+    "other": "%[1]s: %[2]s. %[3]s"
+  },
+  "validation.refusal.insufficient_credit": {
+    "other": "Not sent. This trade would take your available credit below zero. Try a smaller amount. Nothing changed."
+  },
+  "validation.refusal.insufficient_credit_available": {
+    "other": "Not sent. This trade would take your available credit below zero. Available to spend is %[1]s. Try a smaller amount. Nothing changed."
+  },
+  "validation.refusal.amount_exceeds": {
+    "other": "Not sent. The amount is above the largest single trade this network allows (%[1]s). Nothing changed."
+  },
+  "validation.refusal.blocked": {
+    "other": "Not done. %[1]s. Nothing changed."
+  },
+  "validation.refusal.approval_required": {
+    "other": "Not done. The amount is above the dual-control threshold, so one administrator cannot move it alone. Settle it first with an adjustment that a second administrator approves (Adjustments), then try again. Nothing changed."
+  },
+  "admin.reset.action": {
+    "other": "Reset password"
+  },
+  "admin.reset.consequence": {
+    "other": "A one-time temporary password is created and shown to you once. The member's sessions and API tokens end, their recovery codes stop working, and they must choose a new password at next sign-in. Give them the temporary password in person or by a channel you trust."
+  },
+  "admin.reset.confirm_title": {
+    "other": "Reset password: %[1]s?"
+  },
+  "admin.reset.done_title": {
+    "other": "Temporary password"
+  },
+  "admin.reset.throttled": {
+    "other": "Not done. You have reset too many passwords in the last hour. Try again later. Nothing changed."
+  },
+  "admin.reset.for_member": {
+    "other": "Temporary password for %[1]s"
+  },
+  "admin.reset.shown_once": {
+    "other": "This is the only time it is shown."
+  },
+  "admin.reset.instructions": {
+    "other": "Give it to %[1]s in person or by a channel you trust. They must choose a new password when they sign in. All their sessions and API tokens were ended."
+  },
+  "admin.reset.back_members": {
+    "other": "Back to members"
+  },
+  "admin.member_action.heading": {
+    "other": "%[1]s: %[2]s"
+  },
+  "admin.member_action.reason_hint": {
+    "other": "Required. It is recorded in the audit log."
+  },
+  "admin.member_action.go_back": {
+    "other": "Go back"
+  },
+  "directory.title": {
+    "other": "Directory"
+  },
+  "directory.search_label": {
+    "other": "Search by name"
+  },
+  "directory.search": {
+    "other": "Search"
+  },
+  "directory.results": {
+    "one": "%[1]d member found.",
+    "other": "%[1]d members found."
+  },
+  "directory.member_reference": {
+    "other": "(member reference %[1]s)"
+  },
+  "directory.propose": {
+    "other": "Propose a trade"
+  },
+  "directory.propose_with": {
+    "other": "Propose a trade with %[1]s"
+  },
+  "directory.empty": {
+    "other": "No members match. Try a shorter search, or clear it to see everyone."
+  },
+  "directory.pages": {
+    "other": "Directory pages"
+  },
+  "listing.title": {
+    "other": "Listings"
+  },
+  "listing.new": {
+    "other": "New listing"
+  },
+  "listing.all": {
+    "other": "All listings"
+  },
+  "listing.mine": {
+    "other": "My listings"
+  },
+  "listing.kind": {
+    "other": "Kind"
+  },
+  "listing.kind_prefix": {
+    "other": "Kind:"
+  },
+  "listing.types": {
+    "other": "Offers and requests"
+  },
+  "listing.offers": {
+    "other": "Offers"
+  },
+  "listing.requests": {
+    "other": "Requests"
+  },
+  "listing.offer": {
+    "other": "Offer"
+  },
+  "listing.request": {
+    "other": "Request"
+  },
+  "listing.offer_prefix": {
+    "other": "Offer:"
+  },
+  "listing.request_prefix": {
+    "other": "Request:"
+  },
+  "listing.search": {
+    "other": "Search"
+  },
+  "listing.filter": {
+    "other": "Filter"
+  },
+  "listing.tag.active": {
+    "other": "active"
+  },
+  "listing.tag.paused": {
+    "other": "paused"
+  },
+  "listing.tag.archived": {
+    "other": "archived"
+  },
+  "listing.by_owner": {
+    "other": "By %[1]s"
+  },
+  "listing.owner_price": {
+    "other": "By %[1]s · price %[2]s %[3]s"
+  },
+  "listing.price": {
+    "other": "price %[1]s %[2]s"
+  },
+  "listing.edit": {
+    "other": "Edit"
+  },
+  "listing.edit_named": {
+    "other": "Edit %[1]s"
+  },
+  "listing.propose": {
+    "other": "Propose a trade"
+  },
+  "listing.propose_about": {
+    "other": "Propose a trade about %[1]s"
+  },
+  "listing.report": {
+    "other": "Report"
+  },
+  "listing.report_named": {
+    "other": "Report %[1]s"
+  },
+  "listing.empty": {
+    "other": "No listings to show. Offers and requests that members publish appear here."
+  },
+  "listing.publish_first": {
+    "other": "Publish the first one."
+  },
+  "listing.offer_hint": {
+    "other": "Offer: something I provide"
+  },
+  "listing.request_hint": {
+    "other": "Request: something I want"
+  },
+  "listing.field_title": {
+    "other": "Title"
+  },
+  "listing.field_description": {
+    "other": "Description (optional)"
+  },
+  "listing.field_price": {
+    "other": "Price (optional)"
+  },
+  "listing.price_hint_new": {
+    "other": "Amount in credits, up to the network's decimal places. Leave empty if open to offers."
+  },
+  "listing.price_hint_edit": {
+    "other": "Amount in credits. Empty removes the price."
+  },
+  "listing.publish": {
+    "other": "Publish listing"
+  },
+  "listing.cancel": {
+    "other": "Cancel"
+  },
+  "listing.save": {
+    "other": "Save"
+  },
+  "listing.status_label": {
+    "other": "Status"
+  },
+  "listing.status_hint": {
+    "other": "Paused listings are hidden. Archived listings are final and cannot be reopened."
+  },
+  "listing.status.active": {
+    "other": "Active"
+  },
+  "listing.status.paused": {
+    "other": "Paused"
+  },
+  "listing.status.archived": {
+    "other": "Archived"
+  },
+  "listing.edit_title": {
+    "other": "Edit listing"
+  },
+  "listing.invalid": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "listing.published": {
+    "other": "Listing published."
+  },
+  "listing.saved": {
+    "other": "Listing saved."
+  },
+  "listing.price_help": {
+    "one": "Price: enter a positive amount with up to %[1]d decimal place, for example %[2]s.",
+    "other": "Price: enter a positive amount with up to %[1]d decimal places, for example %[2]s."
+  },
+  "profile.reference_label": {
+    "other": "Member reference:"
+  },
+  "profile.reference_note": {
+    "other": "Display names can repeat; the reference does not."
+  },
+  "profile.reference_self": {
+    "other": "Tell it to the members you trade with so they can check it is you."
+  },
+  "profile.reference_other": {
+    "other": "Every trade confirmation shows it, so you can check you are trading with this member."
+  },
+  "profile.propose_with": {
+    "other": "Propose a trade with %[1]s"
+  },
+  "profile.report": {
+    "other": "Report %[1]s"
+  },
+  "profile.listings_by": {
+    "other": "Listings by %[1]s"
+  },
+  "profile.empty": {
+    "other": "%[1]s has no active listings."
+  },
+  "freshness.snapshot": {
+    "other": "Page generated %[1]s. Figures are a snapshot and do not update automatically."
+  },
+  "freshness.offline": {
+    "other": "The browser reports that the connection is unavailable. The figures have not refreshed. %[1]s"
+  },
+  "freshness.history": {
+    "other": "This earlier page was restored from browser history. The figures have not refreshed. %[1]s"
+  },
+  "session_warning.extendable": {
+    "other": "It ends around %[1]s. Choose Stay signed in to keep working."
+  },
+  "session_warning.fixed": {
+    "other": "It ends around %[1]s and cannot be extended. Finish what you are doing, then sign in again."
+  },
+  "session_warning.ended": {
+    "other": "Your session has ended. Sign in again to continue. Your changes on this page have not been sent."
+  },
+  "session_warning.failed": {
+    "other": "Could not extend the session. Sign in again."
+  },
+  "inbox.title": {
+    "other": "Inbox"
+  },
+  "inbox.waiting_title": {
+    "other": "Waiting for your action"
+  },
+  "inbox.waiting_empty": {
+    "other": "Nothing is waiting for you. Trade proposals sent to you and disputes you can answer will appear here."
+  },
+  "inbox.dispute_opened": {
+    "other": "A dispute was opened on a trade with you (%[1]s)"
+  },
+  "inbox.dispute_response": {
+    "other": "Opened %[1]s. You can add your response."
+  },
+  "inbox.notifications_title": {
+    "other": "Notifications"
+  },
+  "inbox.unread_count": {
+    "other": "%[1]d unread."
+  },
+  "inbox.no_unread": {
+    "other": "No unread notifications."
+  },
+  "inbox.show_all": {
+    "other": "Show all"
+  },
+  "inbox.show_unread": {
+    "other": "Show unread only"
+  },
+  "inbox.mark_all": {
+    "other": "Mark all as read"
+  },
+  "inbox.unread": {
+    "other": "Unread"
+  },
+  "inbox.read": {
+    "other": "Read"
+  },
+  "inbox.mark_read": {
+    "other": "Mark as read"
+  },
+  "inbox.mark_read_named": {
+    "other": "Mark as read: %[1]s"
+  },
+  "inbox.empty": {
+    "other": "No notifications to show."
+  },
+  "inbox.all_read": {
+    "other": "All notifications are marked as read."
+  },
+  "report.title": {
+    "other": "Report a problem"
+  },
+  "report.target_listing": {
+    "other": "Listing: %[1]s"
+  },
+  "report.target_member": {
+    "other": "Member: %[1]s"
+  },
+  "report.target_transaction": {
+    "other": "Transaction: %[1]s"
+  },
+  "report.category.spam": {
+    "other": "Spam or advertising"
+  },
+  "report.category.scam": {
+    "other": "Looks like a scam"
+  },
+  "report.category.inappropriate": {
+    "other": "Inappropriate content"
+  },
+  "report.category.harassment": {
+    "other": "Harassment or abuse"
+  },
+  "report.category.other": {
+    "other": "Something else"
+  },
+  "report.duplicate": {
+    "other": "Not sent. You already have an open report about this. An administrator will look at it. Nothing changed."
+  },
+  "report.throttled": {
+    "other": "Not sent. You have sent many reports today. Try again tomorrow. Nothing changed."
+  },
+  "report.sent": {
+    "other": "Report sent. Administrators will review it. It does not change anything for the person you reported, and they are not told who reported."
+  },
+  "report.queue_title": {
+    "other": "Reports"
+  },
+  "report.handled": {
+    "other": "Report marked as handled. The reporter was told it was reviewed."
+  },
+  "report.subject": {
+    "other": "You are reporting: %[1]s."
+  },
+  "report.explanation": {
+    "other": "A report goes to the network administrators. It does not hide, suspend or change anything by itself, and the person you report is not told who reported."
+  },
+  "report.category_label": {
+    "other": "What is the problem?"
+  },
+  "report.note_label": {
+    "other": "Details (optional)"
+  },
+  "report.note_hint": {
+    "other": "Up to 500 characters."
+  },
+  "report.send": {
+    "other": "Send report"
+  },
+  "report.cancel": {
+    "other": "Cancel"
+  },
+  "report.queue_explanation": {
+    "other": "Reports from members about listings, members and transactions. Handling a report here only records that you looked at it; use the ordinary member, policy and dispute tools to act. The reporter is shown only to administrators who are not the report subject."
+  },
+  "report.filter_label": {
+    "other": "Report filter"
+  },
+  "report.status.open": {
+    "other": "Open"
+  },
+  "report.status.handled": {
+    "other": "Handled"
+  },
+  "report.filter_all": {
+    "other": "All"
+  },
+  "report.about": {
+    "other": "%[1]s about %[2]s %[3]s"
+  },
+  "report.target_type.listing": {
+    "other": "listing"
+  },
+  "report.target_type.member": {
+    "other": "member"
+  },
+  "report.target_type.transaction": {
+    "other": "transaction"
+  },
+  "report.related_disputes": {
+    "other": "Related disputes on this transaction"
+  },
+  "report.related_disputes_for": {
+    "other": "Disputes for transaction %[1]s."
+  },
+  "report.case_member_action": {
+    "other": "Report the other member about this dispute"
+  },
+  "report.target_case_listing": {
+    "other": "The listing attached to this disputed trade"
+  },
+  "report.case_listing_action": {
+    "other": "Report the listing about this dispute"
+  },
+  "report.case_description": {
+    "other": "This report is linked to your dispute with %[1]s, opened on %[2]s."
+  },
+  "report.view_case": {
+    "other": "View related dispute"
+  },
+  "report.case_privacy": {
+    "other": "Independent reviewers of this dispute can see the report category and whether it has been handled. Your identity and notes are shown only to independent administrators."
+  },
+  "report.review_title": {
+    "other": "Reports for this dispute"
+  },
+  "report.review_link": {
+    "other": "Read report summaries for this dispute"
+  },
+  "report.review_explanation": {
+    "other": "Only the report category and handling status are shown here. Reporter identities and report notes are available only to independent administrators."
+  },
+  "report.review_reference": {
+    "other": "Report reference: %[1]s"
+  },
+  "report.review_empty": {
+    "other": "There are no report summaries for this dispute."
+  },
+  "report.review_back": {
+    "other": "Back to dispute"
+  },
+  "report.reported_by": {
+    "other": "Reported by %[1]s"
+  },
+  "report.handling_note_label": {
+    "other": "Note (optional, administrators only)"
+  },
+  "report.mark_handled": {
+    "other": "Mark handled"
+  },
+  "report.mark_handled_named": {
+    "other": "Mark handled: report from %[1]s"
+  },
+  "report.handling_note": {
+    "other": "Note: %[1]s"
+  },
+  "report.empty": {
+    "other": "No reports to show."
+  },
+  "trade.title": {
+    "other": "Trades"
+  },
+  "trade.propose.title": {
+    "other": "Propose a trade"
+  },
+  "trade.review.range_detail": {
+    "other": "the resulting balance would exceed the supported range"
+  },
+  "trade.review.title": {
+    "other": "Review your trade"
+  },
+  "trade.detail.title": {
+    "other": "Trade detail"
+  },
+  "trade.history.title": {
+    "other": "History"
+  },
+  "trade.member_with_reference": {
+    "other": "%[1]s (member reference %[2]s)"
+  },
+  "trade.propose.choose_member": {
+    "other": "Choose a member"
+  },
+  "trade.propose.counterparty": {
+    "other": "Who is the trade with?"
+  },
+  "trade.propose.direction": {
+    "other": "Direction"
+  },
+  "trade.propose.pay": {
+    "other": "I pay them"
+  },
+  "trade.propose.receive": {
+    "other": "They pay me"
+  },
+  "trade.amount": {
+    "other": "Amount"
+  },
+  "trade.amount_value": {
+    "other": "%[1]s %[2]s"
+  },
+  "trade.propose.amount_hint": {
+    "one": "Amount in credits, up to %[1]d decimal place.",
+    "other": "Amount in credits, up to %[1]d decimal places."
+  },
+  "trade.propose.amount_help": {
+    "one": "Amount: enter a number with up to %[1]d decimal place, for example %[2]s.",
+    "other": "Amount: enter a number with up to %[1]d decimal places, for example %[2]s."
+  },
+  "trade.propose.amount_decimals": {
+    "one": "Amount: this network allows at most %[1]d decimal place. Remove the extra digits.",
+    "other": "Amount: this network allows at most %[1]d decimal places. Remove the extra digits."
+  },
+  "trade.propose.note": {
+    "other": "What is it for? (optional)"
+  },
+  "trade.propose.review": {
+    "other": "Review trade"
+  },
+  "trade.cancel": {
+    "other": "Cancel"
+  },
+  "trade.propose.counterparty_required": {
+    "other": "Counterparty: choose another active member from the list."
+  },
+  "trade.propose.direction_required": {
+    "other": "Direction: choose whether you pay or are paid."
+  },
+  "trade.propose.invalid": {
+    "other": "Not sent. Fix the problems below. Nothing changed."
+  },
+  "trade.propose.sent": {
+    "other": "Trade sent to %[1]s. It is pending until they respond; pending trades are not part of your balance."
+  },
+  "trade.sentence.pay": {
+    "other": "You pay %[1]s %[2]s %[3]s"
+  },
+  "trade.sentence.receive": {
+    "other": "%[1]s pays you %[2]s %[3]s"
+  },
+  "trade.sentence.other": {
+    "other": "%[1]s pays %[2]s %[3]s %[4]s"
+  },
+  "trade.review.too_much": {
+    "other": "This is more than your available to spend (%[1]s). It will be refused if you send it. Go back and enter a smaller amount."
+  },
+  "trade.review.with": {
+    "other": "With"
+  },
+  "trade.balance.now": {
+    "other": "Your balance now"
+  },
+  "trade.balance.if_accepted": {
+    "other": "Your balance if accepted"
+  },
+  "trade.balance.after_posting": {
+    "other": "Your balance after posting"
+  },
+  "trade.available.now": {
+    "other": "Available to spend now"
+  },
+  "trade.available.after_sending": {
+    "other": "Available to spend after sending"
+  },
+  "trade.available.after_posting": {
+    "other": "Available to spend after posting"
+  },
+  "trade.review.reserved": {
+    "other": "%[1]s (the amount is set aside while the trade is pending)"
+  },
+  "trade.review.awaiting": {
+    "other": "%[1]s (it rises only once the trade is accepted)"
+  },
+  "trade.expires": {
+    "other": "Expires"
+  },
+  "trade.review.expiry": {
+    "one": "after %[1]d day if not answered",
+    "other": "after %[1]d days if not answered"
+  },
+  "trade.note": {
+    "other": "Note"
+  },
+  "trade.note_value": {
+    "other": "Note: %[1]s"
+  },
+  "trade.review.pending_notice": {
+    "other": "Nothing is posted until the other member accepts."
+  },
+  "trade.review.send": {
+    "other": "Send trade"
+  },
+  "trade.review.edit": {
+    "other": "Go back and edit"
+  },
+  "trade.payer": {
+    "other": "Payer"
+  },
+  "trade.payee": {
+    "other": "Payee"
+  },
+  "trade.accept.notice": {
+    "other": "Accepting posts this trade to both accounts straight away."
+  },
+  "trade.accept.confirm": {
+    "other": "Confirm and accept"
+  },
+  "trade.back": {
+    "other": "Go back"
+  },
+  "trade.reason": {
+    "other": "Reason"
+  },
+  "trade.action.reason_hint": {
+    "other": "Required when you cancel a trade you are not part of."
+  },
+  "trade.action.confirm": {
+    "other": "%[1]s this trade"
+  },
+  "trade.action.title": {
+    "other": "%[1]s this trade?"
+  },
+  "trade.action.accept": {
+    "other": "Accept"
+  },
+  "trade.action.decline": {
+    "other": "Decline"
+  },
+  "trade.action.cancel": {
+    "other": "Cancel"
+  },
+  "trade.action.release": {
+    "other": "Nothing is posted and the amount set aside for this trade is released."
+  },
+  "trade.accept.title": {
+    "other": "Review before accepting"
+  },
+  "trade.action.completed": {
+    "other": "Trade completed."
+  },
+  "trade.action.declined": {
+    "other": "Trade declined. Nothing was posted."
+  },
+  "trade.action.cancelled": {
+    "other": "Trade cancelled. Nothing was posted."
+  },
+  "trade.action.completed_balance": {
+    "other": "Trade completed. Your balance is now %[1]s · %[2]s."
+  },
+  "trade.status.label": {
+    "other": "Status"
+  },
+  "trade.status.pending": {
+    "other": "Pending"
+  },
+  "trade.status.completed": {
+    "other": "Completed"
+  },
+  "trade.status.declined": {
+    "other": "Declined"
+  },
+  "trade.status.cancelled": {
+    "other": "Cancelled"
+  },
+  "trade.status.expired": {
+    "other": "Expired"
+  },
+  "trade.status.disputed": {
+    "other": "Disputed"
+  },
+  "trade.status.reversed": {
+    "other": "Reversed"
+  },
+  "trade.history.proposed": {
+    "other": "Proposed"
+  },
+  "trade.detail.suspended_accept": {
+    "other": "Accept is not available while your membership is suspended. You can still decline."
+  },
+  "trade.detail.inactive_dispute": {
+    "other": "Raising a dispute is not available while your membership is not active."
+  },
+  "trade.posted": {
+    "other": "Posted"
+  },
+  "trade.ledger_reference": {
+    "other": "Ledger reference"
+  },
+  "trade.reverses": {
+    "other": "Reverses"
+  },
+  "trade.adjusts": {
+    "other": "Adjusts"
+  },
+  "trade.reversals": {
+    "other": "Reversals"
+  },
+  "trade.original_entry": {
+    "other": "The original entry"
+  },
+  "trade.detail.accept": {
+    "other": "Review and accept"
+  },
+  "trade.detail.cancel": {
+    "other": "Cancel this proposal"
+  },
+  "trade.detail.dispute": {
+    "other": "Raise a dispute"
+  },
+  "trade.detail.report": {
+    "other": "Report a problem with this transaction"
+  },
+  "trade.detail.view_dispute": {
+    "other": "View the dispute"
+  },
+  "trade.detail.reverse": {
+    "other": "Reverse this trade (administrator)"
+  },
+  "trade.detail.timeline": {
+    "other": "Timeline"
+  },
+  "trade.detail.no_changes": {
+    "other": "No status changes recorded yet."
+  },
+  "trade.detail.back": {
+    "other": "Back to trades"
+  },
+  "trade.list.waiting": {
+    "other": "Waiting for you"
+  },
+  "trade.list.waiting_empty": {
+    "other": "Nothing is waiting for you."
+  },
+  "trade.list.pending_empty": {
+    "other": "No trades are waiting for someone else."
+  },
+  "trade.list.past": {
+    "other": "Past trades"
+  },
+  "trade.filter.show": {
+    "other": "Show"
+  },
+  "trade.filter.all": {
+    "other": "All statuses"
+  },
+  "trade.filter.apply": {
+    "other": "Apply filter"
+  },
+  "trade.list.past_empty": {
+    "other": "No past trades yet. Completed and closed trades appear here."
+  },
+  "trade.history.pending_notice": {
+    "other": "Pending trades are not part of your balance."
+  },
+  "trade.history.pending_empty": {
+    "other": "No pending trades."
+  },
+  "trade.history.closed": {
+    "other": "Posted and closed"
+  },
+  "trade.history.empty": {
+    "other": "Nothing here yet. Once you trade, each entry shows who paid whom, the signed amount, its status and ledger reference."
+  },
+  "trade.history.activity_log": {
+    "other": "Account activity log"
+  },
+  "trade.history.download": {
+    "other": "Download your data"
+  },
+  "trade.history.file_format": {
+    "other": "File format"
+  },
+  "trade.history.format_csv": {
+    "other": "CSV (spreadsheet)"
+  },
+  "trade.history.format_json": {
+    "other": "JSON"
+  },
+  "trade.history.export": {
+    "other": "Download my transactions"
+  },
+  "trade.history.reason": {
+    "other": "Reason: %[1]s"
+  },
+  "trade.history.reverses": {
+    "other": "Reverses %[1]s"
+  },
+  "trade.history.adjusts": {
+    "other": "Adjusts %[1]s"
+  },
+  "trade.history.original_entry": {
+    "other": "the original entry"
   },
   "setup.title": {
     "other": "Create a network"
@@ -994,594 +2120,2292 @@
   "sessions.help_bulk": {
     "other": "Sign out other sessions ends all your other sign-ins after confirmation and keeps this browser signed in. It also cancels sign-ins waiting for a two-step code. Session actions do not revoke API tokens. If a sign-in has already expired or ended, refresh the inventory."
   },
-  "validation.label.cursor": {
-    "other": "Page position"
+  "onboarding.networks.title": {
+    "other": "Your networks"
   },
-  "validation.label.login": {
-    "other": "Login"
+  "onboarding.networks.empty": {
+    "other": "You are not a member of any network yet. Open an invitation link from a network administrator to join one, or start your own."
   },
-  "validation.label.password": {
-    "other": "Password"
+  "onboarding.networks.create": {
+    "other": "Create a network"
   },
-  "validation.label.display_name": {
-    "other": "Display name"
+  "onboarding.networks.status.pending": {
+    "other": "pending"
   },
-  "validation.label.amount": {
-    "other": "Amount"
-  },
-  "validation.label.counterparty_id": {
-    "other": "Counterparty"
-  },
-  "validation.label.direction": {
-    "other": "Direction"
-  },
-  "validation.label.title": {
-    "other": "Title"
-  },
-  "validation.label.price": {
-    "other": "Price"
-  },
-  "validation.label.member_id": {
-    "other": "Member"
-  },
-  "validation.label.related_transaction_id": {
-    "other": "Related trade reference"
-  },
-  "validation.label.reason": {
-    "other": "Reason"
-  },
-  "validation.label.reason_code": {
-    "other": "Reason for removal"
-  },
-  "validation.label.transaction_id": {
-    "other": "Trade reference"
-  },
-  "validation.label.rationale": {
-    "other": "Rationale"
-  },
-  "validation.label.category": {
-    "other": "Category"
-  },
-  "validation.label.name": {
-    "other": "Name"
-  },
-  "validation.label.slug": {
-    "other": "Web address name"
-  },
-  "validation.label.limit": {
-    "other": "Credit limit"
-  },
-  "validation.label.type": {
-    "other": "Type"
-  },
-  "validation.label.outcome": {
-    "other": "Outcome"
-  },
-  "validation.label.ttl": {
-    "other": "Valid for"
-  },
-  "validation.label.status": {
-    "other": "Status"
-  },
-  "validation.label.currency_name": {
-    "other": "Credit unit name"
-  },
-  "validation.label.default_credit_limit": {
-    "other": "Default credit limit"
-  },
-  "validation.label.max_tx_amount": {
-    "other": "Largest trade"
-  },
-  "validation.label.proposal_expiry_days": {
-    "other": "Proposal expiry (days)"
-  },
-  "validation.label.dispute_window_days": {
-    "other": "Dispute window (days)"
-  },
-  "validation.label.join_mode": {
-    "other": "Join mode"
-  },
-  "validation.label.departure_rule": {
-    "other": "Departure rule"
-  },
-  "validation.label.signup_grant": {
-    "other": "Sign-up grant"
-  },
-  "validation.label.limit_warning_days": {
-    "other": "Limit warning (days)"
-  },
-  "validation.label.response_period_days": {
-    "other": "Dispute response period"
-  },
-  "validation.label.re_review_window_days": {
-    "other": "Re-review window"
-  },
-  "validation.label.limit_warning_percent": {
-    "other": "Limit warning percent"
-  },
-  "validation.label.inactivity_days": {
-    "other": "Inactivity flag"
-  },
-  "validation.label.waive_reason": {
-    "other": "Reason for not waiting"
-  },
-  "validation.label.notice_days": {
-    "other": "Notice (days)"
-  },
-  "validation.label.notice_reason": {
-    "other": "Reason for shorter notice"
-  },
-  "validation.label.terms_version": {
-    "other": "Terms"
-  },
-  "validation.label.body": {
-    "other": "Terms text"
-  },
-  "validation.label.statement": {
-    "other": "Statement"
-  },
-  "validation.label.note": {
-    "other": "Note"
-  },
-  "validation.label.expires_at": {
-    "other": "Expiry"
-  },
-  "validation.label.confirm_open_grant_risk": {
-    "other": "Open joining with a sign-up grant"
-  },
-  "validation.label.description": {
-    "other": "Description"
-  },
-  "validation.label.response": {
-    "other": "Response"
-  },
-  "validation.label.time_zone": {
-    "other": "Time zone"
-  },
-  "validation.label.version": {
-    "other": "Terms version"
-  },
-  "validation.label.effective_at": {
-    "other": "Takes effect"
-  },
-  "validation.label.supersedes_id": {
-    "other": "Replaces announcement"
-  },
-  "validation.label.listing_id": {
-    "other": "Listing"
-  },
-  "validation.label.listing": {
-    "other": "Listings"
-  },
-  "validation.label.target_type": {
-    "other": "Report about"
-  },
-  "validation.label.target_id": {
-    "other": "Reported item"
-  },
-  "validation.label.role": {
-    "other": "Role"
-  },
-  "validation.label.scopes": {
-    "other": "Token permissions"
-  },
-  "validation.label.code": {
-    "other": "Code"
-  },
-  "validation.label.format": {
-    "other": "File format"
-  },
-  "validation.label.scope": {
-    "other": "Export type"
-  },
-  "validation.label.kind": {
-    "other": "Challenge type"
-  },
-  "validation.label.decimals": {
-    "other": "Decimal places"
-  },
-  "validation.label.dual_control_threshold": {
-    "other": "Dual-control threshold"
-  },
-  "validation.label.threshold": {
-    "other": "Dual-control threshold"
-  },
-  "validation.label.report": {
-    "other": "Ledger report"
-  },
-  "validation.label.page": {
-    "other": "Page"
-  },
-  "validation.label.idempotency_key": {
-    "other": "Form key"
-  },
-  "validation.label.operator": {
-    "other": "Operator"
-  },
-  "validation.label.directory_visibility": {
-    "other": "Directory visibility"
-  },
-  "validation.label.ids": {
-    "other": "Notices"
-  },
-  "validation.choice.counterparty_id": {
-    "other": "Choose another active member from the list."
-  },
-  "validation.choice.member_id": {
-    "other": "Choose a member from the list."
-  },
-  "validation.choice.related_transaction_id": {
-    "other": "Choose a posted trade involving this member, or leave the reference empty."
-  },
-  "validation.choice.direction": {
-    "other": "Choose whether you pay or are paid."
-  },
-  "validation.choice.category": {
-    "other": "Choose one of the listed categories."
-  },
-  "validation.choice.outcome": {
-    "other": "Choose one of the listed outcomes."
-  },
-  "validation.choice.type": {
-    "other": "Choose one of the listed types."
-  },
-  "validation.choice.status": {
-    "other": "Choose one of the listed statuses."
-  },
-  "validation.choice.format": {
-    "other": "Choose CSV or JSON."
-  },
-  "validation.choice.listing_id": {
-    "other": "Start again from the other member's listing, or propose without one."
-  },
-  "validation.choice.terms_version": {
-    "other": "Read the terms shown, tick the box to accept them and try again."
-  },
-  "validation.choice.reason_code": {
-    "other": "Choose one of the listed reasons."
-  },
-  "validation.choice.confirm_open_grant_risk": {
-    "other": "Tick the box to confirm the risk, or choose another join mode or no sign-up grant, then try again."
-  },
-  "validation.detail.choice_required": {
-    "other": "nothing was chosen"
-  },
-  "validation.detail.choice_invalid": {
-    "other": "that choice is not on the list"
-  },
-  "validation.fix.required": {
-    "other": "Fill it in and try again."
-  },
-  "validation.fix.incorrect": {
-    "other": "Type it again carefully and try again."
-  },
-  "validation.fix.too_long": {
-    "other": "Shorten it and try again."
-  },
-  "validation.fix.control_characters": {
-    "other": "Remove hidden or special characters and try again."
-  },
-  "validation.fix.different": {
-    "other": "Choose a different one and try again."
-  },
-  "validation.fix.smaller": {
-    "other": "Enter a smaller amount and try again."
-  },
-  "validation.fix.check": {
-    "other": "Check the value and try again."
-  },
-  "validation.refusal.overflow": {
-    "other": "Not done. The amount is too large to record on these accounts. Try a smaller amount. Nothing changed."
-  },
-  "validation.refusal.no_fields": {
-    "other": "Not saved. Something entered was not accepted. Check the form and try again. Nothing changed."
-  },
-  "validation.refusal.fields": {
-    "other": "Not saved. Fix the problems below. Nothing changed."
-  },
-  "validation.refusal.counterparty_inactive": {
-    "other": "Not sent. The other member is not active in this network, so they cannot take part in a trade. Nothing changed."
-  },
-  "validation.refusal.key_reused": {
-    "other": "Not sent. This form was already used with different details. Reload the page and start again. Nothing changed."
-  },
-  "validation.refusal.key_required": {
-    "other": "Not sent. The form is missing its safety key. Reload the page and try again. Nothing changed."
-  },
-  "validation.refusal.suspended": {
-    "other": "Not done. Trading in this network is paused (suspended). You can still read balances and history and download your data. Nothing changed."
-  },
-  "validation.refusal.invalid_state": {
-    "other": "Not done. This item is no longer in a state that allows that. Reload to see its current state. Nothing changed."
-  },
-  "validation.refusal.conflict": {
-    "other": "Not saved. That value is not available. Choose a different one. Nothing changed."
-  },
-  "validation.refusal.rate_limited": {
-    "other": "Too many attempts. Wait a minute and try again. Nothing changed."
-  },
-  "validation.fix.decimals": {
-    "other": "Use at most %[1]d decimal places and try again."
-  },
-  "validation.fix.number": {
-    "other": "Enter digits only, for example %[1]s."
-  },
-  "validation.field.message": {
-    "other": "%[1]s: %[2]s. %[3]s"
-  },
-  "validation.refusal.insufficient_credit": {
-    "other": "Not sent. This trade would take your available credit below zero. Try a smaller amount. Nothing changed."
-  },
-  "validation.refusal.insufficient_credit_available": {
-    "other": "Not sent. This trade would take your available credit below zero. Available to spend is %[1]s. Try a smaller amount. Nothing changed."
-  },
-  "validation.refusal.amount_exceeds": {
-    "other": "Not sent. The amount is above the largest single trade this network allows (%[1]s). Nothing changed."
-  },
-  "validation.refusal.blocked": {
-    "other": "Not done. %[1]s. Nothing changed."
-  },
-  "validation.refusal.approval_required": {
-    "other": "Not done. The amount is above the dual-control threshold, so one administrator cannot move it alone. Settle it first with an adjustment that a second administrator approves (Adjustments), then try again. Nothing changed."
-  },
-  "admin.reset.action": {
-    "other": "Reset password"
-  },
-  "admin.reset.consequence": {
-    "other": "A one-time temporary password is created and shown to you once. The member's sessions and API tokens end, their recovery codes stop working, and they must choose a new password at next sign-in. Give them the temporary password in person or by a channel you trust."
-  },
-  "admin.reset.confirm_title": {
-    "other": "Reset password: %[1]s?"
-  },
-  "admin.reset.done_title": {
-    "other": "Temporary password"
-  },
-  "admin.reset.self_refused": {
-    "other": "Not done. You cannot reset your own password here; use Change password. Nothing changed."
-  },
-  "admin.reset.throttled": {
-    "other": "Not done. You have reset too many passwords in the last hour. Try again later. Nothing changed."
-  },
-  "admin.reset.for_member": {
-    "other": "Temporary password for %[1]s"
-  },
-  "admin.reset.shown_once": {
-    "other": "This is the only time it is shown."
-  },
-  "admin.reset.instructions": {
-    "other": "Give it to %[1]s in person or by a channel you trust. They must choose a new password when they sign in. All their sessions and API tokens were ended."
-  },
-  "admin.reset.back_members": {
-    "other": "Back to members"
-  },
-  "admin.member_action.heading": {
-    "other": "%[1]s: %[2]s"
-  },
-  "admin.member_action.reason_hint": {
-    "other": "Required. It is recorded in the audit log."
-  },
-  "admin.member_action.go_back": {
-    "other": "Go back"
-  },
-  "directory.title": {
-    "other": "Directory"
-  },
-  "directory.search_label": {
-    "other": "Search by name"
-  },
-  "directory.search": {
-    "other": "Search"
-  },
-  "directory.results": {
-    "one": "%[1]d member found.",
-    "other": "%[1]d members found."
-  },
-  "directory.member_reference": {
-    "other": "(member reference %[1]s)"
-  },
-  "directory.propose": {
-    "other": "Propose a trade"
-  },
-  "directory.propose_with": {
-    "other": "Propose a trade with %[1]s"
-  },
-  "directory.empty": {
-    "other": "No members match. Try a shorter search, or clear it to see everyone."
-  },
-  "directory.pages": {
-    "other": "Directory pages"
-  },
-  "listing.title": {
-    "other": "Listings"
-  },
-  "listing.new": {
-    "other": "New listing"
-  },
-  "listing.all": {
-    "other": "All listings"
-  },
-  "listing.mine": {
-    "other": "My listings"
-  },
-  "listing.kind": {
-    "other": "Kind"
-  },
-  "listing.kind_prefix": {
-    "other": "Kind:"
-  },
-  "listing.types": {
-    "other": "Offers and requests"
-  },
-  "listing.offers": {
-    "other": "Offers"
-  },
-  "listing.requests": {
-    "other": "Requests"
-  },
-  "listing.offer": {
-    "other": "Offer"
-  },
-  "listing.request": {
-    "other": "Request"
-  },
-  "listing.offer_prefix": {
-    "other": "Offer:"
-  },
-  "listing.request_prefix": {
-    "other": "Request:"
-  },
-  "listing.search": {
-    "other": "Search"
-  },
-  "listing.filter": {
-    "other": "Filter"
-  },
-  "listing.tag.active": {
+  "onboarding.networks.status.active": {
     "other": "active"
   },
-  "listing.tag.paused": {
-    "other": "paused"
+  "onboarding.networks.status.suspended": {
+    "other": "suspended"
   },
-  "listing.tag.archived": {
-    "other": "archived"
+  "onboarding.networks.status.departed": {
+    "other": "departed"
   },
-  "listing.by_owner": {
-    "other": "By %[1]s"
+  "admin.audit.title": {
+    "other": "Audit and checks"
   },
-  "listing.owner_price": {
-    "other": "By %[1]s · price %[2]s %[3]s"
+  "admin.audit.system": {
+    "other": "System"
   },
-  "listing.price": {
-    "other": "price %[1]s %[2]s"
+  "admin.audit.filter_label": {
+    "other": "Filter by action"
   },
-  "listing.edit": {
-    "other": "Edit"
+  "admin.audit.filter_hint": {
+    "other": "For example trade.completed. Leave empty for everything."
   },
-  "listing.edit_named": {
-    "other": "Edit %[1]s"
+  "admin.audit.filter": {
+    "other": "Filter"
   },
-  "listing.propose": {
-    "other": "Propose a trade"
+  "admin.audit.region": {
+    "other": "Audit log table"
   },
-  "listing.propose_about": {
-    "other": "Propose a trade about %[1]s"
+  "admin.audit.caption": {
+    "other": "Audit log"
   },
-  "listing.report": {
-    "other": "Report"
+  "admin.audit.column.number": {
+    "other": "No."
   },
-  "listing.report_named": {
-    "other": "Report %[1]s"
+  "admin.audit.column.when": {
+    "other": "When"
   },
-  "listing.empty": {
-    "other": "No listings to show. Offers and requests that members publish appear here."
+  "admin.audit.column.who": {
+    "other": "Who"
   },
-  "listing.publish_first": {
-    "other": "Publish the first one."
+  "admin.audit.column.action": {
+    "other": "Action"
   },
-  "listing.offer_hint": {
-    "other": "Offer: something I provide"
+  "admin.audit.column.target": {
+    "other": "Target"
   },
-  "listing.request_hint": {
-    "other": "Request: something I want"
+  "admin.audit.column.reason": {
+    "other": "Reason"
   },
-  "listing.field_title": {
-    "other": "Title"
+  "admin.audit.empty": {
+    "other": "No audit events match."
   },
-  "listing.field_description": {
-    "other": "Description (optional)"
+  "admin.audit.check_title": {
+    "other": "Consistency check"
   },
-  "listing.field_price": {
-    "other": "Price (optional)"
+  "admin.audit.check_explanation": {
+    "other": "Recomputes balances and checks the audit chain. The run is recorded."
   },
-  "listing.price_hint_new": {
-    "other": "Amount in credits, up to the network's decimal places. Leave empty if open to offers."
+  "admin.audit.check_run": {
+    "other": "Run consistency check"
   },
-  "listing.price_hint_edit": {
-    "other": "Amount in credits. Empty removes the price."
+  "admin.check.title": {
+    "other": "Consistency check result"
   },
-  "listing.publish": {
-    "other": "Publish listing"
+  "admin.check.passed": {
+    "other": "Check passed: no problems found."
   },
-  "listing.cancel": {
-    "other": "Cancel"
+  "admin.check.failed": {
+    "other": "Check failed: problems found."
   },
-  "listing.save": {
-    "other": "Save"
+  "admin.check.history.title": {
+    "other": "Historical credit-limit coverage"
   },
-  "listing.status_label": {
+  "admin.check.history.complete": {
+    "other": "Coverage is complete. The check result separately reports any problems found."
+  },
+  "admin.check.history.partial": {
+    "other": "Coverage is partial: some debits lack usable historical evidence. The check result separately reports any problems found."
+  },
+  "admin.check.history.unknown": {
+    "other": "Historical credit-limit coverage was not recorded for this check."
+  },
+  "admin.check.history.checked": {
+    "one": "%[1]d debit was checked against its historical credit limit.",
+    "other": "%[1]d debits were checked against their historical credit limits."
+  },
+  "admin.check.history.system": {
+    "one": "%[1]d system debit was exempt from credit limits.",
+    "other": "%[1]d system debits were exempt from credit limits."
+  },
+  "admin.check.history.legacy": {
+    "one": "%[1]d debit predates evidence collection and has no recorded historical limit.",
+    "other": "%[1]d debits predate evidence collection and have no recorded historical limits."
+  },
+  "admin.check.history.unverifiable": {
+    "one": "%[1]d debit has missing or unusable evidence from the period covered by historical checks.",
+    "other": "%[1]d debits have missing or unusable evidence from the period covered by historical checks."
+  },
+  "admin.check.back": {
+    "other": "Back to audit and checks"
+  },
+  "admin.exports.title": {
+    "other": "Exports"
+  },
+  "admin.exports.explanation": {
+    "other": "Exports are recorded in the audit log and download as one zip file."
+  },
+  "admin.exports.scope_label": {
+    "other": "What to export"
+  },
+  "admin.exports.scope.ledger": {
+    "other": "Ledger: accounts, trades, entries"
+  },
+  "admin.exports.scope.members": {
+    "other": "Members and roles"
+  },
+  "admin.exports.scope.audit": {
+    "other": "Audit history"
+  },
+  "admin.exports.scope.full": {
+    "other": "Everything"
+  },
+  "admin.exports.format_label": {
+    "other": "File format"
+  },
+  "admin.exports.format.csv": {
+    "other": "CSV"
+  },
+  "admin.exports.format.json": {
+    "other": "JSON"
+  },
+  "admin.exports.download": {
+    "other": "Download export"
+  },
+  "my_audit.title": {
+    "other": "Account activity log"
+  },
+  "my_audit.staff": {
+    "other": "Network staff"
+  },
+  "my_audit.system": {
+    "other": "System"
+  },
+  "my_audit.explanation": {
+    "other": "Events recorded about your account. Other people's names and details are left out."
+  },
+  "my_audit.filter_label": {
+    "other": "Filter by action"
+  },
+  "my_audit.filter_hint": {
+    "other": "For example trade.completed. Leave empty for everything."
+  },
+  "my_audit.filter": {
+    "other": "Filter"
+  },
+  "my_audit.region": {
+    "other": "Activity log table"
+  },
+  "my_audit.caption": {
+    "other": "Activity log"
+  },
+  "my_audit.column.number": {
+    "other": "No."
+  },
+  "my_audit.column.when": {
+    "other": "When"
+  },
+  "my_audit.column.who": {
+    "other": "Who"
+  },
+  "my_audit.column.action": {
+    "other": "Action"
+  },
+  "my_audit.column.about": {
+    "other": "About"
+  },
+  "my_audit.column.reason": {
+    "other": "Reason"
+  },
+  "my_audit.empty": {
+    "other": "No events match."
+  },
+  "admin.check.summary": {
+    "one": "Ledger sequence %[2]s; %[1]d audit event checked.",
+    "other": "Ledger sequence %[2]s; %[1]d audit events checked."
+  },
+  "admin.adjust.title": {
+    "other": "Adjustments"
+  },
+  "admin.adjust.choose_member": {
+    "other": "Choose a member"
+  },
+  "admin.adjust.member_required": {
+    "other": "Member: choose a member other than yourself."
+  },
+  "admin.adjust.direction_required": {
+    "other": "Direction: choose credit or debit."
+  },
+  "admin.adjust.reason_required": {
+    "other": "Reason: a reason is required for every adjustment. Write why it is needed."
+  },
+  "admin.adjust.related_required": {
+    "other": "Choose a posted transaction involving the adjusted member."
+  },
+  "admin.adjust.invalid": {
+    "other": "Not posted. Fix the problems below. Nothing changed."
+  },
+  "admin.adjust.credit": {
+    "other": "Credit (balance goes up)"
+  },
+  "admin.adjust.debit": {
+    "other": "Debit (balance goes down)"
+  },
+  "admin.adjust.review_title": {
+    "other": "Review adjustment"
+  },
+  "admin.adjust.queued": {
+    "other": "Adjustment for %[1]s is above the dual-control threshold. Nothing is posted yet: another administrator must approve it before it expires."
+  },
+  "admin.adjust.posted": {
+    "other": "Adjustment posted for %[1]s. Their balance is now %[2]s · %[3]s."
+  },
+  "admin.adjust.intro": {
+    "other": "An adjustment is an audited correction against the network's system account. Every adjustment needs a reason. You will review the effect before it is posted."
+  },
+  "admin.adjust.member": {
+    "other": "Member"
+  },
+  "admin.adjust.direction": {
+    "other": "Direction"
+  },
+  "admin.adjust.credit_choice": {
+    "other": "Credit: the member's balance goes up"
+  },
+  "admin.adjust.debit_choice": {
+    "other": "Debit: the member's balance goes down"
+  },
+  "admin.adjust.amount": {
+    "other": "Amount"
+  },
+  "admin.adjust.amount_value": {
+    "other": "%[1]s %[2]s"
+  },
+  "admin.adjust.amount_hint": {
+    "one": "Amount in credits, up to %[1]d decimal place.",
+    "other": "Amount in credits, up to %[1]d decimal places."
+  },
+  "admin.adjust.reason": {
+    "other": "Reason"
+  },
+  "admin.adjust.reason_hint": {
+    "other": "Required. Recorded in the audit log."
+  },
+  "admin.adjust.related_optional": {
+    "other": "Related transaction (optional)"
+  },
+  "admin.adjust.related_hint": {
+    "other": "Transaction ID of a posted entry involving this member. Leave blank for a standalone correction."
+  },
+  "admin.adjust.related": {
+    "other": "Related transaction"
+  },
+  "admin.adjust.original_entry": {
+    "other": "The original entry"
+  },
+  "admin.adjust.balance_now": {
+    "other": "Their balance now"
+  },
+  "admin.adjust.balance_after": {
+    "other": "Their balance after"
+  },
+  "admin.adjust.post": {
+    "other": "Post adjustment"
+  },
+  "admin.adjust.edit": {
+    "other": "Go back and edit"
+  },
+  "admin.adjust.approval_title": {
+    "other": "Review adjustment approval"
+  },
+  "admin.adjust.approval_notice": {
+    "other": "Nothing is posted until you confirm approval."
+  },
+  "admin.adjust.requested_by": {
+    "other": "Requested by"
+  },
+  "admin.adjust.approval_recheck": {
+    "other": "The request, permissions and available credit are checked again when you confirm. Balances may change while you review."
+  },
+  "admin.adjust.approve": {
+    "other": "Approve and post"
+  },
+  "admin.adjust.back_without": {
+    "other": "Go back without approving"
+  },
+  "admin.adjust.pending_title": {
+    "other": "Adjustments awaiting approval"
+  },
+  "admin.adjust.threshold": {
+    "other": "Adjustments above %[1]s %[2]s need approval from a second administrator before anything is posted. A request that is not decided in time expires and posts nothing."
+  },
+  "admin.adjust.dual_off": {
+    "other": "Dual control is off for this network, so adjustments post at once. Requests made earlier are listed here."
+  },
+  "admin.adjust.filter_label": {
+    "other": "Show requests"
+  },
+  "admin.adjust.filter_pending": {
+    "other": "Waiting for approval"
+  },
+  "admin.adjust.filter_approved": {
+    "other": "Approved"
+  },
+  "admin.adjust.filter_rejected": {
+    "other": "Rejected"
+  },
+  "admin.adjust.filter_cancelled": {
+    "other": "Cancelled"
+  },
+  "admin.adjust.filter_expired": {
+    "other": "Expired"
+  },
+  "admin.adjust.apply_filter": {
+    "other": "Apply filter"
+  },
+  "admin.adjust.table_label": {
+    "other": "Adjustment requests table"
+  },
+  "admin.adjust.caption": {
+    "other": "Adjustment requests in %[1]s"
+  },
+  "admin.adjust.adjustment": {
+    "other": "Adjustment"
+  },
+  "admin.adjust.status": {
     "other": "Status"
   },
-  "listing.status_hint": {
-    "other": "Paused listings are hidden. Archived listings are final and cannot be reopened."
+  "admin.adjust.actions": {
+    "other": "Actions"
   },
-  "listing.status.active": {
+  "admin.adjust.row_amount": {
+    "other": "%[1]s: %[2]s %[3]s"
+  },
+  "admin.adjust.related_sentence": {
+    "other": "Adjusts %[1]s"
+  },
+  "admin.adjust.original_entry_lower": {
+    "other": "the original entry"
+  },
+  "admin.adjust.status_by": {
+    "other": "%[1]s by %[2]s"
+  },
+  "admin.adjust.expired_suffix": {
+    "other": ": expired, nothing will be posted"
+  },
+  "admin.adjust.expires_suffix": {
+    "other": "; expires %[1]s"
+  },
+  "admin.adjust.review_named": {
+    "other": "Review approval for %[1]s"
+  },
+  "admin.adjust.review_approval": {
+    "other": "Review approval"
+  },
+  "admin.adjust.reject_named": {
+    "other": "Reject adjustment for %[1]s"
+  },
+  "admin.adjust.reject": {
+    "other": "Reject"
+  },
+  "admin.adjust.cancel_named": {
+    "other": "Cancel request for %[1]s"
+  },
+  "admin.adjust.cancel_request": {
+    "other": "Cancel request"
+  },
+  "admin.adjust.another_admin": {
+    "other": "Another administrator must decide this."
+  },
+  "admin.adjust.empty": {
+    "other": "No requests match this filter."
+  },
+  "admin.adjust.status.pending": {
+    "other": "pending"
+  },
+  "admin.adjust.status.approved": {
+    "other": "approved"
+  },
+  "admin.adjust.status.rejected": {
+    "other": "rejected"
+  },
+  "admin.adjust.status.cancelled": {
+    "other": "cancelled"
+  },
+  "admin.adjust.status.expired": {
+    "other": "expired"
+  },
+  "admin.adjust.request_approved": {
+    "other": "Adjustment request approved."
+  },
+  "admin.adjust.request_rejected": {
+    "other": "Adjustment request rejected."
+  },
+  "admin.adjust.request_cancelled": {
+    "other": "Adjustment request cancelled."
+  },
+  "admin.adjust.review_again": {
+    "other": "review this adjustment again before confirming; nothing changed"
+  },
+  "admin.adjust.forbidden": {
+    "other": "Not done. You cannot decide this request: it needs a different administrator, and never the member it adjusts. Nothing changed."
+  },
+  "admin.adjust.closed": {
+    "other": "Not done. This request has expired or was already decided. Nothing changed. The list below shows its current state."
+  },
+  "admin.adjust.closed_detail": {
+    "other": "this request has expired or was already decided"
+  },
+  "admin.adjust.independent_detail": {
+    "other": "a different independent administrator must decide this request"
+  },
+  "admin.adjust.range_detail": {
+    "other": "the resulting balance would exceed the supported range"
+  },
+  "admin.reverse.title": {
+    "other": "Reverse a trade"
+  },
+  "admin.reverse.reference_required": {
+    "other": "Trade reference: enter the reference of the completed trade to reverse. You can copy it from the trade page address."
+  },
+  "admin.reverse.reference_missing": {
+    "other": "Trade reference: no trade with this reference was found in this network."
+  },
+  "admin.reverse.reference_party": {
+    "other": "Trade reference: you took part in this trade, so you cannot reverse it. Ask another administrator."
+  },
+  "admin.reverse.reference_reversal": {
+    "other": "Trade reference: this is itself a reversal, and a reversal cannot be reversed."
+  },
+  "admin.reverse.reference_disputed": {
+    "other": "Trade reference: this trade is under dispute. A reviewer decides disputed trades from the review queue."
+  },
+  "admin.reverse.reference_empty": {
+    "other": "Trade reference: nothing is left to reverse on this trade."
+  },
+  "admin.reverse.reference_status": {
+    "other": "Trade reference: only a completed trade can be reversed. This one is %[1]s."
+  },
+  "admin.reverse.unavailable": {
+    "other": "This trade cannot be reversed."
+  },
+  "admin.reverse.amount_help": {
+    "one": "Amount: enter a number with up to %[1]d decimal place, for example %[2]s. Leave it empty to reverse everything that is left.",
+    "other": "Amount: enter a number with up to %[1]d decimal places, for example %[2]s. Leave it empty to reverse everything that is left."
+  },
+  "admin.reverse.amount_max": {
+    "other": "Amount: at most %[1]s is left to reverse on this trade."
+  },
+  "admin.reverse.reason_required": {
+    "other": "Reason: a reason is required for every reversal. Write why it is needed."
+  },
+  "admin.reverse.reason_long": {
+    "other": "Reason: this is too long. Use 500 characters or fewer."
+  },
+  "admin.reverse.invalid": {
+    "other": "Not reversed. Fix the problems below. Nothing changed."
+  },
+  "admin.reverse.review_title": {
+    "other": "Review reversal"
+  },
+  "admin.reverse.insufficient_credit": {
+    "other": "Not reversed. %[1]s does not have enough available credit to give this amount back. Nothing changed."
+  },
+  "admin.reverse.posted": {
+    "other": "Reversal posted: %[1]s %[2]s went back from %[3]s to %[4]s."
+  },
+  "admin.reverse.intro": {
+    "other": "A reversal gives credit back from the receiver of a completed trade to the payer. It is posted as a new entry, the original trade stays on record, and every reversal needs a reason. You cannot reverse a trade you took part in. Disputed trades are decided from the review queue."
+  },
+  "admin.reverse.payer": {
+    "other": "Payer"
+  },
+  "admin.reverse.payee": {
+    "other": "Payee"
+  },
+  "admin.reverse.amount": {
+    "other": "Amount"
+  },
+  "admin.reverse.amount_value": {
+    "other": "%[1]s %[2]s"
+  },
+  "admin.reverse.already_reversed": {
+    "other": "Already reversed"
+  },
+  "admin.reverse.remaining": {
+    "other": "Left to reverse"
+  },
+  "admin.reverse.reference": {
+    "other": "Trade reference"
+  },
+  "admin.reverse.reference_hint": {
+    "other": "The reference of the completed trade, as in the address of its page."
+  },
+  "admin.reverse.amount_to_reverse": {
+    "other": "Amount to reverse"
+  },
+  "admin.reverse.amount_hint": {
+    "one": "Optional. Up to %[1]d decimal place. Leave empty to reverse everything that is left.",
+    "other": "Optional. Up to %[1]d decimal places. Leave empty to reverse everything that is left."
+  },
+  "admin.reverse.reason": {
+    "other": "Reason"
+  },
+  "admin.reverse.reason_hint": {
+    "other": "Required. Recorded in the audit log and shown on the reversal."
+  },
+  "admin.reverse.confirmation_notice": {
+    "other": "Nothing is posted until you confirm. A posted reversal cannot be undone."
+  },
+  "admin.reverse.trade_label": {
+    "other": "Trade"
+  },
+  "admin.reverse.trade_sentence": {
+    "other": "%[1]s paid %[2]s %[3]s %[4]s"
+  },
+  "admin.reverse.reversal_label": {
+    "other": "Reversal"
+  },
+  "admin.reverse.full_sentence": {
+    "other": "%[1]s %[2]s go back from %[3]s to %[4]s. This reverses everything that is left, so the trade becomes Reversed."
+  },
+  "admin.reverse.partial_sentence": {
+    "other": "%[1]s %[2]s go back from %[3]s to %[4]s. This is a partial reversal; the trade stays Completed."
+  },
+  "admin.reverse.balance_now": {
+    "other": "%[1]s now"
+  },
+  "admin.reverse.balance_after": {
+    "other": "%[1]s after"
+  },
+  "admin.reverse.post": {
+    "other": "Post reversal"
+  },
+  "admin.reverse.edit": {
+    "other": "Go back and edit"
+  },
+  "admin.reset.forbidden": {
+    "other": "Not done. This password cannot be reset here. Use Change password for your own account, or ask the platform operator for help. Nothing changed."
+  },
+  "time_zone.display": {
+    "other": "Pages show times in your time zone. The API and the audit log always use UTC. Now it is %[1]s in %[2]s."
+  },
+  "time_zone.hint": {
+    "other": "An IANA name such as Europe/Berlin, Asia/Kolkata or America/Argentina/Buenos_Aires. Leave empty for UTC."
+  },
+  "time_zone.save": {
+    "other": "Save time zone"
+  },
+  "time_zone.invalid_summary": {
+    "other": "Not saved. Fix the problem below. Nothing changed."
+  },
+  "time_zone.invalid_field": {
+    "other": "Time zone: enter a name such as Europe/Berlin or America/Mexico_City, or leave it empty for UTC."
+  },
+  "time_zone.saved": {
+    "other": "Time zone saved."
+  },
+  "dispute.category.not_delivered": {
+    "other": "Not delivered"
+  },
+  "dispute.category.quality": {
+    "other": "Not as described or poor quality"
+  },
+  "dispute.category.wrong_amount": {
+    "other": "Wrong amount"
+  },
+  "dispute.category.unauthorised": {
+    "other": "I did not agree to this trade"
+  },
+  "dispute.category.other": {
+    "other": "Something else"
+  },
+  "dispute.status.open": {
+    "other": "Open, waiting for a reviewer"
+  },
+  "dispute.status.under_review": {
+    "other": "Under review"
+  },
+  "dispute.status.posting_pending": {
+    "other": "Decided, reversal not yet posted"
+  },
+  "dispute.status.resolved": {
+    "other": "Resolved"
+  },
+  "dispute.status.withdrawn": {
+    "other": "Withdrawn"
+  },
+  "dispute.title": {
+    "other": "Dispute"
+  },
+  "dispute.list_title": {
+    "other": "Disputes"
+  },
+  "dispute.queue_title": {
+    "other": "Dispute review queue"
+  },
+  "dispute.queue.all": {
+    "other": "All needing action"
+  },
+  "dispute.queue.waiting": {
+    "other": "Waiting for a reviewer"
+  },
+  "dispute.open_title": {
+    "other": "Raise a dispute"
+  },
+  "dispute.review_title": {
+    "other": "Review your dispute"
+  },
+  "dispute.invalid": {
+    "other": "Not sent. Fix the problems below. Nothing changed."
+  },
+  "dispute.statement.required": {
+    "other": "Statement: write what went wrong, in up to 2000 characters."
+  },
+  "dispute.statement.too_long": {
+    "other": "Statement: this is too long. Shorten it to 2000 characters or fewer."
+  },
+  "dispute.category.required": {
+    "other": "Reason: choose one of the reasons."
+  },
+  "dispute.not_eligible": {
+    "other": "Not sent. This trade cannot be disputed now: it must be completed, the dispute deadline must not have passed, and you must be a party to it. Nothing changed."
+  },
+  "dispute.opened": {
+    "other": "Dispute opened. The trade is marked Disputed. Your balance has not changed."
+  },
+  "dispute.withdrawn": {
+    "other": "Dispute withdrawn. The trade is Completed again and nothing was posted."
+  },
+  "dispute.review_started": {
+    "other": "Review started."
+  },
+  "dispute.posting_retried": {
+    "other": "Posting retried."
+  },
+  "dispute.responded": {
+    "other": "Your response was added. The reviewer and the other party can read it."
+  },
+  "dispute.rereview_requested": {
+    "other": "Re-review requested. A different reviewer will look at the decision. This can only be done once."
+  },
+  "dispute.rereview_recorded": {
+    "other": "Re-review decision recorded."
+  },
+  "dispute.decision_recorded": {
+    "other": "Decision recorded."
+  },
+  "dispute.not_eligible_deadline": {
+    "other": "Not sent. This trade cannot be disputed now: it must be completed, on or before its dispute deadline (%s), and you must be a party to it. Nothing changed."
+  },
+  "dispute.outcome.dismissed": {
+    "other": "Dismissed: the balance stands as before."
+  },
+  "dispute.outcome.upheld_pending": {
+    "other": "Upheld: a reversal of %s %s is decided but not yet posted."
+  },
+  "dispute.outcome.upheld_posted": {
+    "other": "Upheld: a reversal of %s %s has been posted."
+  },
+  "dispute.outcome.partial_pending": {
+    "other": "Partly upheld: a reversal of %s %s is decided but not yet posted."
+  },
+  "dispute.outcome.partial_posted": {
+    "other": "Partly upheld: a reversal of %s %s has been posted."
+  },
+  "dispute.event.opened": {
+    "other": "Opened"
+  },
+  "dispute.event.under_review": {
+    "other": "Under review"
+  },
+  "dispute.event.posting_pending": {
+    "other": "Posting pending"
+  },
+  "dispute.event.resolved": {
+    "other": "Resolved"
+  },
+  "dispute.event.withdrawn": {
+    "other": "Withdrawn"
+  },
+  "dispute.event.responded": {
+    "other": "Responded"
+  },
+  "dispute.event.rereview_requested": {
+    "other": "Rereview requested"
+  },
+  "dispute.event.rereview_confirmed": {
+    "other": "Rereview confirmed"
+  },
+  "dispute.event.rereview_upheld": {
+    "other": "Rereview upheld"
+  },
+  "dispute.event.rereview_partially_upheld": {
+    "other": "Rereview partially upheld"
+  },
+  "dispute.event_outcome.dismissed": {
+    "other": "dismissed"
+  },
+  "dispute.event_outcome.upheld": {
+    "other": "upheld"
+  },
+  "dispute.event_outcome.partially_upheld": {
+    "other": "partially upheld"
+  },
+  "dispute.event_with_outcome": {
+    "other": "%s (%s)"
+  },
+  "dispute.form.trade": {
+    "other": "Trade: %s (%s)."
+  },
+  "dispute.form.deadline": {
+    "other": "You can open a dispute on this trade until %s."
+  },
+  "dispute.form.completed_only": {
+    "other": "Only a completed trade can be disputed."
+  },
+  "dispute.form.no_balance_change": {
+    "other": "Opening a dispute does not change any balance."
+  },
+  "dispute.form.effect": {
+    "other": "The trade will be marked Disputed. Your balance and available credit do not change until a reviewer decides."
+  },
+  "dispute.trade_sentence": {
+    "other": "%s paid %s %s %s"
+  },
+  "dispute.opened_at": {
+    "other": "Opened %s."
+  },
+  "dispute.response_late": {
+    "other": "(no response yet; a reviewer will assess the case, silence decides nothing)"
+  },
+  "dispute.overdue": {
+    "other": "(overdue)"
+  },
+  "dispute.response_from": {
+    "other": "Response from %s"
+  },
+  "dispute.request_reason": {
+    "other": "Reason for the request: %s"
+  },
+  "dispute.rationale_value": {
+    "other": "Rationale: %s"
+  },
+  "dispute.rereview_explanation": {
+    "other": "You can ask once for a different reviewer to look at this decision, until %s. The original decision is kept; the re-review is recorded next to it."
+  },
+  "dispute.row": {
+    "other": "Dispute: %s"
+  },
+  "dispute.trades": {
+    "other": "trades"
+  },
+  "dispute.empty": {
+    "other": "You have no disputes. To contest a completed trade, open it from your %s and choose Raise a dispute."
+  },
+  "dispute.reason": {
+    "other": "Reason"
+  },
+  "dispute.your_statement": {
+    "other": "Your statement"
+  },
+  "dispute.effect": {
+    "other": "Effect"
+  },
+  "dispute.open_action": {
+    "other": "Open dispute"
+  },
+  "dispute.back_edit": {
+    "other": "Go back and edit"
+  },
+  "dispute.review_action": {
+    "other": "Review dispute"
+  },
+  "dispute.cancel": {
+    "other": "Cancel"
+  },
+  "dispute.waive_response": {
+    "other": "Decide without waiting for the other party's response"
+  },
+  "dispute.statement_label": {
+    "other": "What went wrong?"
+  },
+  "dispute.statement_hint": {
+    "other": "Up to 2000 characters. The other party and the reviewer will read this."
+  },
+  "dispute.statement": {
+    "other": "Statement"
+  },
+  "dispute.status": {
+    "other": "Status"
+  },
+  "dispute.trade": {
+    "other": "Trade"
+  },
+  "dispute.opened_by": {
+    "other": "Opened by"
+  },
+  "dispute.response_due": {
+    "other": "Response due"
+  },
+  "dispute.decision_target": {
+    "other": "Decision target"
+  },
+  "dispute.decision": {
+    "other": "Decision"
+  },
+  "dispute.rationale": {
+    "other": "Rationale"
+  },
+  "dispute.rereview": {
+    "other": "Re-review"
+  },
+  "dispute.timeline": {
+    "other": "Timeline"
+  },
+  "dispute.withdraw_action": {
+    "other": "Withdraw this dispute"
+  },
+  "dispute.start_review": {
+    "other": "Start review"
+  },
+  "dispute.retry_action": {
+    "other": "Retry posting the reversal"
+  },
+  "dispute.response_heading": {
+    "other": "Add your response"
+  },
+  "dispute.respond_action": {
+    "other": "Send response"
+  },
+  "dispute.rereview_heading": {
+    "other": "Ask for a re-review"
+  },
+  "dispute.request_rereview": {
+    "other": "Request re-review"
+  },
+  "dispute.rereview_decision_heading": {
+    "other": "Record the re-review decision"
+  },
+  "dispute.rereview_independent": {
+    "other": "You are not the reviewer who made the original decision."
+  },
+  "dispute.outcome": {
+    "other": "Outcome"
+  },
+  "dispute.confirmed_option": {
+    "other": "Confirmed: the original decision stands"
+  },
+  "dispute.rereview_upheld_option": {
+    "other": "Upheld: reverse what is still reversible"
+  },
+  "dispute.partial_option": {
+    "other": "Partly upheld: reverse part"
+  },
+  "dispute.rereview_review_action": {
+    "other": "Review re-review decision"
+  },
+  "dispute.decision_heading": {
+    "other": "Record a decision"
+  },
+  "dispute.dismissed_option": {
+    "other": "Dismissed: the balance stands"
+  },
+  "dispute.upheld_option": {
+    "other": "Upheld: reverse the whole trade"
+  },
+  "dispute.review_decision": {
+    "other": "Review decision"
+  },
+  "dispute.back": {
+    "other": "Back to disputes"
+  },
+  "dispute.response_label": {
+    "other": "Your response"
+  },
+  "dispute.response_hint": {
+    "other": "Up to 2000 characters. You can respond once. The reviewer and the person who opened the dispute will read it."
+  },
+  "dispute.rereview_reason_label": {
+    "other": "Why should it be looked at again?"
+  },
+  "dispute.short_hint": {
+    "other": "Up to 500 characters."
+  },
+  "dispute.amount_label": {
+    "other": "Amount to reverse (partly upheld only)"
+  },
+  "dispute.rationale_hint": {
+    "other": "Required. Both parties will see it."
+  },
+  "dispute.waive_reason": {
+    "other": "Reason for not waiting"
+  },
+  "dispute.waive_hint": {
+    "other": "Needed only if the response period has not ended and no response was given. It is recorded in the audit trail."
+  },
+  "dispute.amount_hint": {
+    "one": "Amount in credits, up to %[1]d decimal place.",
+    "other": "Amount in credits, up to %[1]d decimal places."
+  },
+  "dispute.amount_invalid": {
+    "one": "enter the amount to reverse, with up to %[1]d decimal place",
+    "other": "enter the amount to reverse, with up to %[1]d decimal places"
+  },
+  "dispute.review_again": {
+    "other": "review this decision again before confirming; nothing changed"
+  },
+  "dispute.show": {
+    "other": "Show"
+  },
+  "dispute.queue.independence": {
+    "other": "You cannot decide a dispute on a trade you took part in."
+  },
+  "dispute.queue.empty": {
+    "other": "The queue is empty. Disputes that need a decision appear here."
+  },
+  "dispute.decision.dismissed": {
+    "other": "Dismissed: the balances stand as they are."
+  },
+  "dispute.decision.upheld": {
+    "other": "Upheld: the whole remaining trade is reversed."
+  },
+  "dispute.decision.partial": {
+    "other": "Partly upheld: part of the trade is reversed."
+  },
+  "dispute.decision.outcome_required": {
+    "other": "choose dismissed, upheld or partly upheld"
+  },
+  "dispute.decision.rationale_required": {
+    "other": "required: both parties will see it"
+  },
+  "dispute.decision.rationale_too_long": {
+    "other": "too long: use 2000 characters or fewer"
+  },
+  "dispute.decision.title": {
+    "other": "Review your decision"
+  },
+  "dispute.decision.amount_max": {
+    "other": "must be at most the remaining reversible amount %s"
+  },
+  "dispute.rereview.pending": {
+    "other": "Re-review requested, waiting for a different reviewer."
+  },
+  "dispute.rereview.confirmed": {
+    "other": "Re-review decided: the original decision stands."
+  },
+  "dispute.rereview.decided": {
+    "other": "Re-review decided."
+  },
+  "dispute.rereview.upheld_posted": {
+    "other": "Re-review decided, upheld: a further reversal of %s %s has been posted."
+  },
+  "dispute.rereview.partial_posted": {
+    "other": "Re-review decided, partly upheld: a further reversal of %s %s has been posted."
+  },
+  "dispute.rereview.independent_required": {
+    "other": "the re-review needs an independent reviewer different from the original reviewer"
+  },
+  "dispute.rereview.none_pending": {
+    "other": "this dispute has no pending re-review"
+  },
+  "dispute.rereview.confirm_option": {
+    "other": "Confirmed: the original decision stands."
+  },
+  "dispute.rereview.uphold_option": {
+    "other": "Upheld: reverse the whole remaining amount."
+  },
+  "dispute.rereview.partial_option": {
+    "other": "Partly upheld: reverse part of the remaining amount."
+  },
+  "dispute.rereview.outcome_required": {
+    "other": "choose confirmed, upheld or partly upheld"
+  },
+  "dispute.rereview.rationale_required": {
+    "other": "write a rationale in 2000 characters or fewer; both parties will see it"
+  },
+  "dispute.rereview.other_undecided": {
+    "other": "another dispute on this trade is still undecided"
+  },
+  "dispute.rereview.balance_range": {
+    "other": "the resulting balance would exceed the supported range"
+  },
+  "dispute.rereview.title": {
+    "other": "Review the re-review decision"
+  },
+  "dispute.rereview.amount_max": {
+    "other": "choose a positive amount no greater than the remaining reversible amount %s"
+  },
+  "dispute.decision.confirm_explanation": {
+    "other": "Nothing is recorded until you confirm. Once recorded, a decision cannot be changed."
+  },
+  "dispute.rereview.confirm_explanation": {
+    "other": "Nothing is recorded until you confirm. The original decision stays in the history."
+  },
+  "dispute.decision.reversal_sentence": {
+    "other": "%s %s go back from %s to %s."
+  },
+  "dispute.decision.waiting": {
+    "other": "If %s does not have the credit available, the decision is recorded and the reversal waits as \"Decided, reversal not yet posted\" until you retry it."
+  },
+  "dispute.decision.no_reversal": {
+    "other": "None. No credit moves."
+  },
+  "dispute.decision.change_for": {
+    "other": "Change for %s"
+  },
+  "dispute.decision.amount_value": {
+    "other": "%s %s"
+  },
+  "dispute.decision.balance_now": {
+    "other": "%s: balance now"
+  },
+  "dispute.decision.balance_after": {
+    "other": "%s: balance after"
+  },
+  "dispute.rereview.atomic_explanation": {
+    "other": "Balances and permissions are checked again when you confirm. If the reversal cannot be posted, nothing is recorded."
+  },
+  "dispute.decision.reversal_label": {
+    "other": "Reversal"
+  },
+  "dispute.decision.unavailable_label": {
+    "other": "If the credit cannot be taken"
+  },
+  "dispute.decision.record": {
+    "other": "Record decision"
+  },
+  "dispute.decision.original_payer": {
+    "other": "Original payer"
+  },
+  "dispute.decision.original_payee": {
+    "other": "Original payee"
+  },
+  "dispute.rereview.record": {
+    "other": "Record re-review decision"
+  },
+  "terms.title": {
+    "other": "Network rules and terms"
+  },
+  "terms.accept_required": {
+    "other": "Not saved. Tick the box to say you accept these terms. Nothing changed."
+  },
+  "terms.accept_field": {
+    "other": "Accept: tick the box to accept these terms."
+  },
+  "terms.changed": {
+    "other": "These terms changed while you were reading. Please read the new version."
+  },
+  "terms.accepted_flash": {
+    "other": "You accepted version %[1]s of the network terms."
+  },
+  "terms.published": {
+    "other": "Version %[1]s, published %[2]s."
+  },
+  "terms.text_heading": {
+    "other": "Terms text"
+  },
+  "terms.accept_version": {
+    "other": "I have read and accept version %[1]s of these terms"
+  },
+  "terms.before_trade": {
+    "other": "You can read your balance and history without accepting, but you must accept before you propose or accept a trade."
+  },
+  "terms.accept_button": {
+    "other": "Accept these terms"
+  },
+  "terms.accepted_version": {
+    "other": "You accepted version %[1]s."
+  },
+  "terms.none": {
+    "other": "This network has not published terms yet."
+  },
+  "terms.rules_link": {
+    "other": "See the rules and their change log"
+  },
+  "terms.admin.title": {
+    "other": "Network terms"
+  },
+  "terms.admin.intro": {
+    "other": "Terms are the onboarding rules new members accept when they join. Publishing a new version tells every active member, and each must accept it before their next trade. Earlier versions are kept."
+  },
+  "terms.admin.current": {
+    "other": "Current: version %[1]s, published %[2]s."
+  },
+  "terms.admin.none": {
+    "other": "No terms are published yet; joining needs no acceptance."
+  },
+  "terms.admin.body_hint": {
+    "other": "Up to 20000 characters. Leave a blank line between paragraphs."
+  },
+  "terms.admin.publish": {
+    "other": "Publish new version"
+  },
+  "terms.admin.back": {
+    "other": "Back to network admin"
+  },
+  "terms.admin.published_flash": {
+    "other": "Published version %[1]s. Members were told and must accept it before their next trade."
+  },
+  "rules.title": {
+    "other": "Network rules"
+  },
+  "rules.yes": {
+    "other": "yes"
+  },
+  "rules.no": {
+    "other": "no"
+  },
+  "rules.change": {
+    "other": "%[1]s: %[2]s to %[3]s"
+  },
+  "rules.initial_value": {
+    "other": "%[1]s: %[2]s"
+  },
+  "rules.intro": {
+    "other": "These are the rules the network's administrators set. A change that could disadvantage members is announced first and only takes effect after its notice period. Earlier trades are never changed by a new rule."
+  },
+  "rules.terms_link": {
+    "other": "Read the network terms (version %[1]s)"
+  },
+  "rules.no_terms": {
+    "other": "This network has not published terms."
+  },
+  "rules.log_title": {
+    "other": "Change log"
+  },
+  "rules.version": {
+    "other": "Version %[1]s"
+  },
+  "rules.scheduled": {
+    "other": "Scheduled"
+  },
+  "rules.withdrawn": {
+    "other": "Cancelled before it took effect"
+  },
+  "rules.initial": {
+    "other": "Initial rules when the network was created."
+  },
+  "rules.announced_scheduled": {
+    "other": "Announced %[1]s; takes effect %[2]s."
+  },
+  "rules.announced_scheduled_notice": {
+    "one": "Announced %[2]s; takes effect %[3]s (%[1]d day's notice).",
+    "other": "Announced %[2]s; takes effect %[3]s (%[1]d days' notice)."
+  },
+  "rules.announced": {
+    "other": "Announced %[1]s."
+  },
+  "rules.in_force": {
+    "other": "Announced %[1]s; in force from %[2]s."
+  },
+  "rules.reason": {
+    "other": "Reason: %[1]s"
+  },
+  "rules.shorter_notice": {
+    "other": "Shorter notice because: %[1]s"
+  },
+  "rules.cancelled_flash": {
+    "other": "The scheduled change was cancelled. The rules in force stay as they are."
+  },
+  "leave.title": {
+    "other": "Leave this network"
+  },
+  "leave.confirm_required": {
+    "other": "Not done. Tick the box to confirm that you want to leave. Nothing changed."
+  },
+  "leave.confirm_error": {
+    "other": "Confirm: tick the box to leave this network."
+  },
+  "leave.left": {
+    "other": "You have left %[1]s. You can still read your history and download your data from the History page."
+  },
+  "leave.intro": {
+    "other": "Leaving ends your membership in %[1]s. Please read what happens first."
+  },
+  "leave.blocked": {
+    "other": "You cannot leave yet:"
+  },
+  "leave.resolve": {
+    "other": "Resolve these first (for example, ask for the dispute to be decided, or make another member an administrator), then come back."
+  },
+  "leave.proposals": {
+    "one": "%[1]d open trade proposal involving you will be cancelled, and the other members are told.",
+    "other": "%[1]d open trade proposals involving you will be cancelled, and the other members are told."
+  },
+  "leave.no_proposals": {
+    "other": "You have no open trade proposals."
+  },
+  "leave.balance_settle": {
+    "other": "Your balance is %[1]s. When you leave, your balance is settled to zero by a recorded adjustment."
+  },
+  "leave.balance_retain": {
+    "other": "Your balance is %[1]s. It stays on your closed account and your history is kept."
+  },
+  "leave.history_access": {
+    "other": "You keep read-only access to your own history and can download your data from the History page. Past trades are never changed."
+  },
+  "leave.no_rejoin": {
+    "other": "You cannot rejoin this network with the same account afterwards."
+  },
+  "leave.download_heading": {
+    "other": "Download your data first"
+  },
+  "leave.download_explanation": {
+    "other": "Before you leave, download a copy of your transactions and ledger entries in this network. It contains only trades you took part in. After leaving you can still download it from the %[1]s."
+  },
+  "leave.history_link": {
+    "other": "History page"
+  },
+  "leave.format_label": {
+    "other": "File format"
+  },
+  "leave.format_csv": {
+    "other": "CSV (spreadsheet)"
+  },
+  "leave.format_json": {
+    "other": "JSON"
+  },
+  "leave.download": {
+    "other": "Download my data"
+  },
+  "leave.reason_label": {
+    "other": "Reason (optional)"
+  },
+  "leave.reason_hint": {
+    "other": "Kept in the audit log. Up to 500 characters."
+  },
+  "leave.confirm": {
+    "other": "I understand and want to leave %[1]s"
+  },
+  "leave.cancel": {
+    "other": "Cancel"
+  },
+  "admin.member_action.approve": {
+    "other": "Approve"
+  },
+  "admin.member_action.approve_consequence": {
+    "other": "The person becomes an active member and can trade."
+  },
+  "admin.member_action.deny": {
+    "other": "Deny"
+  },
+  "admin.member_action.deny_consequence": {
+    "other": "The request is closed and the person does not join."
+  },
+  "admin.member_action.suspend": {
+    "other": "Suspend"
+  },
+  "admin.member_action.suspend_consequence": {
+    "other": "The member can no longer propose, accept or post. They can still view history and decline trades."
+  },
+  "admin.member_action.restore": {
+    "other": "Restore"
+  },
+  "admin.member_action.restore_consequence": {
+    "other": "The member becomes active again."
+  },
+  "admin.member_action.remove": {
+    "other": "Remove"
+  },
+  "admin.member_action.remove_consequence": {
+    "other": "The membership ends. Open proposals are cancelled and the member keeps read-only access to their own history. This cannot be undone: a departed member cannot rejoin."
+  },
+  "admin.member_action.grant_admin": {
+    "other": "Make administrator"
+  },
+  "admin.member_action.grant_admin_consequence": {
+    "other": "The member can change policy, limits and memberships and see other members' balances."
+  },
+  "admin.member_action.revoke_admin": {
+    "other": "Remove administrator role"
+  },
+  "admin.member_action.revoke_admin_consequence": {
+    "other": "The member loses administrator rights. A network must keep at least one administrator."
+  },
+  "admin.member_action.grant_reviewer": {
+    "other": "Make dispute reviewer"
+  },
+  "admin.member_action.grant_reviewer_consequence": {
+    "other": "The member can decide disputes they are not a party to."
+  },
+  "admin.member_action.revoke_reviewer": {
+    "other": "Remove reviewer role"
+  },
+  "admin.member_action.revoke_reviewer_consequence": {
+    "other": "The member can no longer decide disputes."
+  },
+  "admin.member_action.flag": {
+    "other": "Mark as in default"
+  },
+  "admin.member_action.flag_consequence": {
+    "other": "The member is marked as in default (a governance marker); the network policy decides what that blocks."
+  },
+  "admin.member_action.unflag": {
+    "other": "Clear default marker"
+  },
+  "admin.member_action.unflag_consequence": {
+    "other": "The default marker is removed."
+  },
+  "admin.member_action.limit": {
+    "other": "Set credit limit"
+  },
+  "admin.member_action.limit_consequence": {
+    "other": "Sets this member's credit limit. Leave the amount empty to go back to the network default."
+  },
+  "admin.members.title": {
+    "other": "Members"
+  },
+  "admin.members.status.pending": {
+    "other": "pending"
+  },
+  "admin.members.status.active": {
+    "other": "active"
+  },
+  "admin.members.status.suspended": {
+    "other": "suspended"
+  },
+  "admin.members.status.departed": {
+    "other": "departed"
+  },
+  "admin.members.role.admin": {
+    "other": "admin"
+  },
+  "admin.members.role.reviewer": {
+    "other": "reviewer"
+  },
+  "admin.members.filter_label": {
+    "other": "Show members"
+  },
+  "admin.members.filter_all": {
+    "other": "All"
+  },
+  "admin.members.filter_pending": {
+    "other": "Pending approval"
+  },
+  "admin.members.filter_active": {
     "other": "Active"
   },
-  "listing.status.paused": {
-    "other": "Paused"
+  "admin.members.filter_suspended": {
+    "other": "Suspended"
   },
-  "listing.status.archived": {
-    "other": "Archived"
+  "admin.members.filter_departed": {
+    "other": "Departed"
   },
-  "listing.edit_title": {
-    "other": "Edit listing"
+  "admin.members.filter_apply": {
+    "other": "Apply filter"
   },
-  "listing.invalid": {
+  "admin.members.table_label": {
+    "other": "Members table"
+  },
+  "admin.members.caption": {
+    "other": "Members of %[1]s"
+  },
+  "admin.members.roles": {
+    "other": "Roles"
+  },
+  "admin.members.actions": {
+    "other": "Actions"
+  },
+  "admin.members.in_default": {
+    "other": "in default"
+  },
+  "admin.members.member_role": {
+    "other": "member"
+  },
+  "admin.members.action_for": {
+    "other": "%[1]s %[2]s"
+  },
+  "admin.members.pages": {
+    "other": "Member list pages"
+  },
+  "admin.members.empty": {
+    "other": "No members match this filter."
+  },
+  "admin.member_action.choose_reason": {
+    "other": "Choose a reason"
+  },
+  "admin.member_action.removal_reason.rule_breach": {
+    "other": "Breach of network rules"
+  },
+  "admin.member_action.removal_reason.confirmed_fraud": {
+    "other": "Confirmed fraud"
+  },
+  "admin.member_action.removal_reason.dispute_non_response": {
+    "other": "Prolonged non-response to a dispute"
+  },
+  "admin.member_action.confirm_title": {
+    "other": "%[1]s: %[2]s?"
+  },
+  "admin.member_action.removal_conflict": {
+    "other": "Not done. You took part in the matter of this removal (the named trade, or a trade of this member that is still under dispute or re-review), so another administrator must decide it. Nothing changed."
+  },
+  "admin.member_action.invalid": {
     "other": "Not saved. Fix the problems below. Nothing changed."
   },
-  "listing.published": {
-    "other": "Listing published."
+  "admin.member_action.done": {
+    "other": "%[1]s: done for %[2]s."
   },
-  "listing.saved": {
-    "other": "Listing saved."
+  "admin.member_action.amount_hint": {
+    "other": "Amount in credits. Leave empty to use the network default."
   },
-  "listing.price_help": {
-    "one": "Price: enter a positive amount with up to %[1]d decimal place, for example %[2]s.",
-    "other": "Price: enter a positive amount with up to %[1]d decimal places, for example %[2]s."
+  "admin.member_action.removal_hint": {
+    "other": "Required. A member can be removed only for one of these reasons. The member's notice names it, and they can challenge the removal."
   },
-  "profile.reference_label": {
-    "other": "Member reference:"
+  "admin.member_action.trade_label": {
+    "other": "Trade reference (optional)"
   },
-  "profile.reference_note": {
-    "other": "Display names can repeat; the reference does not."
+  "admin.member_action.trade_hint": {
+    "other": "If the removal is about one trade, its reference from the trade page address. For fraud or a rules breach you cannot decide a removal about a trade you took part in; the check sees only the trade named here and trades still under dispute."
   },
-  "profile.reference_self": {
-    "other": "Tell it to the members you trade with so they can check it is you."
+  "admin.member_action.details_label": {
+    "other": "Details (optional)"
   },
-  "profile.reference_other": {
-    "other": "Every trade confirmation shows it, so you can check you are trading with this member."
+  "admin.member_action.details_hint": {
+    "other": "Recorded in the audit log. The member's notice does not include it."
   },
-  "profile.propose_with": {
-    "other": "Propose a trade with %[1]s"
+  "admin.invitations.title": {
+    "other": "Invitations"
   },
-  "profile.report": {
-    "other": "Report %[1]s"
+  "admin.invitations.status.unused": {
+    "other": "Unused"
   },
-  "profile.listings_by": {
-    "other": "Listings by %[1]s"
+  "admin.invitations.status.used": {
+    "other": "Used"
   },
-  "profile.empty": {
-    "other": "%[1]s has no active listings."
+  "admin.invitations.status.revoked": {
+    "other": "Revoked"
   },
-  "freshness.snapshot": {
-    "other": "Page generated %[1]s. Figures are a snapshot and do not update automatically."
+  "admin.invitations.status.expired": {
+    "other": "Expired"
   },
-  "freshness.offline": {
-    "other": "The browser reports that the connection is unavailable. The figures have not refreshed. %[1]s"
+  "admin.invitations.created": {
+    "other": "Invitation created. Copy this link now: it is shown only once."
   },
-  "freshness.history": {
-    "other": "This earlier page was restored from browser history. The figures have not refreshed. %[1]s"
+  "admin.invitations.days_label": {
+    "other": "Valid for (days)"
   },
-  "session_warning.extendable": {
-    "other": "It ends around %[1]s. Choose Stay signed in to keep working."
+  "admin.invitations.days_hint": {
+    "other": "A whole number from 1 to 90."
   },
-  "session_warning.fixed": {
-    "other": "It ends around %[1]s and cannot be extended. Finish what you are doing, then sign in again."
+  "admin.invitations.create": {
+    "other": "Create invitation link"
   },
-  "session_warning.ended": {
-    "other": "Your session has ended. Sign in again to continue. Your changes on this page have not been sent."
+  "admin.invitations.existing": {
+    "other": "Existing invitations"
   },
-  "session_warning.failed": {
-    "other": "Could not extend the session. Sign in again."
+  "admin.invitations.row": {
+    "other": "%[1]s, expires %[2]s"
+  },
+  "admin.invitations.revoke": {
+    "other": "Revoke"
+  },
+  "admin.invitations.revoke_named": {
+    "other": "Revoke invitation expiring %[1]s"
+  },
+  "admin.invitations.empty": {
+    "other": "No invitations yet."
+  },
+  "admin.invitations.invalid": {
+    "other": "Not created. Fix the problems below. Nothing changed."
+  },
+  "admin.invitations.days_error": {
+    "other": "Valid for: enter a whole number of days from 1 to 90."
+  },
+  "admin.invitations.revoked": {
+    "other": "Invitation revoked."
+  },
+  "admin.inactive.title": {
+    "other": "Inactive members"
+  },
+  "admin.inactive.no_rule": {
+    "other": "This network has no inactivity rule. You can set one in the %[1]s."
+  },
+  "admin.inactive.policy": {
+    "other": "policy"
+  },
+  "admin.inactive.table_label": {
+    "other": "Inactive members table"
+  },
+  "admin.inactive.caption": {
+    "other": "Inactive members of %[1]s"
+  },
+  "admin.inactive.joined": {
+    "other": "Joined"
+  },
+  "admin.inactive.empty": {
+    "other": "No member is flagged as inactive."
+  },
+  "admin.inactive.back": {
+    "other": "Back to members"
+  },
+  "admin.members.matches": {
+    "one": "%[1]d member matches this filter.",
+    "other": "%[1]d members match this filter."
+  },
+  "admin.inactive.explanation": {
+    "one": "Members with no sign-in and no trade for %[1]d day. They have been told in their inbox. They are still members: nothing is removed or suspended automatically. Decide on each one yourself.",
+    "other": "Members with no sign-in and no trade for %[1]d days. They have been told in their inbox. They are still members: nothing is removed or suspended automatically. Decide on each one yourself."
+  },
+  "admin.policy.title": {
+    "other": "Network policy"
+  },
+  "admin.policy.current": {
+    "other": "Current policy is version %[1]s. Saving creates a new version; earlier versions are kept. Decimal places (%[2]d) cannot be changed."
+  },
+  "admin.policy.notice": {
+    "other": "Changes that could disadvantage members (less default credit, a shorter dispute window, a different departure rule, a more open way to join) are announced first and take effect after at least 14 days. The %[1]s shows members what changed and when."
+  },
+  "admin.policy.change_log": {
+    "other": "change log"
+  },
+  "admin.policy.scheduled_title": {
+    "other": "Scheduled change"
+  },
+  "admin.policy.scheduled": {
+    "other": "Version %[1]s was announced %[2]s and takes effect %[3]s. Until then the rules in force are unchanged."
+  },
+  "admin.policy.cancel": {
+    "other": "Cancel the scheduled change"
+  },
+  "admin.policy.scheduled_hint": {
+    "other": "While a change is scheduled, make no other policy change: cancel it first."
+  },
+  "admin.policy.currency_name": {
+    "other": "Credit unit name"
+  },
+  "admin.policy.default_credit_limit": {
+    "other": "Default credit limit"
+  },
+  "admin.policy.max_tx_amount": {
+    "other": "Largest single trade"
+  },
+  "admin.policy.signup_grant": {
+    "other": "Sign-up grant"
+  },
+  "admin.policy.amount_hint": {
+    "other": "Amount in %[1]s."
+  },
+  "admin.policy.grant_hint": {
+    "other": "Amount in %[1]s; 0 for none."
+  },
+  "admin.policy.proposal_expiry_days": {
+    "other": "Proposal expiry (days)"
+  },
+  "admin.policy.dispute_window_days": {
+    "other": "Dispute window (days)"
+  },
+  "admin.policy.limit_warning_days": {
+    "other": "Limit warning (days, 0 to disable)"
+  },
+  "admin.policy.response_period_days": {
+    "other": "Dispute response period (days, 0 for none)"
+  },
+  "admin.policy.response_hint": {
+    "other": "A decision waits for the other party's response or this period, unless the reviewer waives the response."
+  },
+  "admin.policy.re_review_window_days": {
+    "other": "Re-review window (days)"
+  },
+  "admin.policy.limit_warning_percent": {
+    "other": "Limit warning (percent of limit used)"
+  },
+  "admin.policy.percent_hint": {
+    "other": "1 to 100."
+  },
+  "admin.policy.inactivity_days": {
+    "other": "Inactivity flag (days, 0 for no rule)"
+  },
+  "admin.policy.inactivity_hint": {
+    "other": "Members with no sign-in and no trade for this long are listed for administrators and told. They are never removed automatically. 0 or 30 to 3650."
+  },
+  "admin.policy.join_mode": {
+    "other": "How people join"
+  },
+  "admin.policy.join_invite": {
+    "other": "By invitation only"
+  },
+  "admin.policy.join_approval": {
+    "other": "Request, then approval"
+  },
+  "admin.policy.join_open": {
+    "other": "Open"
+  },
+  "admin.policy.departure_rule": {
+    "other": "When a member leaves"
+  },
+  "admin.policy.departure_retain": {
+    "other": "Balance is retained"
+  },
+  "admin.policy.departure_settle": {
+    "other": "Balance is settled to zero"
+  },
+  "admin.policy.open_grant_consent": {
+    "other": "I accept the risk of open joining together with a grant: everyone who joins receives it, including people who join by themselves, so anyone can collect it again by opening new accounts. Only needed for that combination."
+  },
+  "admin.policy.default_blocks_payer": {
+    "other": "Members marked in default cannot pay"
+  },
+  "admin.policy.reason": {
+    "other": "Reason for the change"
+  },
+  "admin.policy.reason_hint": {
+    "other": "Required. It is recorded with the new version."
+  },
+  "admin.policy.notice_days": {
+    "other": "Notice (days)"
+  },
+  "admin.policy.notice_hint": {
+    "other": "Optional. Empty means 14 days for a change that could disadvantage members and none otherwise. Up to 90."
+  },
+  "admin.policy.notice_reason": {
+    "other": "Reason for shorter notice"
+  },
+  "admin.policy.notice_reason_hint": {
+    "other": "Required only if you give fewer than 14 days for such a change. Members see it."
+  },
+  "admin.policy.save": {
+    "other": "Save new version"
+  },
+  "admin.policy.amount_invalid": {
+    "one": "%[2]s: enter a number with up to %[1]d decimal place, for example %[3]s.",
+    "other": "%[2]s: enter a number with up to %[1]d decimal places, for example %[3]s."
+  },
+  "admin.policy.integer_invalid": {
+    "other": "%[1]s: enter a whole number."
+  },
+  "admin.policy.notice_invalid": {
+    "other": "Notice (days): enter a whole number, or leave it empty."
+  },
+  "admin.policy.invalid": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "admin.policy.announced": {
+    "other": "Change announced to members. It takes effect after its notice period; see the scheduled change below."
+  },
+  "admin.policy.saved": {
+    "other": "Policy saved as a new version."
+  },
+  "admin.network.title": {
+    "other": "Suspension and closure"
+  },
+  "admin.network.administrator": {
+    "other": "An administrator"
+  },
+  "admin.network.platform_operator": {
+    "other": "The platform operator"
+  },
+  "admin.network.suspended": {
+    "other": "Trading is paused. Members were told. Balances, history and exports stay available."
+  },
+  "admin.network.resumed": {
+    "other": "Your suspension is lifted."
+  },
+  "admin.network.close_invalid": {
+    "other": "Not closed. Type the network address name exactly to confirm. Nothing changed."
+  },
+  "admin.network.confirm_invalid": {
+    "other": "Confirmation: type %[1]s exactly."
+  },
+  "admin.network.closure_announced": {
+    "other": "The closure date is announced. Members were told. Trading continues until that date."
+  },
+  "admin.network.closure_cancelled": {
+    "other": "The closure is cancelled. Members were told."
+  },
+  "admin.network.pause": {
+    "other": "Pause trading"
+  },
+  "admin.network.suspension": {
+    "other": "%[1]s paused trading, %[2]s."
+  },
+  "admin.network.category": {
+    "other": "Category: %[1]s."
+  },
+  "admin.network.paused_explanation": {
+    "other": "While trading is paused, no new trades, acceptances or postings are possible. Members can still read balances and history and download their data."
+  },
+  "admin.network.pause_explanation": {
+    "other": "Pausing trading refuses new proposals, acceptances and postings. Members can still read balances and history and download their data. Every member is told, with your reason."
+  },
+  "admin.network.closed": {
+    "other": "This network is closed."
+  },
+  "admin.network.resume_reason": {
+    "other": "Reason for resuming"
+  },
+  "admin.network.audit_hint": {
+    "other": "Recorded in the audit log."
+  },
+  "admin.network.resume": {
+    "other": "Resume trading"
+  },
+  "admin.network.both_paused": {
+    "other": "The platform operator has also paused this network. Only the operator can lift that."
+  },
+  "admin.network.platform_only": {
+    "other": "Only the platform operator can lift the platform's pause."
+  },
+  "admin.network.pause_reason": {
+    "other": "Reason for pausing"
+  },
+  "admin.network.member_reason_hint": {
+    "other": "Shown to members and recorded in the audit log."
+  },
+  "admin.network.close": {
+    "other": "Close the network"
+  },
+  "admin.network.closed_history": {
+    "other": "This network is closed. History stays readable and exports are available to members and administrators."
+  },
+  "admin.network.closed_history_until": {
+    "other": "This network is closed. History stays readable and exports are available to members and administrators until %[1]s."
+  },
+  "admin.network.checksum": {
+    "other": "Final export checksum (SHA-256): %[1]s"
+  },
+  "admin.network.closing": {
+    "other": "The network closes on %[1]s: %[2]s. Trading continues until then. On that date open proposals are cancelled and new trades stop. Members keep read and export access afterwards."
+  },
+  "admin.network.cancel_reason": {
+    "other": "Reason for cancelling"
+  },
+  "admin.network.cancel": {
+    "other": "Cancel the closure"
+  },
+  "admin.network.closing_wait": {
+    "other": "The closing date has passed. The network completes closing once every dispute is resolved."
+  },
+  "admin.network.close_explanation": {
+    "one": "Closing is announced at least %[1]d day ahead. Until the date, trading continues. On the date, open proposals are cancelled and new trades, memberships, adjustments and grants stop for good. History stays readable and exports stay available for 90 days.",
+    "other": "Closing is announced at least %[1]d days ahead. Until the date, trading continues. On the date, open proposals are cancelled and new trades, memberships, adjustments and grants stop for good. History stays readable and exports stay available for 90 days."
+  },
+  "admin.network.members_told": {
+    "one": "%[1]d active member is told now.",
+    "other": "All %[1]d active members are told now."
+  },
+  "admin.network.count": {
+    "other": "%[1]d"
+  },
+  "admin.network.proposals": {
+    "one": "%[2]s open proposal will be cancelled on the closing date.",
+    "other": "%[2]s open proposals will be cancelled on the closing date."
+  },
+  "admin.network.nonzero": {
+    "one": "%[2]s account has a balance that is not zero. Closing does not settle balances. Tell members how you expect to settle them before you close.",
+    "other": "%[2]s accounts have a balance that is not zero. Closing does not settle balances. Tell members how you expect to settle them before you close."
+  },
+  "admin.network.export_explanation": {
+    "other": "A final export with a checksum is produced when the network closes. You can also download one now: %[1]s."
+  },
+  "admin.network.exports": {
+    "other": "Exports"
+  },
+  "admin.network.blocked": {
+    "other": "Closing cannot be announced until these are resolved:"
+  },
+  "admin.network.review_explanation": {
+    "other": "Use the %[1]s."
+  },
+  "admin.network.review": {
+    "other": "dispute review queue"
+  },
+  "admin.network.close_reason": {
+    "other": "Reason for closing"
+  },
+  "admin.network.notice_days": {
+    "other": "Days of notice"
+  },
+  "admin.network.notice_hint": {
+    "other": "At least 30. Leave empty for 30."
+  },
+  "admin.network.confirm": {
+    "other": "Type the network address name to confirm"
+  },
+  "admin.network.confirm_hint": {
+    "other": "Members are told at once."
+  },
+  "admin.network.announce": {
+    "other": "Announce the closure"
+  },
+  "admin.network.category_legal_order": {
+    "other": "Legal order"
+  },
+  "admin.network.category_security_incident": {
+    "other": "Security incident"
+  },
+  "admin.network.category_platform_abuse": {
+    "other": "Platform abuse"
+  },
+  "admin.network.category_hosting_agreement": {
+    "other": "Hosting agreement"
+  },
+  "erasure.action": {
+    "other": "Erase personal data"
+  },
+  "erasure.consequence": {
+    "other": "Irreversible. The member's name, listings, trade notes and dispute statements are replaced or cleared. Balances and the ledger stay exactly as they are."
+  },
+  "erasure.member_title": {
+    "other": "Erase personal data of %[1]s?"
+  },
+  "erasure.member_heading": {
+    "other": "Erase the personal data of %[1]s"
+  },
+  "erasure.self_title": {
+    "other": "Erase my personal data?"
+  },
+  "erasure.self_heading": {
+    "other": "Erase my personal data in this network"
+  },
+  "erasure.irreversible": {
+    "other": "This cannot be undone."
+  },
+  "erasure.name_effect": {
+    "other": "The display name is replaced by \"Former member\" and a short code."
+  },
+  "erasure.listings_effect": {
+    "other": "Listings are archived and their text is removed."
+  },
+  "erasure.notes_effect": {
+    "other": "Notes written on trades and statements written in disputes are removed."
+  },
+  "erasure.login_effect": {
+    "other": "If this is the person's only membership, the login is erased and the password stops working."
+  },
+  "erasure.records_effect": {
+    "other": "Balances, trades, amounts and the audit log stay as they are, because the network's accounts must keep adding up. Anything still open (a proposed trade or a dispute) blocks erasure until it is settled."
+  },
+  "erasure.reason_optional": {
+    "other": "Optional. It is written to the audit log, which is never rewritten, so do not put names or contact details in it."
+  },
+  "erasure.reason_required": {
+    "other": "Required. It is written to the audit log, which is never rewritten, so do not put names or contact details in it."
+  },
+  "erasure.confirm_label": {
+    "other": "I understand this cannot be undone"
+  },
+  "erasure.confirm_required": {
+    "other": "Not done. Tick the box to confirm. Nothing changed."
+  },
+  "erasure.confirm_error": {
+    "other": "Confirm: tick the box to show you understand this cannot be undone."
+  },
+  "erasure.member_done": {
+    "other": "Personal data erased. The member now appears as a former member."
+  },
+  "erasure.self_done": {
+    "other": "Your personal data in this network has been erased."
+  },
+  "erasure.go_back": {
+    "other": "Go back"
+  },
+  "error.fallback.internal": {
+    "other": "internal error"
+  },
+  "error.fallback.reference": {
+    "other": "internal error, reference %[1]s"
+  },
+  "error.csrf.title": {
+    "other": "Form expired"
+  },
+  "error.csrf.body": {
+    "other": "Not sent. This form could not be verified, usually because the page was open for a long time or cookies are blocked. Nothing changed. Go back, reload the page and try again."
+  },
+  "error.forbidden.title": {
+    "other": "No access"
+  },
+  "error.forbidden.body": {
+    "other": "You do not have access to this page."
+  },
+  "error.not_found.title": {
+    "other": "Page not found"
+  },
+  "error.not_found.body": {
+    "other": "We could not find that page. It may not exist, or you may not have access to it."
+  },
+  "error.invalid.title": {
+    "other": "Request not accepted"
+  },
+  "error.invalid.body": {
+    "other": "One or more values in this request are invalid. Nothing changed. Go back, check the values and try again."
+  },
+  "error.rate_limited.title": {
+    "other": "Too many attempts"
+  },
+  "error.rate_limited.body": {
+    "other": "Too many attempts. Wait a minute and try again. Nothing changed."
+  },
+  "error.busy.title": {
+    "other": "Busy, try again"
+  },
+  "error.busy.body": {
+    "other": "The service is busy and could not complete the request. Nothing changed. Wait a few seconds and try again."
+  },
+  "error.frozen.title": {
+    "other": "Network read-only"
+  },
+  "error.frozen.body": {
+    "other": "This network is read-only because its ledger failed an integrity check. Balances and history can still be viewed. Nothing was changed. The administrator has been alerted; try again later."
+  },
+  "error.conflict.title": {
+    "other": "Conflict"
+  },
+  "error.conflict.body": {
+    "other": "That cannot be done in the current state. Nothing changed. Reload the page to see the latest state."
+  },
+  "error.internal.title": {
+    "other": "Something went wrong"
+  },
+  "error.internal.body": {
+    "other": "The server could not complete the request. Nothing is shown here about the cause. If you contact the administrator, quote the reference below."
+  },
+  "notice.terms_changed": {
+    "other": "The network's rules and terms changed. Please read and accept them before you trade."
+  },
+  "help.title": {
+    "other": "Help: credits, balances and statuses"
+  },
+  "help.credits.title": {
+    "other": "What credits are"
+  },
+  "help.credits.body": {
+    "other": "Credits are accounting units used inside one network to record value that members give and receive. They have no value outside the network and nobody is obliged to accept them."
+  },
+  "help.balance.title": {
+    "other": "Balance: in credit, in debt, level"
+  },
+  "help.balance.credit": {
+    "other": "%[1]s (shown with a plus sign): you have provided more value than you have received in this network."
+  },
+  "help.balance.debt": {
+    "other": "%[1]s (shown with a minus sign): you have received more value than you have provided and are using part of your credit limit. It is not owed to or by the network itself."
+  },
+  "help.balance.level": {
+    "other": "%[1]s: you have given and received the same."
+  },
+  "help.available.title": {
+    "other": "Available to spend"
+  },
+  "help.available.body": {
+    "other": "Available to spend is your balance plus your credit limit, minus amounts set aside for your pending outgoing trades. It is not your balance. Pending outgoing trades reduce it straight away, and the amount is released if the trade is declined, cancelled or expires."
+  },
+  "help.statuses.title": {
+    "other": "Trade statuses"
+  },
+  "help.status.pending.label": {
+    "other": "Waiting for someone to respond"
+  },
+  "help.status.pending.body": {
+    "other": "Proposed but not accepted. Nothing is posted and it is not part of the balance."
+  },
+  "help.status.completed.label": {
+    "other": "Completed"
+  },
+  "help.status.completed.body": {
+    "other": "Accepted and posted to both accounts."
+  },
+  "help.status.closed.label": {
+    "other": "Declined, Cancelled, Expired"
+  },
+  "help.status.closed.body": {
+    "other": "Closed without posting anything."
+  },
+  "help.status.disputed.label": {
+    "other": "Disputed"
+  },
+  "help.status.disputed.body": {
+    "other": "A dispute is open; postings stay as they were until a reviewer decides."
+  },
+  "help.status.reversed.label": {
+    "other": "Reversed"
+  },
+  "help.status.reversed.body": {
+    "other": "A later posting has undone the trade."
+  },
+  "help.support.title": {
+    "other": "Support boundaries"
+  },
+  "help.support.routing": {
+    "other": "For questions about network rules and trades, contact a network administrator. The platform operator supports software, deployment and platform policy."
+  },
+  "help.support.exception": {
+    "other": "A support request does not grant staff access to network data. For an approved exception involving financial or personal data, policy requires recorded, time-limited break-glass (emergency) access, a documented reason and a second staff approver. Policy also requires minimum necessary access, a record readable by network administrators and notice when required. Some approval and notice steps depend on operator procedures; technical enforcement is incomplete."
+  },
+  "help.support.access": {
+    "other": "The platform operator can technically read data stored by the deployment. These rules rely on access policy, audit and notice; they are not cryptographic separation."
+  },
+  "error.reference": {
+    "other": "Reference: %[1]s"
+  },
+  "error.return_home": {
+    "other": "Return home"
+  },
+  "home.activity_unavailable": {
+    "other": "Your recent activity could not be loaded just now. The figures above are current as of this page load; reload to try again."
+  },
+  "notice.credit_limit_used": {
+    "other": "You are using %[1]s of your %[2]s credit limit (%[3]s percent or more). A trade that would take you past the limit is refused."
+  },
+  "notice.membership_pending.title": {
+    "other": "Waiting for approval"
+  },
+  "notice.membership_pending.body": {
+    "other": "Your request to join %[1]s is waiting for an administrator to decide. You cannot trade until it is approved. Check back later."
+  },
+  "notice.frozen": {
+    "other": "This network is read-only while its ledger is being checked, since %[1]s. You can read balances and history; anything that would change them is refused until the check passes."
+  },
+  "histbal.hint": {
+    "other": "Use a full date and time with Z or a numeric offset, for example %[1]s."
+  },
+  "histbal.explanation": {
+    "other": "This is the posted balance of your account at this instant. It counts only postings made up to then."
+  },
+  "histbal.title": {
+    "other": "Balance at an exact time"
+  },
+  "histbal.at_label": {
+    "other": "Date and time (with Z or offset)"
+  },
+  "histbal.field_error": {
+    "other": "Date and time: %[1]s"
+  },
+  "histbal.show": {
+    "other": "Show balance"
+  },
+  "histbal.at_utc": {
+    "other": "At %[1]s (UTC)"
+  },
+  "histbal.no_postings": {
+    "other": "No postings as of this instant"
+  },
+  "histbal.reason.missing": {
+    "other": "enter a date and time"
+  },
+  "histbal.reason.format": {
+    "other": "use a full RFC 3339 date-time with Z or a numeric offset, for example %[1]s"
+  },
+  "histbal.reason.precision": {
+    "other": "use at most millisecond precision (3 fractional digits)"
+  },
+  "histbal.reason.future": {
+    "other": "choose an instant that is not in the future"
+  },
+  "admin.announcements.title": {
+    "other": "Announcements"
+  },
+  "admin.announcements.explanation": {
+    "other": "Announcements appear on every member's home page from their start time. They cannot be edited; delete one and publish a new one to correct it. Deleted announcements stay in the audit log."
+  },
+  "admin.announcements.title_label": {
+    "other": "Title"
+  },
+  "admin.announcements.title_hint": {
+    "other": "Up to 120 characters."
+  },
+  "admin.announcements.body_label": {
+    "other": "Message"
+  },
+  "admin.announcements.body_hint": {
+    "other": "Up to 4000 characters."
+  },
+  "admin.announcements.days_label": {
+    "other": "Start in (days)"
+  },
+  "admin.announcements.days_hint": {
+    "other": "Optional. Leave empty to publish now."
+  },
+  "admin.announcements.supersedes": {
+    "other": "Replaces an earlier announcement"
+  },
+  "admin.announcements.none": {
+    "other": "None"
+  },
+  "admin.announcements.publish": {
+    "other": "Publish announcement"
+  },
+  "admin.announcements.current": {
+    "other": "Current announcements"
+  },
+  "admin.announcements.starts": {
+    "other": "%[1]s · starts %[2]s"
+  },
+  "admin.announcements.since": {
+    "other": "%[1]s · since %[2]s"
+  },
+  "admin.announcements.delete": {
+    "other": "Delete"
+  },
+  "admin.announcements.delete_named": {
+    "other": "Delete announcement %[1]s"
+  },
+  "admin.announcements.empty": {
+    "other": "No announcements yet."
+  },
+  "admin.announcements.invalid": {
+    "other": "Not published. Fix the problems below. Nothing changed."
+  },
+  "admin.announcements.days_invalid": {
+    "other": "Start in (days): enter a whole number from 0 to 365, or leave it empty to publish now."
+  },
+  "admin.announcements.published": {
+    "other": "Announcement published."
+  },
+  "admin.announcements.deleted": {
+    "other": "Announcement deleted. Members no longer see it; the audit log keeps the record."
+  },
+  "overview.frozen_title": {
+    "other": "This network is read-only"
+  },
+  "overview.frozen": {
+    "other": "Frozen since %[1]s. Members can read balances and history, but every change is refused (status 423) until the ledger check passes again."
+  },
+  "overview.frozen_reason": {
+    "other": "Reason: %[1]s"
+  },
+  "overview.attention": {
+    "other": "Needs attention"
+  },
+  "overview.counted": {
+    "other": "Counted from the ledger and the dispute records when this page loaded, %[1]s."
+  },
+  "overview.manage_title": {
+    "other": "Manage the network"
+  },
+  "overview.link_members": {
+    "other": "Members"
+  },
+  "overview.manage_members": {
+    "other": "%[1]s: approve, suspend, restore, remove, roles and credit limits"
+  },
+  "overview.link_invitations": {
+    "other": "Invitations"
+  },
+  "overview.manage_invitations": {
+    "other": "%[1]s: create and revoke invitation links"
+  },
+  "overview.link_policy": {
+    "other": "Policy"
+  },
+  "overview.manage_policy": {
+    "other": "%[1]s: limits, expiry, join mode"
+  },
+  "overview.link_terms": {
+    "other": "Terms"
+  },
+  "overview.manage_terms": {
+    "other": "%[1]s: the terms members accept when they join, and new versions of them"
+  },
+  "overview.link_adjust": {
+    "other": "Adjustments"
+  },
+  "overview.manage_adjust": {
+    "other": "%[1]s: audited corrections to a member's balance"
+  },
+  "overview.link_reverse": {
+    "other": "Reverse a trade"
+  },
+  "overview.manage_reverse": {
+    "other": "%[1]s: give back a completed trade, with a reason"
+  },
+  "overview.link_announcements": {
+    "other": "Announcements"
+  },
+  "overview.manage_announcements": {
+    "other": "%[1]s: notices on every member's home page"
+  },
+  "overview.link_pending": {
+    "other": "Adjustments awaiting approval"
+  },
+  "overview.manage_pending": {
+    "other": "%[1]s: second-administrator approval (dual control)"
+  },
+  "overview.link_audit": {
+    "other": "Audit and checks"
+  },
+  "overview.link_network": {
+    "other": "Pause or close"
+  },
+  "overview.manage_network": {
+    "other": "%[1]s: pause trading, or close the network"
+  },
+  "overview.link_exports": {
+    "other": "Exports"
+  },
+  "overview.link_operator": {
+    "other": "Operator access"
+  },
+  "overview.manage_operator": {
+    "other": "%[1]s: sessions in which platform staff reached this network"
+  },
+  "overview.link_reports": {
+    "other": "Reports"
+  },
+  "overview.manage_reports": {
+    "other": "%[1]s: abuse reports about listings and members"
+  },
+  "overview.link_review": {
+    "other": "Dispute review queue"
+  },
+  "overview.link_support": {
+    "other": "Support boundaries"
+  },
+  "overview.manage_support": {
+    "other": "%[1]s: who can help with network rules, trades, software and platform policy"
+  },
+  "queue.explanation": {
+    "one": "Open proposals waiting at least %[1]d hour for an answer, as of %[2]s. Expired proposals are excluded.",
+    "other": "Open proposals waiting at least %[1]d hours for an answer, as of %[2]s. Expired proposals are excluded."
+  },
+  "queue.empty": {
+    "other": "No proposals are waiting this long. %[1]s."
+  },
+  "queue.return_overview": {
+    "other": "Return to the administrator overview"
+  },
+  "queue.overview": {
+    "other": "Administrator overview"
+  },
+  "admin.break_glass.title": {
+    "other": "Operator access"
+  },
+  "admin.break_glass.explanation": {
+    "other": "Platform staff may reach this network's data or rights only through a break-glass session. Every session is listed here with its reason. A session lasts at most four hours. You cannot open or close sessions from this page."
+  },
+  "admin.break_glass.table": {
+    "other": "Operator access table"
+  },
+  "admin.break_glass.caption": {
+    "other": "Operator access sessions, newest first"
+  },
+  "admin.break_glass.operator": {
+    "other": "Operator"
+  },
+  "admin.break_glass.status": {
+    "other": "Status"
+  },
+  "admin.break_glass.opened": {
+    "other": "Opened"
+  },
+  "admin.break_glass.expires": {
+    "other": "Expires"
+  },
+  "admin.break_glass.closed": {
+    "other": "Closed"
+  },
+  "admin.break_glass.reason": {
+    "other": "Reason"
+  },
+  "admin.break_glass.closed_with_reason": {
+    "other": "%[1]s (%[2]s)"
+  },
+  "admin.break_glass.not_closed": {
+    "other": "Not closed"
+  },
+  "admin.break_glass.empty": {
+    "other": "No operator access has been recorded for this network."
+  },
+  "admin.break_glass.status_open": {
+    "other": "open"
+  },
+  "admin.break_glass.status_closed": {
+    "other": "closed"
+  },
+  "admin.break_glass.status_expired": {
+    "other": "expired"
   }
 }

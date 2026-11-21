@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/passwordwork"
 	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
@@ -184,7 +185,7 @@ func (s *Service) MFAStatus(ctx context.Context, actor domain.Actor) (*MFAStatus
 // before the hash is compared. A wrong password is a validation error on the
 // "password" field. The returned hash must still match inside the caller's
 // protected write, since a password change/reset can commit during hashing.
-func (s *Service) checkCurrentPassword(ctx context.Context, actor domain.Actor, password string) (string, error) {
+func (s *Service) checkCurrentPassword(ctx context.Context, work *passwordwork.Ticket, actor domain.Actor, password string) (string, error) {
 	var hash string
 	err := s.update(ctx, func(tx store.Tx) error {
 		if err := s.reserveAttempt(tx, recgenKey(actor.PersonID)); err != nil {
@@ -197,7 +198,11 @@ func (s *Service) checkCurrentPassword(ctx context.Context, actor domain.Actor, 
 	if err != nil {
 		return "", err
 	}
-	if !verifyPassword(password, hash) {
+	ok, err := verifyPassword(ctx, work, password, hash)
+	if err != nil {
+		return "", err
+	}
+	if !ok {
 		return "", domain.Invalid("password", "is not correct") // the attempt was counted above
 	}
 	return hash, nil
@@ -208,11 +213,17 @@ func (s *Service) checkCurrentPassword(ctx context.Context, actor domain.Actor, 
 // Resuming returns the same pending secret so a mistyped confirmation does not
 // strand the authenticator app. Conflict when MFA is already enabled. It needs
 // the current password (A3-03).
-func (s *Service) BeginMFAEnrolment(ctx context.Context, actor domain.Actor, password string) (*MFAEnrolment, error) {
+func (s *Service) BeginMFAEnrolment(ctx context.Context, actor domain.Actor, password string) (result *MFAEnrolment, resultErr error) {
+	defer func() { s.observeAuthentication("mfa_management", resultErr) }()
 	if err := s.mfaActor(actor); err != nil {
 		return nil, err
 	}
-	hash, err := s.checkCurrentPassword(ctx, actor, password)
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer work.Release()
+	hash, err := s.checkCurrentPassword(ctx, work, actor, password)
 	if err != nil {
 		return nil, err
 	}
@@ -278,11 +289,17 @@ func (s *Service) issueRecoveryCodes(tx store.Tx, personID string) ([]string, er
 // current password as well as the code (A3-03), and on success revokes every
 // other session of the person, so a session stolen earlier cannot ride along
 // with the new second factor.
-func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, password, code string) ([]string, error) {
+func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, password, code string) (result []string, resultErr error) {
+	defer func() { s.observeAuthentication("mfa_management", resultErr) }()
 	if err := s.mfaActor(actor); err != nil {
 		return nil, err
 	}
-	hash, err := s.checkCurrentPassword(ctx, actor, password)
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer work.Release()
+	hash, err := s.checkCurrentPassword(ctx, work, actor, password)
 	if err != nil {
 		return nil, err
 	}
@@ -345,10 +362,16 @@ func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, p
 // valid TOTP or recovery code. Existing sessions stay valid. Attempts are
 // throttled with the other session second-factor attempts (reserveMFAManage),
 // not on the sign-in counter.
-func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, code string) error {
+func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, code string) (resultErr error) {
+	defer func() { s.observeAuthentication("mfa_management", resultErr) }()
 	if err := s.mfaActor(actor); err != nil {
 		return err
 	}
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return err
+	}
+	defer work.Release()
 	if err := s.reserveMFAManage(ctx, actor.PersonID); err != nil {
 		return err
 	}
@@ -356,7 +379,11 @@ func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, 
 	if err := s.view(ctx, func(tx store.Tx) (err error) { _, hash, err = tx.GetPerson(actor.PersonID); return }); err != nil {
 		return authnErr(err)
 	}
-	if !verifyPassword(password, hash) {
+	ok, err := verifyPassword(ctx, work, password, hash)
+	if err != nil {
+		return err
+	}
+	if !ok {
 		return domain.Invalid("password", "is not correct")
 	}
 	return s.update(ctx, func(tx store.Tx) error {
@@ -397,7 +424,8 @@ func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, 
 
 // RegenerateRecoveryCodes replaces all recovery codes with ten new ones. It
 // needs a current TOTP code (a recovery code is not accepted here).
-func (s *Service) RegenerateRecoveryCodes(ctx context.Context, actor domain.Actor, code string) ([]string, error) {
+func (s *Service) RegenerateRecoveryCodes(ctx context.Context, actor domain.Actor, code string) (result []string, resultErr error) {
+	defer func() { s.observeAuthentication("mfa_management", resultErr) }()
 	if err := s.mfaActor(actor); err != nil {
 		return nil, err
 	}

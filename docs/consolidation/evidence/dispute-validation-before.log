@@ -1,0 +1,20 @@
+--- FAIL: TestDisputeValidationMessages (0.00s)
+panic: unknown UI message: dispute.amount_invalid [recovered, repanicked]
+
+goroutine 9 [running]:
+testing.tRunner.func1.2({0x6ab720, 0x20ac9f739000})
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:1974 +0x232
+testing.tRunner.func1()
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:1977 +0x349
+panic({0x6ab720?, 0x20ac9f739000?})
+	/workspace/scratch/beb70d57deba/toolchain/go/src/runtime/panic.go:860 +0x13a
+github.com/djshellshoxxx/circula/internal/web/messages.Text({0x71dd0e, 0x16}, {0x20ac9f738ff0, 0x1, 0x1})
+	/workspace/scratch/93aeb012c206/circula-recovered/internal/web/messages/messages.go:56 +0x129
+github.com/djshellshoxxx/circula/internal/web/messages.TestDisputeValidationMessages(0x20ac9f870248)
+	/workspace/scratch/93aeb012c206/circula-recovered/internal/web/messages/dispute_test.go:45 +0x172
+testing.tRunner(0x20ac9f870248, 0x736df8)
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:2036 +0xea
+created by testing.(*T).Run in goroutine 1
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:2101 +0x4c5
+FAIL	github.com/djshellshoxxx/circula/internal/web/messages	0.012s
+FAIL

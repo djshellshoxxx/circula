@@ -44,7 +44,7 @@ func TestApplyFreezeFreezesAndThaws(t *testing.T) {
 		t.Fatal(err)
 	}
 	checks, err := verifyAllNetworks(ctx, svc, "t", "")
-	if err != nil || len(checks) != 1 || checks[0].OK {
+	if err != nil || summarise(checks).Networks != 1 || checks[0].OK {
 		t.Fatalf("checks = %+v err=%v", checks, err)
 	}
 	applyFreeze(svc, checks, discardLogger())

@@ -150,8 +150,20 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		if err != nil {
 			return fmt.Errorf("audit-mirror-file: %w", err)
 		}
-		defer func() { _ = mir.close() }()
+		m.auditMirror = mir
 		st.SetAuditSink(mir.write)
+		defer func() {
+			st.SetAuditSink(nil)
+			drainCtx, cancel := context.WithTimeout(context.Background(), auditMirrorDrainTime)
+			defer cancel()
+			if err := mir.close(drainCtx); err != nil {
+				state := mir.stats()
+				logger.Error("audit mirror shutdown did not finish cleanly; any pending delivery is unconfirmed",
+					"error", err, "pending", state.Pending, "written", state.Written, "write_failures", state.Failed,
+					"dropped_shutdown", state.Dropped[mirrorDropShutdown], "dropped_full", state.Dropped[mirrorDropFull],
+					"dropped_oversize", state.Dropped[mirrorDropOversize])
+			}
+		}()
 	}
 	if state.Pending() > 0 {
 		m.migrationRan("applied")
@@ -171,7 +183,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		return fmt.Errorf("startup ledger verification: %w", err)
 	}
 	sum := summarise(checks)
-	m.ledgerResult(sum.Failing == 0, sum.Failing, time.Now().UTC())
+	m.ledgerResult(sum.Status == "ok", sum.Failing, time.Now().UTC())
 	// A failing network is frozen (read-only) and every other network serves
 	// (CMD-07, OPS-033). The operator is told loudly; nothing is refused.
 	applyFreeze(svc, checks, logger)
@@ -464,7 +476,7 @@ func (j *jobRunner) verify(ctx context.Context) error {
 		return err
 	}
 	sum := summarise(checks)
-	j.metrics.ledgerResult(sum.Failing == 0, sum.Failing, time.Now().UTC())
+	j.metrics.ledgerResult(sum.Status == "ok", sum.Failing, time.Now().UTC())
 	applyFreeze(j.svc, checks, j.logger)
 	return nil
 }
@@ -474,6 +486,12 @@ func (j *jobRunner) verify(ctx context.Context) error {
 // Reasons are the finding counts only; findings stay in verify-ledger output.
 func applyFreeze(svc *service.Service, checks []networkCheck, logger *slog.Logger) {
 	for _, c := range checks {
+		if c.Platform {
+			if !c.OK {
+				logger.Error("platform audit verification failed; operator review required", "findings", len(c.Findings))
+			}
+			continue
+		}
 		switch {
 		case !c.OK && !svc.IsFrozen(c.ID):
 			svc.FreezeNetwork(c.ID, fmt.Sprintf("%d ledger finding(s)", len(c.Findings)))

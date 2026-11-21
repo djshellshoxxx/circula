@@ -68,6 +68,7 @@ func (s *server) routes() {
 	R("POST "+v1+"/disputes", s.openDispute, idem)                 // API-054
 	R("GET "+v1+"/disputes", s.listDisputes)                       // API-054
 	R("GET "+v1+"/disputes/{id}", s.getDispute, queryParams())     // API-054
+	R("GET "+v1+"/disputes/{id}/reports", s.disputeReports)        // SEC-025: independent reviewer projection
 	R("POST "+v1+"/disputes/{id}/resolve", s.resolveDispute, idem) // API-055
 	R("POST "+v1+"/disputes/{id}/review", s.reviewDispute)         // extension: start review
 	R("POST "+v1+"/disputes/{id}/withdraw", s.withdrawDispute)     // extension: opener withdraws

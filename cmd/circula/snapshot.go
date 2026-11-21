@@ -29,14 +29,17 @@ const manifestFormat = 1
 // manifests use v2, which authenticates the verification summaries as well.
 const manifestHMACVersion = 2
 
-// LedgerSummary is the ledger verification result recorded with a backup or a
-// command run. Status is ok, failed or not-run. Only counts are recorded, not
-// network identifiers, so manifests carry no member or network data.
+// LedgerSummary is the network-ledger and platform-audit result recorded with
+// a backup or command run. Status is ok, failed or not-run. Only counts and
+// statuses are recorded, not network identifiers or member data.
 type LedgerSummary struct {
-	Status   string `json:"status"`
-	Networks int    `json:"networks"`
-	Failing  int    `json:"failing_networks"`
-	Reason   string `json:"reason,omitempty"`
+	Status        string `json:"status"`
+	Networks      int    `json:"networks"`
+	Failing       int    `json:"failing_networks"`
+	Reason        string `json:"reason,omitempty"`
+	PlatformAudit string `json:"platform_audit,omitempty"` // absent in historical manifests
+	// Omit unknown coverage to preserve older canonical bytes and signatures.
+	HistoricalLimits *service.HistoricalLimitCoverage `json:"historical_limit_coverage,omitempty"`
 }
 
 // Manifest accompanies every backup file (OPS-017).
@@ -118,17 +121,21 @@ func checkManifestAuth(m *Manifest, key []byte) (authenticated bool, err error) 
 	return true, nil
 }
 
-// networkCheck is the outcome of verifying one network.
+// networkCheck is the outcome of verifying one network or the platform audit
+// scope. Platform results never contribute to network counts or freezes.
 type networkCheck struct {
-	ID       string
-	Slug     string
-	OK       bool
-	Findings []string
+	ID               string
+	Slug             string
+	OK               bool
+	Findings         []string
+	Platform         bool
+	HistoricalLimits *service.HistoricalLimitCoverage
 }
 
 // verifyAllNetworks runs the ledger verification for every network (or only
 // the network whose id or slug equals filter, when filter is not empty) as the
-// system actor. It returns an error only when the check could not run.
+// system actor, plus the platform audit chain. It returns an error only when
+// a check could not run.
 func verifyAllNetworks(ctx context.Context, svc *service.Service, requestID, filter string) ([]networkCheck, error) {
 	return verifyNetworks(ctx, svc, requestID, filter, false)
 }
@@ -141,7 +148,7 @@ func verifyNetworks(ctx context.Context, svc *service.Service, requestID, filter
 	if err != nil {
 		return nil, err
 	}
-	out := make([]networkCheck, 0, len(nets))
+	out := make([]networkCheck, 0, len(nets)+1)
 	for _, n := range nets {
 		rep, err := svc.VerifyLedger(ctx, domain.SystemActor(requestID), n.ID)
 		if err != nil {
@@ -152,15 +159,30 @@ func verifyNetworks(ctx context.Context, svc *service.Service, requestID, filter
 				return out, fmt.Errorf("record run for network %s: %w", n.Slug, err)
 			}
 		}
-		out = append(out, networkCheck{ID: n.ID, Slug: n.Slug, OK: rep.OK, Findings: rep.Findings})
+		out = append(out, networkCheck{ID: n.ID, Slug: n.Slug, OK: rep.OK, Findings: rep.Findings,
+			HistoricalLimits: rep.HistoricalLimits})
 	}
+	platform, err := svc.VerifyPlatformAudit(ctx, domain.SystemActor(requestID))
+	if err != nil {
+		return out, fmt.Errorf("verify platform audit: %w", err)
+	}
+	out = append(out, networkCheck{Platform: true, OK: platform.OK, Findings: platform.Findings})
 	return out, nil
 }
 
-// summarise turns per-network results into a LedgerSummary.
+// summarise keeps network counts separate while making a platform audit
+// failure part of the overall verification result.
 func summarise(checks []networkCheck) LedgerSummary {
-	s := LedgerSummary{Status: "ok", Networks: len(checks)}
+	s := LedgerSummary{Status: "ok", HistoricalLimits: summariseHistoricalLimits(checks)}
 	for _, c := range checks {
+		if c.Platform {
+			s.PlatformAudit = "ok"
+			if !c.OK {
+				s.PlatformAudit, s.Status = "failed", "failed"
+			}
+			continue
+		}
+		s.Networks++
 		if !c.OK {
 			s.Failing++
 		}
@@ -175,9 +197,9 @@ func summarise(checks []networkCheck) LedgerSummary {
 type ledgerFunc func(ctx context.Context, path string) (LedgerSummary, error)
 
 // verifyFileChecks opens the database file at path (which must already be at
-// the binary's schema version), runs ledger verification for every network and
-// closes it. Verification records its run in the file, so callers pass a copy
-// whenever the file itself must stay unchanged.
+// the binary's schema version), verifies every network and the platform audit,
+// then closes it. The service checks are read-only; callers use a staging copy
+// to isolate connection setup from the original backup.
 func verifyFileChecks(ctx context.Context, path string, cfg *Config) ([]networkCheck, error) {
 	st, err := openStore(ctx, path, cfg)
 	if err != nil {
@@ -218,9 +240,8 @@ func verifyCopy(ctx context.Context, path string, cfg *Config) ([]networkCheck, 
 // verifies it, and writes dest + ".manifest.json". The copy is built under a
 // private temporary directory and renamed only after every check passed, so an interrupted
 // backup never looks complete. VACUUM INTO reads a snapshot and does not hold
-// the write lock (OPS-017). The ledger check runs on a throw-away copy, because
-// verification records its run in the database it checks: the backup must stay
-// byte-identical to what VACUUM INTO produced (CMD-01), which snapshot proves
+// the write lock (OPS-017). Verification runs on a throw-away copy so the
+// backup stays byte-identical to what VACUUM INTO produced (CMD-01), which snapshot proves
 // by comparing digests before and after the checks. A non-empty key signs the
 // manifest (SA-07). Files are created 0600 (SA-06).
 func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Time, ledger ledgerFunc, key []byte) (*Manifest, error) {
@@ -274,7 +295,7 @@ func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time
 	if err != nil {
 		return fail(err)
 	}
-	ledgerSum := LedgerSummary{Status: "not-run", Reason: "snapshot schema is older than this binary (pre-migration copy)"}
+	ledgerSum := LedgerSummary{Status: "not-run", Reason: "snapshot schema is older than this binary (pre-migration copy)", PlatformAudit: "not-run"}
 	if schema.Pending() == 0 && ledger != nil {
 		scratch := partial + ".verify"
 		if err := copyFileSync(partial, scratch); err != nil {

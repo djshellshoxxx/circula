@@ -63,7 +63,7 @@ func TestSnapshotWritesVerifiedManifestAndRestores(t *testing.T) {
 	if err != nil {
 		t.Fatalf("snapshot: %v", err)
 	}
-	if mf.Ledger.Status != "ok" || mf.Ledger.Networks != 1 || mf.Integrity != "ok" {
+	if mf.Ledger.Status != "ok" || mf.Ledger.Networks != 1 || mf.Ledger.PlatformAudit != "ok" || mf.Integrity != "ok" {
 		t.Errorf("manifest = %+v", mf)
 	}
 	if mf.SchemaVersion != store.SchemaVersion() {

@@ -138,6 +138,19 @@ func (s *Service) authorizeExport(tx store.Tx, actor domain.Actor, netID string,
 	} else if err := p.requireAdmin(); err != nil {
 		return nil, err
 	}
+	if !p.actor.System && (scope == ExportAudit || scope == ExportFull) {
+		// These scopes promise the complete audit history. A report subject
+		// cannot receive that history's reporter identities, including from a
+		// retained artifact. Keep exports complete for independent authority
+		// rather than silently omitting or rewriting immutable audit rows.
+		conflicts, err := tx.ListReports(netID, store.ReportFilter{ConflictMemberID: p.memberID(), Limit: 1})
+		if err != nil {
+			return nil, err
+		}
+		if len(conflicts) != 0 {
+			return nil, domain.Forbidden("export is not available")
+		}
+	}
 	return p, nil
 }
 
@@ -148,6 +161,13 @@ func (s *Service) authorizeExport(tx store.Tx, actor domain.Actor, netID string,
 // material are unreachable by construction; text cells that could trigger
 // spreadsheet formulas are neutralised in CSV.
 func (s *Service) Export(ctx context.Context, actor domain.Actor, netID string, scope ExportScope, format ExportFormat, sink ExportSink) (*Manifest, error) {
+	return s.export(ctx, actor, netID, scope, format, sink, time.Time{})
+}
+
+// export permits a closure checkpoint to pin its generation timestamp. Public
+// downloads always pass zero and use the current clock; authorization, quota,
+// audit and the single read snapshot are otherwise identical.
+func (s *Service) export(ctx context.Context, actor domain.Actor, netID string, scope ExportScope, format ExportFormat, sink ExportSink, generatedAt time.Time) (*Manifest, error) {
 	tables, ok := scopeTables[scope]
 	if !ok {
 		return nil, domain.Invalid("scope", "unknown export scope")
@@ -195,8 +215,11 @@ func (s *Service) Export(ctx context.Context, actor domain.Actor, netID string, 
 		if err != nil {
 			return err
 		}
+		if generatedAt.IsZero() {
+			generatedAt = s.now()
+		}
 		man = &Manifest{SchemaVersion: ExportSchemaVersion, NetworkID: netID, Scope: scope, Format: format,
-			Decimals: net.Policy.Decimals, LedgerSeq: seq, GeneratedAt: s.now()}
+			Decimals: net.Policy.Decimals, LedgerSeq: seq, GeneratedAt: generatedAt}
 		rc := newReconciler(tables, memberID == "")
 		if format == FormatCSV {
 			err = writeCSV(tx, sink, man, tables, memberID, rc)

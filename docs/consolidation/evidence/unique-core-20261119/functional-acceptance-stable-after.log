@@ -1,0 +1,4 @@
+=== RUN   TestTradeAcceptanceConcurrentReplayAtBalanceBoundary
+--- PASS: TestTradeAcceptanceConcurrentReplayAtBalanceBoundary (1.44s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/web	2.482s

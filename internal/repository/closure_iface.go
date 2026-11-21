@@ -29,7 +29,7 @@ type ClosureRepo interface {
 	// DeleteOpenClosure removes a closure that has not completed; false if none.
 	DeleteOpenClosure(netID string) (bool, error)
 	SetClosureDone(netID string, at time.Time) error
-	SetClosureFinal(netID string, ledgerSeq int64, sha string, balanceTotal, entriesSum int64) error
+	SetClosureFinal(netID string, version int, ledgerSeq int64, sha string, balanceTotal, entriesSum int64) error
 	SetClosureErased(netID string, at time.Time) error
 	// ListClosures returns closures: pending (not completed) or completed and not yet erased.
 	ListClosures(pending bool) ([]domain.Closure, error)

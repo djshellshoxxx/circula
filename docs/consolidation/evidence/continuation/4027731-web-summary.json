@@ -1,0 +1,28 @@
+{
+  "head": "40277310094ac16b34969fc3b002b2182983d8b5",
+  "tree": "4bbd4bc2718fee7fa7dad69d3e6b0cd4f812692e",
+  "commands": [
+    "go vet ./internal/web",
+    "go test -json -p 1 -count=1 -timeout 20m ./internal/web"
+  ],
+  "environment": {
+    "GOMAXPROCS": "1",
+    "GOMEMLIMIT": "250MiB",
+    "GOGC": "40"
+  },
+  "exit_codes": [
+    0,
+    0
+  ],
+  "packages": [
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/web",
+      "Action": "pass",
+      "Elapsed": 52.585
+    }
+  ],
+  "test_terminal_counts": {
+    "pass": 379
+  },
+  "end_head": "40277310094ac16b34969fc3b002b2182983d8b5"
+}

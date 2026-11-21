@@ -1,0 +1,38 @@
+{
+  "task": "DAT-001/DAT-002: direct acceptance evidence for default and injected persisted domain identifiers",
+  "base_commit": "1c8a4777f9eee5e1076c7581228c2501ec38b0cb",
+  "commit": "7fe8dc4d11a6e6b52c9d06a5498f3ac8a2c6cf71",
+  "branch": "fix/report-subject-conflicts-20261120",
+  "worktree": "/workspace/scratch/4d30fa819181/circula-report-privacy",
+  "environment": {
+    "go": "1.26.11",
+    "GOMAXPROCS": "1",
+    "GOGC": "25",
+    "GOMEMLIMIT": "512MiB",
+    "CGO_ENABLED": "1",
+    "GOTOOLCHAIN": "local"
+  },
+  "verification": {
+    "exit_code": 0,
+    "top_level_passes": 2,
+    "failed_tests": 0,
+    "skipped_tests": 0,
+    "race_reports": 0,
+    "log": "/workspace/scratch/4d30fa819181/analysis/id-generation-acceptance-tests.log",
+    "sha256": "cfebc304f755e8caf6195dcfc5e3c6f7dbaccb104b652780ef46a61ae126c90d",
+    "command": "go test -race -p 1 -count=1 -v -run '^(TestDefaultIDGeneratorPersistsCanonicalUUIDv7|TestInjectedIDGeneratorReachesPersistedPerson)$' -timeout 2m ./internal/service",
+    "packages": [
+      "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t2.363s"
+    ]
+  },
+  "assertions": {
+    "DAT-001": "RegisterPerson uses the production default ID generator when Config.IDs is nil. Returned and read-back person identifiers match and the stored text has canonical lowercase UUIDv7 format, version 7, and RFC UUID variant.",
+    "DAT-002": "A deliberately substituted Config.IDs generator supplies the exact person identifier returned by RegisterPerson and read back from SQLite by login."
+  },
+  "format_and_diff_checks": "gofmt -l empty; git diff --check passed; working tree clean after commit",
+  "files": {
+    "docs/specs/06-data-ledger-audit.md": "e0dcc7b0ef23df4fee713a9a51677b947f61c51f0986f432ce27823e40e99563",
+    "internal/service/id_generation_test.go": "6ac767b4419914dc25855bc8a4ccaf577caec4e29627afc47d567d31f452f022"
+  },
+  "scope": "One focused test file and two requirement evidence-note updates. No production changes, status changes, generator rewrites, legacy-ID migration, session selector changes, or statistical randomness tests. This is direct persisted-person evidence, not universal identifier or release qualification. No remote writes."
+}

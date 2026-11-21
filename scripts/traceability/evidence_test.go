@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -166,8 +167,37 @@ func TestFailedExecutionKeepsDiagnosticOutput(t *testing.T) {
 {"Action":"output","Package":"example","Test":"TestFail","Output":"mismatched balance\n"}
 {"Action":"output","Package":"example","Output":"FAIL example\n"}`
 	var log strings.Builder
-	writeFailureOutput([]byte(raw), []testEvent{{Package: "example", Test: "TestFail", Action: "fail"}, {Package: "example", Action: "fail"}}, &log)
+	writeFailureOutput([]byte(raw), []testEvent{{Package: "example", Test: "TestPass", Action: "pass"}, {Package: "example", Test: "TestFail", Action: "fail"}, {Package: "example", Action: "fail"}}, &log)
 	if log.String() != "mismatched balance\nFAIL example\n" {
 		t.Fatal(log.String())
+	}
+}
+
+// QA-042: a timed-out package can terminate without a terminal event for its
+// running test. Keep the actual panic and stack instead of only the FAIL line.
+func TestFailedExecutionKeepsActualTimeoutDiagnostics(t *testing.T) {
+	root := evidenceFixture(t)
+	writeFiles(t, root, map[string]string{
+		"timeout_test.go": "package example\nimport (\"testing\";\"time\")\nfunc TestCompletedBeforeTimeout(t *testing.T) { t.Log(\"completed control noise\") }\nfunc TestTimeout(t *testing.T) { time.Sleep(time.Hour) }\n",
+	})
+	cmd := exec.Command("go", "test", "-json", "-count=1", "-run", "^Test(CompletedBeforeTimeout|Timeout)$", "-timeout", "200ms", "./...")
+	cmd.Dir = root
+	raw, err := cmd.CombinedOutput()
+	if err == nil {
+		t.Fatal("timeout control unexpectedly passed")
+	}
+	events, err := terminalEvents(strings.NewReader(string(raw)))
+	if err != nil {
+		t.Fatalf("actual timeout did not produce valid terminal events: %v\n%s", err, raw)
+	}
+	var log strings.Builder
+	writeFailureOutput(raw, events, &log)
+	for _, want := range []string{"panic: test timed out after", "TestTimeout", "goroutine", "FAIL"} {
+		if !strings.Contains(log.String(), want) {
+			t.Errorf("timeout diagnostic lost %q:\n%s", want, log.String())
+		}
+	}
+	if strings.Contains(log.String(), "completed control noise") {
+		t.Errorf("completed test output leaked into failure diagnostics:\n%s", log.String())
 	}
 }

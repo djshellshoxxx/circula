@@ -1,0 +1,51 @@
+Baseline fefaf0124dc4270205b1f38220e362868b71476d
+GOMAXPROCS=1 GOMEMLIMIT=250MiB GOGC=40; default vet enabled
+Command: /workspace/scratch/beb70d57deba/toolchain/go/bin/go test -p 1 ./internal/web/messages -run ^TestAdminHistoryMessages$ -count=1
+--- FAIL: TestAdminHistoryMessages (0.00s)
+    --- FAIL: TestAdminHistoryMessages/admin.announcements.published (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.announcements.published
+    --- FAIL: TestAdminHistoryMessages/admin.announcements.deleted (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.announcements.deleted
+    --- FAIL: TestAdminHistoryMessages/admin.announcements.invalid (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.announcements.invalid
+    --- FAIL: TestAdminHistoryMessages/admin.announcements.days_invalid (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.announcements.days_invalid
+    --- FAIL: TestAdminHistoryMessages/admin.announcements.starts (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.announcements.starts
+    --- FAIL: TestAdminHistoryMessages/admin.announcements.since (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.announcements.since
+    --- FAIL: TestAdminHistoryMessages/admin.announcements.delete_named (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.announcements.delete_named
+    --- FAIL: TestAdminHistoryMessages/overview.frozen (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: overview.frozen
+    --- FAIL: TestAdminHistoryMessages/overview.frozen_reason (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: overview.frozen_reason
+    --- FAIL: TestAdminHistoryMessages/overview.counted (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: overview.counted
+    --- FAIL: TestAdminHistoryMessages/overview.manage_members (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: overview.manage_members
+    --- FAIL: TestAdminHistoryMessages/queue.explanation (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: queue.explanation
+    --- FAIL: TestAdminHistoryMessages/queue.explanation#01 (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: queue.explanation
+    --- FAIL: TestAdminHistoryMessages/queue.explanation#02 (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: queue.explanation
+    --- FAIL: TestAdminHistoryMessages/queue.explanation#03 (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: queue.explanation
+    --- FAIL: TestAdminHistoryMessages/queue.empty (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: queue.empty
+    --- FAIL: TestAdminHistoryMessages/admin.break_glass.closed_with_reason (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.break_glass.closed_with_reason
+    --- FAIL: TestAdminHistoryMessages/admin.break_glass.status_open (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.break_glass.status_open
+    --- FAIL: TestAdminHistoryMessages/admin.break_glass.status_closed (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.break_glass.status_closed
+    --- FAIL: TestAdminHistoryMessages/admin.break_glass.status_expired (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.break_glass.status_expired
+    --- FAIL: TestAdminHistoryMessages/admin.break_glass.not_closed (0.00s)
+        admin_history_test.go:36: message is not in the catalogue: admin.break_glass.not_closed
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web/messages	0.006s
+FAIL
+
+Exit: 1

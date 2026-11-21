@@ -1,0 +1,43 @@
+{
+  "source_commit": "ed3e095f31053d9b7becaab1a89f309a6f166fca",
+  "source_tree": "1e36b67212192ef1b15b4e497711f9b079c46c1f",
+  "base": "22c767a90f69d286642ef96e6b3c174836637a3c",
+  "recorded_at": "2026-11-20T06:18:03.520986+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "files": {
+    "scripts/read-export.py": {
+      "blob": "d482806322cdc21f0fabd6ea2e69ce6d1cda75fe",
+      "sha256": "060f5e187725b741e829a6316ef5f35b71de4cfcc0fa611b3b6863c2ab5bcb2e"
+    },
+    "scripts/test_read_export.py": {
+      "blob": "8d182df70e39a1f4a223829526a21de03ac6428b",
+      "sha256": "f8b14557be4506f10b856ca7b7346c16a7c5bfa76d3b82e07af91ba1c359c6bc"
+    }
+  },
+  "before": {
+    "command": "python -m unittest discover -s scripts -p test_read_export.py -k test_manifest_nested",
+    "production_source": "22c767a90f69d286642ef96e6b3c174836637a3c",
+    "test_source": "ed3e095f31053d9b7becaab1a89f309a6f166fca",
+    "test_groups": 4,
+    "failures": 16,
+    "duration_seconds": 3.374,
+    "exit_code": 1,
+    "log": "export_nested_before.log"
+  },
+  "after": {
+    "command": "python -m unittest discover -s scripts -p test_read_export.py",
+    "test_count": 45,
+    "duration_seconds": 33.314,
+    "exit_code": 0,
+    "log": "export_nested_after.log"
+  },
+  "go_probe": {
+    "scope": "Actual encoding/json decoder, standalone types using the production nested pointer field shapes; not a full production command package test",
+    "file": "manifest_merge_probe.go",
+    "output": "Go nested alias merge: entries=2 nonzero=2 sha256=ordinary-digest",
+    "exit_code": 0
+  },
+  "whitespace_check": "git diff --check and staged diff check passed",
+  "working_tree": "clean",
+  "remote_operations": []
+}

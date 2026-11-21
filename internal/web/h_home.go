@@ -17,6 +17,7 @@ const perPage = 25
 func (s *server) homeRoutes() {
 	s.mux.HandleFunc("GET /{$}", s.home)
 	s.mux.HandleFunc("GET /n/{slug}/{$}", s.netH(s.dashboard))
+	s.mux.HandleFunc("GET /n/{slug}/about", s.netH(s.aboutNetwork))
 	s.mux.HandleFunc("GET /n/{slug}/history", s.netH(s.history))
 	s.mux.HandleFunc("GET /n/{slug}/audit", s.netH(s.myAuditPage)) // FR-082
 	s.mux.HandleFunc("POST /n/{slug}/export", s.netH(s.exportMine))
@@ -27,6 +28,11 @@ func (s *server) homeRoutes() {
 	s.mux.HandleFunc("POST /n/{slug}/listings/new", s.netH(s.listingCreate))
 	s.mux.HandleFunc("GET /n/{slug}/listings/{id}/edit", s.netH(s.listingEditForm))
 	s.mux.HandleFunc("POST /n/{slug}/listings/{id}/edit", s.netH(s.listingEdit))
+}
+
+// VIS-002: network information uses the same read boundary as its history.
+func (s *server) aboutNetwork(w http.ResponseWriter, r *http.Request, c *rc) {
+	s.render(w, r, c, "about", 200, &page{Title: messages.Text("about.title", c.Net.Name)})
 }
 
 type netLink struct{ Name, Slug, Status string }
@@ -61,7 +67,7 @@ func (s *server) home(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/n/"+links[0].Slug, http.StatusSeeOther)
 		return
 	}
-	s.render(w, r, nil, "networks", 200, &page{Title: "Your networks", D: links})
+	s.render(w, r, nil, "networks", 200, &page{Title: messages.Text("onboarding.networks.title"), D: links})
 }
 
 type dash struct {
@@ -126,7 +132,7 @@ func (s *server) dashboard(w http.ResponseWriter, r *http.Request, c *rc) {
 	d.Notices = c.announcementRows()
 	recent, rerr := s.svc.ListTransactions(r.Context(), c.actor, c.netID(), nil, service.Page{Limit: 30})
 	if perr != nil || rerr != nil {
-		d.Err = "Your recent activity could not be loaded just now. The figures above are current as of this page load; reload to try again."
+		d.Err = messages.Text("home.activity_unavailable")
 	}
 	n := c.memberNames()
 	for _, t := range pending {
@@ -143,7 +149,7 @@ func (s *server) dashboard(w http.ResponseWriter, r *http.Request, c *rc) {
 			d.Recent = append(d.Recent, row)
 		}
 	}
-	s.render(w, r, c, "dashboard", 200, &page{Title: "Home", D: d, Warn: c.limitNotice()})
+	s.render(w, r, c, "dashboard", 200, &page{Title: messages.Text("navigation.home"), D: d, Warn: c.limitNotice()})
 }
 
 type historyData struct {
@@ -173,7 +179,7 @@ func (s *server) history(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	if _, asked := r.URL.Query()["at"]; asked && hb.Raw == "" {
-		hb.FieldError = histbal.ReasonMissing // submitted blank: say so rather than show the bare form
+		hb.FieldError = histBalanceReason(histbal.ReasonMissing) // submitted blank: say so rather than show the bare form
 	}
 	n := c.memberNames()
 	h := &historyData{Filter: f, HistBal: hb}
@@ -189,7 +195,7 @@ func (s *server) history(w http.ResponseWriter, r *http.Request, c *rc) {
 	if len(txs) == 50 {
 		h.Next = txs[len(txs)-1].ID
 	}
-	s.render(w, r, c, "history", 200, &page{Title: "History", D: h, V: map[string]string{"status": f}})
+	s.render(w, r, c, "history", 200, &page{Title: messages.Text("trade.history.title"), D: h, V: map[string]string{"status": f}})
 }
 
 // activeMembers returns every active member, paging through the directory without a cap.

@@ -28,9 +28,11 @@ func replayPermission(pattern string) service.ReplayPermission {
 		return service.ReplayDisputeResponse
 	case "POST " + v1 + "/challenges":
 		return service.ReplayChallenge
+	case "POST " + v1 + "/admin/reports/{id}/handle":
+		return service.ReplayReportHandle
 	case "POST " + v1 + "/admin/transactions/{id}/reversal", "POST " + v1 + "/admin/adjustments",
 		"POST " + v1 + "/admin/members/{id}/approve", "POST " + v1 + "/admin/members/{id}/deny",
-		"POST " + v1 + "/admin/members/{id}/reinstate", "POST " + v1 + "/admin/reports/{id}/handle",
+		"POST " + v1 + "/admin/members/{id}/reinstate",
 		"POST " + v1 + "/admin/announcements":
 		return service.ReplayAdmin
 	case "POST " + v1 + "/admin/terms", "POST " + v1 + "/admin/members/{id}/suspend":
@@ -60,7 +62,7 @@ func (s *server) authorizeReplay(c *reqCtx, rt route, rec *idemRec) error {
 		return errInternal
 	}
 	in := service.ReplayAuthorization{Permission: replayPermission(rt.pattern),
-		TransactionID: c.r.PathValue("id"), MemberID: c.r.PathValue("id")}
+		TransactionID: c.r.PathValue("id"), MemberID: c.r.PathValue("id"), ReportID: c.r.PathValue("id")}
 	netID := c.netID
 	switch in.Permission {
 	case service.ReplayInvitationAccept:

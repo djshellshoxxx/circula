@@ -1,0 +1,6 @@
+=== RUN   TestDefaultIDGeneratorPersistsCanonicalUUIDv7
+--- PASS: TestDefaultIDGeneratorPersistsCanonicalUUIDv7 (0.70s)
+=== RUN   TestInjectedIDGeneratorReachesPersistedPerson
+--- PASS: TestInjectedIDGeneratorReachesPersistedPerson (0.63s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	2.363s

@@ -7,6 +7,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/djshellshoxxx/circula/internal/service"
 )
 
 // metrics holds the in-process counters and gauges exposed at /metrics in the
@@ -18,31 +20,43 @@ type metrics struct {
 
 	started time.Time
 
-	requests     map[[2]string]uint64 // route, status class
-	durSum       map[string]float64   // route, seconds
-	durCount     map[string]uint64    // route
-	authFailures uint64               // 401 responses
-	rateLimited  uint64               // 429 responses
-	jobRuns      map[[2]string]uint64 // job, result
-	migrations   map[string]uint64    // result
-	postings     uint64               // ledger postings committed (service.Observer)
-	replays      uint64               // idempotent retries answered from a stored record
+	requests            map[[2]string]uint64  // route, status class
+	durSum              map[string]float64    // route, seconds
+	durCount            map[string]uint64     // route
+	durSumClass         map[[2]string]float64 // route, status class
+	durCountClass       map[[2]string]uint64  // route, status class
+	authFailures        uint64                // 401 responses
+	rateLimited         uint64                // 429 responses
+	credentialFailures  map[string]uint64     // fixed credential-operation classes
+	credentialThrottled map[string]uint64     // refused operations, separate from failures
+	jobRuns             map[[2]string]uint64  // job, result
+	migrations          map[string]uint64     // result
+	postings            uint64                // ledger postings committed (service.Observer)
+	postAttempts        uint64                // centralized posting attempts, including refusals
+	postFailures        map[string]uint64     // fixed reason classes only
+	replays             uint64                // idempotent retries answered from a stored record
 
-	ledgerOK        int     // 1 pass, 0 fail, -1 not yet run
-	ledgerFailing   int     // networks failing at the last run
-	ledgerCheckedAt float64 // unix seconds of the last run
-	backupOKAt      float64 // unix seconds of the last successful backup
+	ledgerOK        int          // 1 pass, 0 fail, -1 not yet run
+	ledgerFailing   int          // networks failing at the last run
+	ledgerCheckedAt float64      // unix seconds of the last run
+	backupOKAt      float64      // unix seconds of the last successful backup
+	auditMirror     *auditMirror // fixed during startup; its counters are atomic
 }
 
 func newMetrics(now time.Time) *metrics {
 	return &metrics{
-		started:    now,
-		requests:   map[[2]string]uint64{},
-		durSum:     map[string]float64{},
-		durCount:   map[string]uint64{},
-		jobRuns:    map[[2]string]uint64{},
-		migrations: map[string]uint64{},
-		ledgerOK:   -1,
+		started:             now,
+		requests:            map[[2]string]uint64{},
+		durSum:              map[string]float64{},
+		durCount:            map[string]uint64{},
+		durSumClass:         map[[2]string]float64{},
+		durCountClass:       map[[2]string]uint64{},
+		jobRuns:             map[[2]string]uint64{},
+		migrations:          map[string]uint64{},
+		postFailures:        map[string]uint64{},
+		credentialFailures:  map[string]uint64{},
+		credentialThrottled: map[string]uint64{},
+		ledgerOK:            -1,
 	}
 }
 
@@ -50,7 +64,10 @@ func newMetrics(now time.Time) *metrics {
 func (m *metrics) observe(route string, status int, d time.Duration) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.requests[[2]string{route, fmt.Sprintf("%dxx", status/100)}]++
+	key := [2]string{route, fmt.Sprintf("%dxx", status/100)}
+	m.requests[key]++
+	m.durSumClass[key] += d.Seconds()
+	m.durCountClass[key]++
 	m.durSum[route] += d.Seconds()
 	m.durCount[route]++
 	switch status {
@@ -74,6 +91,39 @@ func (m *metrics) Replayed(n int) {
 	m.replays += uint64(n) //nolint:gosec // G115: the service passes a positive count
 }
 
+func (m *metrics) PostingAttempted(n int) {
+	if n <= 0 {
+		return
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.postAttempts += uint64(n) //nolint:gosec // G115: nonpositive counts are refused above
+}
+
+func (m *metrics) PostingFailed(n int, reason string) {
+	if n <= 0 {
+		return
+	}
+	reason = service.NormalizePostingFailureClass(reason)
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.postFailures[reason] += uint64(n) //nolint:gosec // G115: nonpositive counts are refused above
+}
+
+func (m *metrics) AuthenticationFailed(reason string) {
+	reason = service.NormalizeAuthenticationFailureClass(reason)
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.credentialFailures[reason]++
+}
+
+func (m *metrics) AuthenticationThrottled(reason string) {
+	reason = service.NormalizeAuthenticationFailureClass(reason)
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.credentialThrottled[reason]++
+}
+
 func (m *metrics) jobRan(job, result string) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -86,7 +136,8 @@ func (m *metrics) migrationRan(result string) {
 	m.migrations[result]++
 }
 
-// ledgerResult records the outcome of a ledger verification run.
+// ledgerResult records the overall network-ledger and platform-audit outcome.
+// The failing count includes only financial networks.
 func (m *metrics) ledgerResult(ok bool, failing int, at time.Time) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -138,6 +189,23 @@ func (m *metrics) write(w io.Writer, dyn dynamicMetrics) {
 	gauge("circula_database_size_bytes", "Size of the database file.", dyn.dbBytes)
 	gauge("circula_database_wal_size_bytes", "Size of the write-ahead log file.", dyn.walBytes)
 
+	var mirror auditMirrorStats
+	mirrorEnabled := 0
+	if m.auditMirror != nil {
+		mirrorEnabled = 1
+		mirror = m.auditMirror.stats()
+	}
+	gauge("circula_audit_mirror_enabled", "1 when the best-effort audit mirror is configured.", mirrorEnabled)
+	gauge("circula_audit_mirror_pending_records", "Admitted audit mirror records still queued or in a delivery attempt.", mirror.Pending)
+	counter("circula_audit_mirror_written_total", "Audit mirror records whose complete write returned successfully; not a durability guarantee.")
+	fmt.Fprintf(&b, "circula_audit_mirror_written_total %d\n", mirror.Written)
+	counter("circula_audit_mirror_write_failures_total", "Audit mirror write errors and short writes; records may be incomplete.")
+	fmt.Fprintf(&b, "circula_audit_mirror_write_failures_total %d\n", mirror.Failed)
+	counter("circula_audit_mirror_dropped_total", "Audit mirror records skipped without a delivery attempt, by fixed reason.")
+	for reason, count := range mirror.Dropped {
+		fmt.Fprintf(&b, "circula_audit_mirror_dropped_total{reason=%q} %d\n", mirrorDropNames[reason], count)
+	}
+
 	counter("circula_http_requests_total", "HTTP requests by route template and status class.")
 	for _, k := range sortedKeys2(m.requests) {
 		fmt.Fprintf(&b, "circula_http_requests_total{route=%q,class=%q} %d\n", k[0], k[1], m.requests[k])
@@ -147,13 +215,32 @@ func (m *metrics) write(w io.Writer, dyn dynamicMetrics) {
 		fmt.Fprintf(&b, "circula_http_request_duration_seconds_sum{route=%q} %g\n", r, m.durSum[r])
 		fmt.Fprintf(&b, "circula_http_request_duration_seconds_count{route=%q} %d\n", r, m.durCount[r])
 	}
+	fmt.Fprintf(&b, "# HELP circula_http_request_duration_by_status_seconds Request latency by route template and status class (sum and count, no quantiles).\n# TYPE circula_http_request_duration_by_status_seconds summary\n")
+	for _, k := range sortedKeys2(m.durCountClass) {
+		fmt.Fprintf(&b, "circula_http_request_duration_by_status_seconds_sum{route=%q,class=%q} %g\n", k[0], k[1], m.durSumClass[k])
+		fmt.Fprintf(&b, "circula_http_request_duration_by_status_seconds_count{route=%q,class=%q} %d\n", k[0], k[1], m.durCountClass[k])
+	}
 	counter("circula_http_auth_failures_total", "Responses with status 401 (authentication failures seen at the edge).")
 	fmt.Fprintf(&b, "circula_http_auth_failures_total %d\n", m.authFailures)
 	counter("circula_http_rate_limited_total", "Responses with status 429 (throttling seen at the edge).")
 	fmt.Fprintf(&b, "circula_http_rate_limited_total %d\n", m.rateLimited)
+	counter("circula_authentication_failures_total", "Credential operations that refused a proof, by fixed operation class; excludes throttling and storage errors.")
+	for _, reason := range service.AuthenticationFailureClasses() {
+		fmt.Fprintf(&b, "circula_authentication_failures_total{reason=%q} %d\n", reason, m.credentialFailures[reason])
+	}
+	counter("circula_authentication_throttled_total", "Credential operations refused by a service authentication throttle, by fixed operation class.")
+	for _, reason := range service.AuthenticationFailureClasses() {
+		fmt.Fprintf(&b, "circula_authentication_throttled_total{reason=%q} %d\n", reason, m.credentialThrottled[reason])
+	}
 
 	counter("circula_ledger_postings_total", "Ledger postings committed since start.")
 	fmt.Fprintf(&b, "circula_ledger_postings_total %d\n", m.postings)
+	counter("circula_ledger_posting_attempts_total", "Central posting attempts since start; durable replays do not add attempts.")
+	fmt.Fprintf(&b, "circula_ledger_posting_attempts_total %d\n", m.postAttempts)
+	counter("circula_ledger_posting_failures_total", "Posting attempts that returned a failure or whose enclosing unit failed, by bounded reason class.")
+	for _, reason := range service.PostingFailureClasses() {
+		fmt.Fprintf(&b, "circula_ledger_posting_failures_total{reason=%q} %d\n", reason, m.postFailures[reason])
+	}
 	counter("circula_idempotent_replays_total", "Retries answered from a stored idempotency record since start.")
 	fmt.Fprintf(&b, "circula_idempotent_replays_total %d\n", m.replays)
 	gauge("circula_maintenance_mode", "1 while maintenance mode is active.", map[bool]int{true: 1, false: 0}[dyn.maintenance])
@@ -168,7 +255,7 @@ func (m *metrics) write(w io.Writer, dyn dynamicMetrics) {
 		fmt.Fprintf(&b, "circula_migrations_total{result=%q} %d\n", r, m.migrations[r])
 	}
 
-	gauge("circula_ledger_verification_ok", "Result of the last ledger verification: 1 pass, 0 fail, -1 not run.", m.ledgerOK)
+	gauge("circula_ledger_verification_ok", "Result of the last ledger and platform audit verification: 1 pass, 0 fail, -1 not run.", m.ledgerOK)
 	gauge("circula_ledger_verification_failing_networks", "Networks that failed the last ledger verification.", m.ledgerFailing)
 	gauge("circula_ledger_verification_timestamp_seconds", "Unix time of the last ledger verification.", m.ledgerCheckedAt)
 	gauge("circula_backup_last_success_timestamp_seconds", "Unix time of the last successful backup; 0 if none.", m.backupOKAt)

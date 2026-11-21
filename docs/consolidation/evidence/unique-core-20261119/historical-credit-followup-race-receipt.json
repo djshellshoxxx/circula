@@ -1,0 +1,45 @@
+{
+  "source": "6bb97503e3d8d0b09771a86cf4ee240bdfc8bcb3",
+  "clean_before": true,
+  "source_after": "6bb97503e3d8d0b09771a86cf4ee240bdfc8bcb3",
+  "clean_after": true,
+  "command": [
+    "go",
+    "test",
+    "-race",
+    "-p",
+    "1",
+    "./internal/integrity",
+    "./internal/store",
+    "./internal/service",
+    "-run",
+    "^(TestHistoricalCredit|TestVerifyLedgerAcceptsLargeBalancedTotals$|TestVerifyLedgerIsReadOnly$|TestVerifyLedgerDoesNotTakeWriteGate$|TestPostingObserver|TestAdjustments$|TestSignupGrant$|TestFullReversal$|TestClosureCheckpoint|TestEventOrderMigrationPreservesExportChecksum$|TestPersonalDataInventoryCoversSchema$)",
+    "-count=1",
+    "-v"
+  ],
+  "environment": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTMPDIR": "/workspace/scratch/4d30fa819181/runtime/go-tmp",
+    "GOTOOLCHAIN": "local",
+    "CGO_ENABLED": "1",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB"
+  },
+  "go": "go1.26.11",
+  "started_utc": "2026-11-20T09:18:13.007503+00:00",
+  "finished_utc": "2026-11-20T09:19:34.926129+00:00",
+  "elapsed_seconds": 81.919,
+  "exit_code": 0,
+  "top_level_passes": 30,
+  "subcase_passes": 32,
+  "failures": [],
+  "package_results": [
+    "ok  \tgithub.com/djshellshoxxx/circula/internal/integrity\t1.012s",
+    "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t13.704s",
+    "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t25.323s"
+  ],
+  "log": "historical-credit-followup-race.log",
+  "limits": "Selected core/service/storage compatibility tests at schema24 source; combined schema25/API/CLI/web qualification belongs to separate receipts."
+}

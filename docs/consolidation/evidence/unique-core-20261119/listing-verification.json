@@ -1,0 +1,48 @@
+{
+  "task": "WAPI-02: atomic conditional listing owner edits",
+  "base_commit": "3e45f20779ceb8e8e57064dc6e237ac93bd66671",
+  "commit": "697940bf80d468c7f36153e4baf301a1e311a3ce",
+  "branch": "fix/listing-conditional-write-20261120",
+  "worktree": "/workspace/scratch/4d30fa819181/circula-listing",
+  "environment": {
+    "go": "1.26.11",
+    "GOMAXPROCS": "1",
+    "GOGC": "25",
+    "GOMEMLIMIT": "512MiB",
+    "CGO_ENABLED": "1",
+    "GOTOOLCHAIN": "local"
+  },
+  "before": {
+    "exit_code": 1,
+    "expected_failed_subtests": 8,
+    "passing_controls": [
+      "historical ETag serialization",
+      "wildcard merge",
+      "wildcard list merge",
+      "wildcard archive refusal"
+    ],
+    "log": "/workspace/scratch/4d30fa819181/analysis/listing-revision-before.log",
+    "sha256": "89c0884d158707597fc74e72306502d20fee40c866fb31dd9df4d333967f8a84"
+  },
+  "after": {
+    "exit_code": 0,
+    "top_level_passes": 9,
+    "subtest_passes": 16,
+    "failed_tests": 0,
+    "skipped_tests": 0,
+    "race_reports": 0,
+    "log": "/workspace/scratch/4d30fa819181/analysis/listing-revision-after.log",
+    "sha256": "618e08db79a899c0237e26ab88834f722fefc38b7463bb9d12f163ecb31739ab",
+    "command": "go test -race -p 1 -count=1 -v -run '^(TestListing(ConcurrentConditionalOwnerEdits|ConditionalUpdatePreservesOwnerAndArchiveRules|ConditionalWriteRejectsInterveningOwnerEdit|ETagRetainsSerializedRevision)|TestListingsDoNotTouchLedger|TestPolicyAndListingETags|TestA3_08_ListingTextRejectsInvisibleRunes|TestA3_08_ActiveListingCap|TestProposeListingValidation)$' -timeout 3m ./internal/service ./internal/api"
+  },
+  "format_and_diff_checks": "gofmt -l empty; git diff --check passed; working tree clean after commit",
+  "files": {
+    "internal/service/listings.go": "9696fff6b00a445290527ffe821251ab9a0072eb3109894a86bbaaded4f2e304",
+    "internal/api/h_listings.go": "0e9f154c1391fa5cad01ca1d3e80440f4714b94a9936f619b93a6d943ab11048",
+    "internal/api/dto.go": "5d0641c64c0abe34c381ce480177ee57f578af5e8d6d267be6b00675826b9073",
+    "internal/service/listing_revision_test.go": "888b8af9642016094a9340dea3708b863a9b5f9649e51e939d85fc997824cb58",
+    "internal/api/listing_revision_test.go": "de2665c03549f838ea047fb35eced8422b40d383b4ee7aa852fad0c7926e0222",
+    "internal/api/listing_etag_internal_test.go": "95467f1b87bce16543c03c17989c2f104983f1855ba1b6c56fe16b4611604aa8"
+  },
+  "scope": "Three production files and three focused test files. No schema, privilege, wildcard, archive-policy or API mutex changes. No remote writes. Full repository suite and CI are not claimed."
+}

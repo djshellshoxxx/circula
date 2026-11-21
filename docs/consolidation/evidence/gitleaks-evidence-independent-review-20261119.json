@@ -1,0 +1,69 @@
+{
+  "reviewed_commit": "dd3357d3cb155bbe29de47d1bb788bff38d7d35f",
+  "reviewed_tree": "0942998f7a50d7c25f704d55403689a9d2f33ec5",
+  "config_blob": "e138f4232f4021d8c691937d3ba30b66210fa524",
+  "config_sha256": "43b9c433c68a5194ec9c1e1bb40b940bb3eca61782fc34edd9982565d54f83d4",
+  "default_extension_unchanged": true,
+  "existing_global_fixture_allowlists_unchanged": true,
+  "rule_local_AND_blocks": 6,
+  "literal_path_value_pairs": 17,
+  "verified_nonsecret_provenance": [
+    {
+      "document": "docs/audits/evidence/post-snapshot-20261119/core-cursor-security-merged-a50f90b.execution.json",
+      "source_path": "internal/api/api.go",
+      "source_ref": "e0d27cc7cb73299219439919b260991b824d594a",
+      "sha256": "5f84e7b5b011abaa6755f172a9797ff4272240cf7ea74c09928283e846da66d7"
+    },
+    {
+      "document": "docs/audits/evidence/post-snapshot-20261119/core-cursor-security-merged-a50f90b.execution.json",
+      "source_path": "internal/api/auth.go",
+      "source_ref": "e0d27cc7cb73299219439919b260991b824d594a",
+      "sha256": "47c4cb44b4ee0a94bc2343353a482d71fcb961cc9f97a43c7ab0d8cc27c93c02"
+    },
+    {
+      "document": "docs/audits/evidence/post-snapshot-20261119/core-cursor-security-merged-a50f90b.execution.json",
+      "source_path": "internal/api/h_password.go",
+      "source_ref": "e0d27cc7cb73299219439919b260991b824d594a",
+      "sha256": "f394f52a25896fef666fe552f478195e12339feecfa78af933167ced472edfbd"
+    },
+    {
+      "document": "docs/audits/evidence/post-snapshot-20261119/core-cursor-security-merged-a50f90b.execution.json",
+      "source_path": "internal/api/h_tokens.go",
+      "source_ref": "e0d27cc7cb73299219439919b260991b824d594a",
+      "sha256": "394b8a828ad79147d108e6e5dec771129c5aca0eb86827e8465fc14eb0045818"
+    },
+    {
+      "document": "docs/audits/evidence/post-snapshot-20261119/core-cursor-security-merged-a50f90b.execution.json",
+      "source_path": "internal/api/replay_auth.go",
+      "source_ref": "e0d27cc7cb73299219439919b260991b824d594a",
+      "sha256": "ef2dde35f33ad4579e25d58c140038a5ade6ac8a5bd7d41e9b11118fd1bad043"
+    },
+    {
+      "document": "docs/audits/evidence/post-snapshot-20261119/core-catalogue-traceability-merged-12af211.execution.json",
+      "source_path": "internal/web/messages/auth_test.go",
+      "source_ref": "e0d27cc7cb73299219439919b260991b824d594a",
+      "sha256": "0483dec14f87928801c3de47352683fac000d3fbf15508afc8dbaa57cf22f272"
+    },
+    {
+      "branch": "chatgpt/circula-ledger-auth-guard-20261115",
+      "verified_commit": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca"
+    },
+    {
+      "branch": "claude/aud4-auth-fixes",
+      "verified_commit": "82dc18e07f6b22b9c34ef026f833391705b30067"
+    },
+    {
+      "branch": "claude/ux-047-auth-catalogue",
+      "verified_commit": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db"
+    },
+    {
+      "branch": "dependabot/go_modules/github.com/getkin/kin-openapi-0.153.0",
+      "verified_commit": "3fa76cdb590182eaff42fc4044cf3538275eea6b"
+    },
+    {
+      "shared_baseline_blob": "f1e82342b34a96e0855f10e8a83a052621623356",
+      "shared_source_sha256": "c446ae0d278b43607d8ac25fe937ec6f7a61c66b8c38210ba29979f1fda93ebd"
+    }
+  ],
+  "execution": "Read-only Git/source/TOML checks only; no scanner run or scanner compilation by this reviewer."
+}

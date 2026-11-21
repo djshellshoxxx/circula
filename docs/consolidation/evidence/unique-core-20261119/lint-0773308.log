@@ -1,0 +1,11 @@
+internal/api/report_privacy_test.go:21:4: QF1003: could use tagged switch on target (staticcheck)
+			if target == service.ReportListing {
+			^
+internal/service/report_privacy_test.go:17:2: QF1003: could use tagged switch on target (staticcheck)
+	if target == service.ReportListing {
+	^
+internal/web/h_notify.go:236:3: QF1003: could use tagged switch on x.TargetType (staticcheck)
+		if x.TargetType == service.ReportMember {
+		^
+3 issues:
+* staticcheck: 3

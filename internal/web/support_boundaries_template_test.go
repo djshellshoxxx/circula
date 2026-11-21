@@ -2,9 +2,6 @@ package web
 
 import (
 	"bytes"
-	"html/template"
-	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 )
@@ -16,18 +13,10 @@ type supportBoundaryPageData struct {
 
 func renderSupportBoundaryTemplate(t *testing.T, name string, data any) string {
 	t.Helper()
-	_, source, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("runtime.Caller could not locate the test source")
-	}
-	path := filepath.Join(filepath.Dir(source), "templates", name)
-	// Production registers msg before parsing; the fixture must provide the same
-	// callable so the support text is tested, not rejected at parse time.
-	tmpl, err := template.New(name).Funcs(template.FuncMap{
-		"msg": func(key string) string { return key },
-	}).ParseFiles(path)
-	if err != nil {
-		t.Fatalf("parse %s: %v", name, err)
+	// Load the same page and shared template definitions as production.
+	tmpl := mustLoadTemplates()[strings.TrimSuffix(name, ".html")]
+	if tmpl == nil {
+		t.Fatalf("missing page template %s", name)
 	}
 	var output bytes.Buffer
 	if err := tmpl.ExecuteTemplate(&output, "content", data); err != nil {
@@ -38,6 +27,9 @@ func renderSupportBoundaryTemplate(t *testing.T, name string, data any) string {
 
 func TestHelpDocumentsSupportBoundaries(t *testing.T) {
 	body := renderSupportBoundaryTemplate(t, "help.html", nil)
+	if !strings.Contains(body, `<h2 id="sessions">Review and end your sign-ins</h2>`) {
+		t.Error("help page did not render the localized session guidance")
+	}
 	for _, required := range []string{
 		`<h2 id="support-boundaries">Support boundaries</h2>`,
 		"network administrators",

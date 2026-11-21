@@ -1,0 +1,35 @@
+{
+  "source_commit": "4630a0a7ae05f867ce5889075cb7214ef324b03f",
+  "base_commit": "01685005573bf36bcbec07f06a4c14c8bb4a73fa",
+  "integrated_commit": "a29a0943258be14d292a0d0998c0f0661c80d248",
+  "command": "go test -race -p 1 -count=1 -v -run Test(PostingObserver|PostingFailureClasses|MetricsPosting|MetricsLatency|MetricsExposeRequiredSeries|ServiceObserverWiredToMetrics|ObserverCountsPostingsAndReplays) ./internal/service ./cmd/circula",
+  "go_version": "go1.26.11 linux/amd64",
+  "environment": {
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB"
+  },
+  "passed_top_level_tests": 10,
+  "failed": 0,
+  "race_marker": false,
+  "log_sha256": "66065c133b88dd13d254cafbd08ebd543fc0c39c6545da21f08f7ef7a66f5168",
+  "source_sha256": {
+    "cmd/circula/metrics.go": "c5cc9b4fedaefa7dbcb84bb865ae38b01ea69d0e56287b782122647fbca877df",
+    "cmd/circula/metrics_hooks_test.go": "950c75427d7fe67b79ad5abc644aabcf4eaa7b2e0754bb5923cea528a2a6ce73",
+    "cmd/circula/ops_test.go": "e965b06c6c36c6a75c1da4e4c5fbe0984d208d44d796c3bf17f412c248cc6695",
+    "docs/ops/README.md": "4f34b54061ba66915a8c3019fbf978a2f47ed72a2ed3c3751b4c95e5be302d3c",
+    "docs/ops/monitoring.md": "a7b998f089ae045d122db5a8520349c9ca90485d1a22bceb1aae85c0eaba942b",
+    "docs/specs/05-architecture.md": "7c0446b85528798beb71d77f97eceb1ba76e257b5ccb45217a940cb72fbd1aa3",
+    "docs/specs/11-deployment-operations.md": "404e0c3fcbe98d038f0a779b4723629b4424d827bf3102346374ef22c6d0fbd3",
+    "internal/service/observe.go": "57e65a50a9da820896dab5cf52db90f45d55aa27c15dc1646977243cebb204cb",
+    "internal/service/posting.go": "64026a19adddb3bcf89a8c5239bb11295fcc88acd9d3870e691354709387b309",
+    "internal/service/posting_observe_internal_test.go": "f2fe1a1f51e06f411b6dffdda123c96acafaccc3530e45123d94d46d5428e268",
+    "internal/service/posting_observe_test.go": "f0bace2462bd6baecbc4647ef5231b44c84d8344e80911c51c912e162fd3c972",
+    "internal/service/reversal.go": "20d99de6ee015ee1b0af162f47bffb1abab980cc543f69c9ffea746c707746fe",
+    "internal/service/service.go": "a18b37f7e0afa6fcf08ce3506adcdf53815e7ecc94c2542aadbb8d7475abb1ac"
+  },
+  "prior_failures": [
+    "posting-metrics-compile-before.log: incorrect test constant, no production change",
+    "posting-metrics-fixture-before.log: proposal correctly refused before posting; fixture corrected to lower limit after a valid request"
+  ]
+}

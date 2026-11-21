@@ -221,6 +221,9 @@ type DisputeView struct {
 	// the end of the re-review window (FR-078), under the policy in force when
 	// the dispute was opened (GOV-001): the dates the service enforces.
 	Deadlines domain.DisputeDeadlines
+	// CanReadTransactionReports is current independent review authority, not
+	// a report-presence flag. Ordinary parties receive no report context.
+	CanReadTransactionReports bool
 }
 
 func (s *Service) disputeView(tx store.Tx, net *domain.Network, d *domain.Dispute) (*DisputeView, error) {
@@ -273,6 +276,13 @@ func (s *Service) GetDispute(ctx context.Context, actor domain.Actor, netID, dis
 		}
 		if !p.actor.System && !v.Tx.IsParty(p.memberID()) && p.requireDecider() != nil {
 			return domain.NotFound("dispute")
+		}
+		if err := requireIndependentDisputeReportReader(tx, p, v.Tx); err != nil {
+			if domain.CodeOf(err) != domain.CodeForbidden {
+				return err
+			}
+		} else {
+			v.CanReadTransactionReports = true
 		}
 		out = v
 		return nil

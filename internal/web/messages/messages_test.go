@@ -67,6 +67,11 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 	for key, e := range keys {
 		var args []any
 		switch key {
+		case "notice.credit_limit_used":
+			args = []any{"90071992547409.93", "90071992547409.94", "90"}
+		case "error.fallback.reference", "error.reference", "help.balance.credit", "help.balance.debt", "help.balance.level",
+			"notice.membership_pending.body", "notice.frozen", "histbal.hint", "histbal.field_error", "histbal.at_utc", "histbal.reason.format":
+			args = []any{"example"}
 		case "balance.spoken_credit", "balance.spoken_debt", "balance.limit_used":
 			args = []any{"12.50", "credits"}
 		case "notice.closing_date", "balance.spoken_level", "status.waiting_other", "reversal.ledger", "row.ledger", "join.network.title", "join.network.invite_only", "join.flash.joined", "join.terms.heading":
@@ -75,6 +80,59 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{"Default credit limit", 2, "12.50"}
 		case "freshness.snapshot", "freshness.offline", "freshness.history", "session_warning.extendable", "session_warning.fixed":
 			args = []any{"example"}
+		case "auth.login.create_prompt", "auth.login.recovery_prompt", "auth.enrol.already_on", "auth.enrol.uri_note", "auth.register.have_account", "security.mfa.state", "about.title":
+			args = []any{"example"}
+		case "auth.codes.remaining":
+			args = []any{1000, "1,000"}
+		case "auth.codes.count":
+			args = []any{1000}
+		case "time_zone.display":
+			args = []any{"19 Nov 2026, 17:30 IST", "Asia/Kolkata"}
+		case "terms.accepted_flash", "terms.accept_version", "terms.accepted_version", "terms.admin.published_flash",
+			"rules.terms_link", "rules.version", "rules.announced", "rules.reason", "rules.shorter_notice",
+			"leave.left", "leave.intro", "leave.balance_settle", "leave.balance_retain", "leave.download_explanation", "leave.confirm":
+			args = []any{"1000"}
+		case "terms.published", "terms.admin.current", "rules.announced_scheduled", "rules.in_force", "rules.initial_value":
+			args = []any{"1000", "example"}
+		case "rules.change":
+			args = []any{"Default credit limit", "90071992547409.93", "0.00"}
+		case "rules.announced_scheduled_notice":
+			args = []any{14, "announced", "effective"}
+		case "inbox.dispute_opened", "inbox.dispute_response", "inbox.mark_read_named", "report.target_listing", "report.target_member",
+			"report.target_transaction", "report.related_disputes_for", "report.review_reference",
+			"report.subject", "report.reported_by", "report.mark_handled_named", "report.handling_note":
+			args = []any{"example"}
+		case "inbox.unread_count":
+			args = []any{1000}
+		case "admin.check.summary":
+			args = []any{1000, "9223372036854775807"}
+		case "admin.announcements.starts", "admin.announcements.since", "admin.break_glass.closed_with_reason":
+			args = []any{"example", "example"}
+		case "admin.announcements.delete_named", "overview.frozen", "overview.frozen_reason", "overview.counted",
+			"overview.manage_members", "overview.manage_invitations", "overview.manage_policy", "overview.manage_terms",
+			"overview.manage_adjust", "overview.manage_reverse", "overview.manage_announcements", "overview.manage_pending",
+			"overview.manage_network", "overview.manage_operator", "overview.manage_reports", "overview.manage_support", "queue.empty":
+			args = []any{"example"}
+		case "queue.explanation":
+			args = []any{48, "example"}
+		case "admin.policy.current":
+			args = []any{"1000", 2}
+		case "admin.policy.scheduled":
+			args = []any{"1000", "announced", "effective"}
+		case "admin.policy.amount_invalid":
+			args = []any{2, "Largest single trade", "90071992547409.93"}
+		case "admin.policy.notice", "admin.policy.amount_hint", "admin.policy.grant_hint", "admin.policy.integer_invalid",
+			"admin.network.confirm_invalid", "admin.network.category", "admin.network.closed_history_until",
+			"admin.network.checksum", "admin.network.export_explanation", "admin.network.review_explanation":
+			args = []any{"example"}
+		case "admin.network.suspension", "admin.network.closing":
+			args = []any{"example", "example"}
+		case "admin.network.count":
+			args = []any{1000}
+		case "admin.network.proposals", "admin.network.nonzero":
+			args = []any{1000, "1,000"}
+		case "report.about":
+			args = []any{"Looks like a scam", "listing", "Bike repair"}
 		case "reversal.by":
 			args = []any{"ledger reference 12345", "12.50", "credits"}
 		case "queue.party_proposal":
@@ -93,6 +151,43 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{"Amount", "not a number", "Enter digits only, for example 12.50."}
 		case "admin.member_action.heading":
 			args = []any{"Reset password", "Zoë"}
+		case "admin.member_action.confirm_title", "admin.member_action.done", "admin.members.action_for", "admin.invitations.row":
+			args = []any{"example", "Zoë"}
+		case "admin.members.caption", "admin.inactive.caption", "admin.inactive.no_rule", "admin.invitations.revoke_named":
+			args = []any{"example"}
+		case "erasure.member_title", "erasure.member_heading":
+			args = []any{"example"}
+		case "dispute.trade_sentence":
+			args = []any{"Ana", "Ben", "90071992547409.93", "Hours"}
+		case "dispute.outcome.upheld_pending", "dispute.outcome.upheld_posted", "dispute.outcome.partial_pending", "dispute.outcome.partial_posted":
+			args = []any{"90071992547409.93", "Hours"}
+		case "dispute.event_with_outcome", "dispute.form.trade", "report.case_description":
+			args = []any{"example", "example"}
+		case "dispute.not_eligible_deadline", "dispute.form.deadline", "dispute.opened_at", "dispute.response_from",
+			"dispute.request_reason", "dispute.rationale_value", "dispute.rereview_explanation", "dispute.row", "dispute.empty":
+			args = []any{"example"}
+		case "dispute.amount_hint":
+			args = []any{2}
+		case "dispute.decision.reversal_sentence":
+			args = []any{"90071992547409.93", "Hours", "Ana", "Ben"}
+		case "dispute.decision.amount_value", "dispute.rereview.upheld_posted", "dispute.rereview.partial_posted":
+			args = []any{"90071992547409.93", "Hours"}
+		case "dispute.decision.waiting", "dispute.decision.change_for", "dispute.decision.balance_now", "dispute.decision.balance_after",
+			"dispute.decision.amount_max", "dispute.rereview.amount_max":
+			args = []any{"example"}
+		case "admin.adjust.queued", "admin.adjust.caption", "admin.adjust.related_sentence", "admin.adjust.expires_suffix",
+			"admin.adjust.review_named", "admin.adjust.reject_named", "admin.adjust.cancel_named",
+			"admin.reverse.reference_status", "admin.reverse.amount_max", "admin.reverse.insufficient_credit",
+			"admin.reverse.balance_now", "admin.reverse.balance_after":
+			args = []any{"example"}
+		case "admin.adjust.amount_value", "admin.adjust.threshold", "admin.adjust.status_by", "admin.reverse.amount_value":
+			args = []any{"90071992547409.93", "Hours"}
+		case "admin.adjust.posted", "admin.adjust.row_amount":
+			args = []any{"Zoë", "90071992547409.93", "Hours"}
+		case "admin.reverse.trade_sentence", "admin.reverse.full_sentence", "admin.reverse.partial_sentence", "admin.reverse.posted":
+			args = []any{"Ana", "Ben", "90071992547409.93", "Hours"}
+		case "admin.reverse.amount_help":
+			args = []any{2, "12.50"}
 		case "listing.owner_price":
 			args = []any{"Zoë", "90071992547409.93", "Hours"}
 		case "listing.price":
@@ -103,6 +198,20 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			"profile.listings_by", "profile.empty", "profile.propose_with", "profile.report",
 			"directory.member_reference", "directory.propose_with":
 			args = []any{"Zoë"}
+		case "trade.sentence.pay", "trade.sentence.receive":
+			args = []any{"Zoë", "90071992547409.93", "Hours"}
+		case "trade.sentence.other":
+			args = []any{"Ana", "Ben", "90071992547409.93", "Hours"}
+		case "trade.member_with_reference":
+			args = []any{"Zoë", "1234-5678"}
+		case "trade.amount_value", "trade.action.completed_balance":
+			args = []any{"90071992547409.93", "Hours"}
+		case "trade.propose.amount_help":
+			args = []any{2, "12.50"}
+		case "trade.propose.sent", "trade.review.too_much", "trade.review.reserved", "trade.review.awaiting",
+			"trade.note_value", "trade.action.title", "trade.action.confirm", "trade.history.reason",
+			"trade.history.reverses", "trade.history.adjusts":
+			args = []any{"example"}
 		default:
 			if strings.HasPrefix(key, "financial.row.") {
 				args = []any{"Ana", "12.50", "credits"}

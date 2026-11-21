@@ -7,39 +7,52 @@ import (
 // reportDTO is a report. Reporter fields are filled only for administrators
 // (FR-024: the reporter is never shown to the reported member).
 type reportDTO struct {
-	ID               string  `json:"id"`
-	TargetType       string  `json:"target_type"`
-	TargetID         string  `json:"target_id"`
-	Category         string  `json:"category"`
-	Description      string  `json:"description"`
-	Status           string  `json:"status"`
-	CreatedAt        string  `json:"created_at"`
-	ReporterMemberID string  `json:"reporter_member_id"`
-	ReporterName     *string `json:"reporter_display_name"`
-	TargetLabel      *string `json:"target_label"`
-	HandledBy        *string `json:"handled_by"`
-	HandledAt        *string `json:"handled_at"`
-	HandlingNote     string  `json:"handling_note"`
+	ID                 string  `json:"id"`
+	TargetType         string  `json:"target_type"`
+	TargetID           string  `json:"target_id"`
+	Category           string  `json:"category"`
+	Description        string  `json:"description"`
+	Status             string  `json:"status"`
+	CreatedAt          string  `json:"created_at"`
+	ReporterMemberID   string  `json:"reporter_member_id"`
+	ReporterName       *string `json:"reporter_display_name"`
+	TargetLabel        *string `json:"target_label"`
+	HandledBy          *string `json:"handled_by"`
+	HandledAt          *string `json:"handled_at"`
+	HandlingNote       string  `json:"handling_note"`
+	RelatedDisputesURL string  `json:"related_disputes_url,omitempty"`
+	DisputeID          string  `json:"dispute_id,omitempty"`
+	RelatedDisputeURL  string  `json:"related_dispute_url,omitempty"`
 }
 
 func toReport(r *service.Report) reportDTO {
-	return reportDTO{ID: r.ID, TargetType: r.TargetType, TargetID: r.TargetID, Category: r.Category, Description: r.Note,
+	d := reportDTO{ID: r.ID, TargetType: r.TargetType, TargetID: r.TargetID, Category: r.Category, Description: r.Note,
 		Status: r.Status, CreatedAt: ts(r.CreatedAt), ReporterMemberID: r.ReporterID, HandledBy: strPtr(r.HandledBy),
-		HandledAt: tsPtr(r.HandledAt), HandlingNote: r.HandlingNote}
+		HandledAt: tsPtr(r.HandledAt), HandlingNote: r.HandlingNote, DisputeID: r.DisputeID}
+	if r.TargetType == service.ReportTransaction {
+		// The destination is the ordinary authorized, paginated dispute list.
+		// Its exact-transaction relation includes cases filed after the report.
+		d.RelatedDisputesURL = v1 + "/disputes?transaction_id=" + r.TargetID
+	}
+	if r.DisputeID != "" {
+		d.RelatedDisputeURL = v1 + "/disputes/" + r.DisputeID
+	}
+	return d
 }
 
-func (s *server) fileReport(c *reqCtx) error { // FR-024
+func (s *server) fileReport(c *reqCtx) error { // FR-024, SEC-025
 	var in struct {
 		TargetType  string `json:"target_type"`
 		TargetID    string `json:"target_id"`
 		Category    string `json:"category"`
 		Description string `json:"description"`
+		DisputeID   string `json:"dispute_id"`
 	}
 	if err := c.decode(&in); err != nil {
 		return err
 	}
 	r, err := s.svc.CreateReport(c.r.Context(), c.actor, c.netID, service.ReportInput{TargetType: in.TargetType,
-		TargetID: in.TargetID, Category: in.Category, Note: in.Description, IdempotencyKey: c.idemKey})
+		TargetID: in.TargetID, Category: in.Category, Note: in.Description, DisputeID: in.DisputeID, IdempotencyKey: c.idemKey})
 	if err != nil {
 		return err
 	}

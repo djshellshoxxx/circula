@@ -5,7 +5,9 @@ import (
 	"testing"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/passwordwork"
 	"github.com/djshellshoxxx/circula/internal/service"
+	tu "github.com/djshellshoxxx/circula/internal/testutil"
 )
 
 // SEC-003 / AUD4-F06: a sign-in with the old password that is still hashing
@@ -23,7 +25,9 @@ func TestLoginStraddlingPasswordChangeGetsNoSession(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			w := newWorld(t, func(p *domain.Policy) { p.DefaultCreditLimit = 100000 })
+			// The observer admits a second real operation during the first.
+			w := newWorldCfg(t, func(p *domain.Policy) { p.DefaultCreditLimit = 100000 },
+				func(c *service.Config) { c.PasswordWork = tu.Must(passwordwork.New(2)) })
 			var fired atomic.Bool
 			var changeErr error
 			stop := service.ObserveArgon2(func(service.Argon2Params) {
@@ -52,7 +56,8 @@ func TestLoginStraddlingPasswordChangeGetsNoSession(t *testing.T) {
 // AUD4-F06: two password changes that both verified the same old password
 // must not both apply; the later one would silently replace the first.
 func TestChangePasswordReplacesOnlyTheVerifiedHash(t *testing.T) {
-	w := newWorld(t, func(p *domain.Policy) { p.DefaultCreditLimit = 100000 })
+	w := newWorldCfg(t, func(p *domain.Policy) { p.DefaultCreditLimit = 100000 },
+		func(c *service.Config) { c.PasswordWork = tu.Must(passwordwork.New(2)) })
 	var fired atomic.Bool
 	var first error
 	stop := service.ObserveArgon2(func(service.Argon2Params) {

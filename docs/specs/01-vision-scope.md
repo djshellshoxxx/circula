@@ -21,7 +21,7 @@ Summary: built 5, not built 1, partial 6.
 | ID | Priority | Status | Note |
 |---|---|---|---|
 | VIS-001 | P0 | partial | Help text and dashboard copy avoid redeemable/money wording; no review checklist run |
-| VIS-002 | P0 | partial | Help text says nobody is obliged to accept credits; no network "about" page |
+| VIS-002 | P0 | partial | Source refresh 2026-11-20: authenticated network About and README contain the acceptance statement (`internal/web/h_home.go`, `TestNetworkAboutPageAndReadAuthority`). Release-candidate/browser qualification remains separate. |
 | VIS-003 | P0 | built | Cross-network ids return not-found in service and API |
 | VIS-004 | P0 | built | LED invariant tests present; run in go test |
 | VIS-005 | P0 | built | Policy stored per network; bounds tested; prospective versions |
@@ -31,7 +31,7 @@ Summary: built 5, not built 1, partial 6.
 | VIS-009 | P1 | partial | Export round trip implemented; import (needed for round trip) deferred |
 | VIS-010 | P1 | partial | Source refresh 2026-11-19: [personal-data inventory](../security/personal-data-inventory.md) records purpose, retention, export and erasure; `TestPersonalDataInventoryCoversSchema` and `TestPersonalDataInventoryRowsComplete` check coverage and populated cells. Retention decisions and the inventory's stated gaps remain open; this is not a current execution or compliance claim |
 | VIS-011 | P1 | built | No billing or payment-provider code; "payment" is trade wording only; Inspection target: `cmd/circula` and `go.mod`; repository-wide absence of monetization is not established by an automated requirement test. No execution result is implied |
-| VIS-012 | P2 | built | No route for deferred capabilities in routes.go |
+| VIS-012 | P2 | built | Inspection targets: `internal/api/routes.go`, `internal/web/web.go` and distributed `h_*.go` registrations, compared with the current deferred list. The unkeyed audit chain is recorded as built under DEC-044; its owner confirmation remains open. Route inventory coverage alone is not a semantic test of every deferral; no execution result is implied |
 
 ## 1. Purpose and statement of limits
 

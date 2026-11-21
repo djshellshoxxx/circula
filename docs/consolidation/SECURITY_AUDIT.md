@@ -1,6 +1,18 @@
 # Core consolidation security review
 
-> Later consolidation: [combined recovery and validation status](../audits/CONSOLIDATION_CONTINUATION_2026-11-19.md). This file retains its original source snapshot and execution scope; final candidate status is recorded in PR #99.
+## Current continuation
+
+The current source, recovered implementation, completed repairs, verification
+boundaries and remaining gates are recorded in
+[UNIQUE_CORE_CONTINUATION_20261119.md](UNIQUE_CORE_CONTINUATION_20261119.md).
+The owned continuation is [PR #127](https://github.com/djshellshoxxx/circula/pull/127),
+which recovers PR #125 and adds the reviewed correctness repairs. Main was last
+observed at `aa01563f`. Complete combined qualification and a main merge remain
+pending in that record; focused worker passes do not qualify a later combination.
+All earlier reports and the snapshot below remain historical source-specific
+records. Existing future-module and policy holds continue to apply.
+
+## Historical initial-recovery checkpoint
 
 Baseline: `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`.
 Candidate: `integration/core-recovery-20261119`.
@@ -72,3 +84,18 @@ policy HOLDs were disabled. No production data was used. Full candidate race,
 dependency/security, browser, and integration outcomes are tracked separately
 in TEST_RESULTS.md. This AI-assisted review does not close SEC-033's independent
 external review gate.
+
+## Committed-response verification and concurrent security work
+
+The follow-up `TestWebExportCommittedReadFailureAbortsHTTP` uses the complete
+operations/web middleware chain and a real TCP client. In each CSV/JSON case,
+the client receives 4 KiB before releasing a controlled repository read fault.
+The original main revision reports a normal completed body; the repair yields
+`io.ErrUnexpectedEOF` and an invalid ZIP. This verifies transport interruption,
+not only an in-process panic sentinel.
+
+The #99 source review (5973679547) records a separate live-session authority
+gap in #90's token mutation path. That repair is in #99, not this independent
+export candidate. #90 must not merge alone before the repair. None of these
+source reviews replaces the pending combined current-head security/regression
+checks or the independent external security review requirement.

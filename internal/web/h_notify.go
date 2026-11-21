@@ -2,10 +2,12 @@ package web
 
 import (
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 func (s *server) notifyRoutes() {
@@ -90,7 +92,7 @@ func (s *server) inbox(w http.ResponseWriter, r *http.Request, c *rc) {
 	for _, x := range ds {
 		d.Disputes = append(d.Disputes, awaitingDispute{ID: x.ID, Category: categoryLabel(x.Category), Opened: fmtTime(x.OpenedAt)})
 	}
-	s.render(w, r, c, "inbox", 200, &page{Title: "Inbox", D: d, V: map[string]string{"show": d.Filter}})
+	s.render(w, r, c, "inbox", 200, &page{Title: messages.Text("inbox.title"), D: d, V: map[string]string{"show": d.Filter}})
 }
 
 func (s *server) inboxRead(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -103,19 +105,21 @@ func (s *server) inboxRead(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	if len(ids) == 0 {
-		s.setFlash(w, r, "All notifications are marked as read.")
+		s.setFlash(w, r, messages.Text("inbox.all_read"))
 	}
 	http.Redirect(w, r, c.base()+"/inbox", http.StatusSeeOther)
 }
 
 type reportFormData struct {
-	Type, ID, Label string
-	Cats            []option
+	Type, ID, Label                      string
+	Cats                                 []option
+	DisputeID, CaseDescription, CaseHref string
 }
 
 var reportCats = []option{
-	{"spam", "Spam or advertising"}, {"scam", "Looks like a scam"}, {"inappropriate", "Inappropriate content"},
-	{"harassment", "Harassment or abuse"}, {"other", "Something else"},
+	{"spam", messages.Text("report.category.spam")}, {"scam", messages.Text("report.category.scam")},
+	{"inappropriate", messages.Text("report.category.inappropriate")},
+	{"harassment", messages.Text("report.category.harassment")}, {"other", messages.Text("report.category.other")},
 }
 
 // reportTarget resolves what is being reported and its display label.
@@ -126,20 +130,48 @@ func (c *rc) reportTarget(typ, id string) (string, bool) {
 		if err != nil || l.MemberID == c.Me.ID {
 			return "", false
 		}
-		return "Listing: " + l.Title, true
+		return messages.Text("report.target_listing", l.Title), true
 	case service.ReportMember:
 		m, err := c.s.svc.GetMember(c.ctx, c.actor, c.netID(), id)
 		if err != nil || m.ID == c.Me.ID {
 			return "", false
 		}
-		return "Member: " + m.DisplayName, true
+		return messages.Text("report.target_member", m.DisplayName), true
+	case service.ReportTransaction:
+		v, err := c.s.svc.GetTransaction(c.ctx, c.actor, c.netID(), id)
+		if err != nil || !v.Tx.IsParty(c.Me.ID) || v.Tx.PayerMemberID == "" ||
+			v.Tx.PayeeMemberID == "" || v.Tx.PayerMemberID == v.Tx.PayeeMemberID {
+			return "", false
+		}
+		return messages.Text("report.target_transaction", v.Tx.ID), true
 	}
 	return "", false
 }
 
-func (s *server) reportFormData(r *http.Request, c *rc, typ, id string) (*reportFormData, error) {
+func (s *server) reportFormData(r *http.Request, c *rc, typ, id, disputeID string) (*reportFormData, error) {
 	if !c.isActive() {
 		return nil, domain.ErrForbidden
+	}
+	if disputeID != "" {
+		caseContext, err := s.svc.GetReportDisputeContext(r.Context(), c.actor, c.netID(), disputeID)
+		if err != nil {
+			return nil, err
+		}
+		var label string
+		switch {
+		case typ == service.ReportMember && id == caseContext.MemberID:
+			label = messages.Text("report.target_member", caseContext.MemberName)
+		case typ == service.ReportListing && id != "" && id == caseContext.ListingID:
+			label = messages.Text("report.target_case_listing")
+			if caseContext.ListingTitle != "" {
+				label = messages.Text("report.target_listing", caseContext.ListingTitle)
+			}
+		default:
+			return nil, domain.Invalid("dispute_id", "the selected case does not match the report target")
+		}
+		return &reportFormData{Type: typ, ID: id, Label: label, Cats: reportCats, DisputeID: caseContext.DisputeID,
+			CaseDescription: messages.Text("report.case_description", caseContext.MemberName, c.at(caseContext.OpenedAt).Format("2 Jan 2006")),
+			CaseHref:        c.base() + "/disputes/" + caseContext.DisputeID}, nil
 	}
 	label, ok := c.reportTarget(typ, id)
 	if !ok {
@@ -149,30 +181,30 @@ func (s *server) reportFormData(r *http.Request, c *rc, typ, id string) (*report
 }
 
 func (s *server) reportForm(w http.ResponseWriter, r *http.Request, c *rc) {
-	d, err := s.reportFormData(r, c, r.URL.Query().Get("type"), r.URL.Query().Get("id"))
+	d, err := s.reportFormData(r, c, r.URL.Query().Get("type"), r.URL.Query().Get("id"), r.URL.Query().Get("dispute_id"))
 	if err != nil {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, c, "report_form", 200, &page{Title: "Report a problem", D: d, V: map[string]string{"category": "spam"}})
+	s.render(w, r, c, "report_form", 200, &page{Title: messages.Text("report.title"), D: d, V: map[string]string{"category": "spam"}})
 }
 
 func (s *server) reportPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	v := formValues(r)
-	d, err := s.reportFormData(r, c, v["type"], v["id"])
+	d, err := s.reportFormData(r, c, v["type"], v["id"], v["dispute_id"])
 	if err != nil {
 		s.fail(w, r, err)
 		return
 	}
 	_, err = s.svc.CreateReport(r.Context(), c.actor, c.netID(), service.ReportInput{TargetType: d.Type, TargetID: d.ID,
-		Category: v["category"], Note: v["note"], IdempotencyKey: idemKey(r)})
+		Category: v["category"], Note: v["note"], DisputeID: d.DisputeID, IdempotencyKey: idemKey(r)})
 	if err != nil {
-		p := &page{Title: "Report a problem", D: d, V: v}
+		p := &page{Title: messages.Text("report.title"), D: d, V: v}
 		switch domain.CodeOf(err) {
 		case domain.CodeConflict:
-			p.Summary = "Not sent. You already have an open report about this. An administrator will look at it. Nothing changed."
+			p.Summary = messages.Text("report.duplicate")
 		case domain.CodeRateLimited:
-			p.Summary = "Not sent. You have sent many reports today. Try again tomorrow. Nothing changed."
+			p.Summary = messages.Text("report.throttled")
 		default:
 			sum, fe, ok := c.refuse(err)
 			if !ok {
@@ -184,16 +216,25 @@ func (s *server) reportPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.render(w, r, c, "report_form", 422, p)
 		return
 	}
-	s.setFlash(w, r, "Report sent. Administrators will review it. It does not change anything for the person you reported, and they are not told who reported.")
+	s.setFlash(w, r, messages.Text("report.sent"))
+	if d.DisputeID != "" {
+		// Build the local destination from the authorized case identifier;
+		// the form's display link is not a redirect destination.
+		http.Redirect(w, r, c.base()+"/disputes/"+url.PathEscape(d.DisputeID), http.StatusSeeOther)
+		return
+	}
 	http.Redirect(w, r, c.base(), http.StatusSeeOther)
 }
 
 type reportRow struct {
-	ID, Reporter, Target, Category, Note, Status, HandlingNote string
-	TargetType                                                 string
-	TargetHref                                                 string
-	Open                                                       bool
-	Created                                                    any
+	ID, Reporter, Target, Note, Status, HandlingNote string
+	TargetHref                                       string
+	DisputesHref                                     string
+	DisputeHref                                      string
+	Open                                             bool
+	Created                                          any
+	About                                            messages.Parts
+	PlainAbout                                       string
 }
 
 type reportsData struct {
@@ -219,17 +260,48 @@ func (s *server) reportQueue(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	d := &reportsData{Filter: status}
 	for _, x := range rs {
-		row := reportRow{ID: x.ID, Reporter: x.ReporterName, Target: x.TargetLabel, Category: categoryOf(x.Category), Note: x.Note,
-			Status: x.Status, HandlingNote: x.HandlingNote, TargetType: x.TargetType, Open: x.Status == "open", Created: fmtTime(x.CreatedAt)}
-		if x.TargetType == service.ReportMember {
+		row := reportRow{ID: x.ID, Reporter: x.ReporterName, Target: x.TargetLabel, Note: x.Note,
+			Status: x.Status, HandlingNote: x.HandlingNote, Open: x.Status == "open", Created: fmtTime(x.CreatedAt)}
+		row.About, row.PlainAbout = reportAbout(x.Category, x.TargetType, x.TargetLabel)
+		switch x.TargetType {
+		case service.ReportMember:
 			row.TargetHref = c.base() + "/members/" + x.TargetID
+		case service.ReportTransaction:
+			row.TargetHref = c.base() + "/trades/" + x.TargetID
+			row.DisputesHref = c.base() + "/disputes?transaction_id=" + x.TargetID
+		}
+		if x.DisputeID != "" {
+			row.DisputeHref = c.base() + "/disputes/" + x.DisputeID
 		}
 		d.Rows = append(d.Rows, row)
 	}
 	if len(rs) == per {
 		d.Next = rs[len(rs)-1].ID
 	}
-	s.render(w, r, c, "admin_reports", 200, &page{Title: "Reports", D: d})
+	s.render(w, r, c, "admin_reports", 200, &page{Title: messages.Text("report.queue_title"), D: d})
+}
+
+// reportAbout passes only known catalogue enum labels to Around. Target names
+// stay in the template-owned slot. Unknown category/type values use plain text
+// so arbitrary stored values (including NUL or %!) never reach its sentinel.
+func reportAbout(category, typ, target string) (messages.Parts, string) {
+	var typeLabel string
+	switch typ {
+	case service.ReportListing:
+		typeLabel = messages.Text("report.target_type.listing")
+	case service.ReportMember:
+		typeLabel = messages.Text("report.target_type.member")
+	case service.ReportTransaction:
+		typeLabel = messages.Text("report.target_type.transaction")
+	default:
+		return messages.Parts{}, messages.Text("report.about", categoryOf(category), typ, target)
+	}
+	for _, option := range reportCats {
+		if option.Value == category {
+			return messages.Around("report.about", option.Label, typeLabel), ""
+		}
+	}
+	return messages.Parts{}, messages.Text("report.about", category, typeLabel, target)
 }
 
 func categoryOf(v string) string {
@@ -253,7 +325,7 @@ func (s *server) reportHandle(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "Report marked as handled. The reporter was told it was reviewed.")
+	s.setFlash(w, r, messages.Text("report.handled"))
 	http.Redirect(w, r, c.base()+"/admin/reports", http.StatusSeeOther)
 }
 
@@ -267,6 +339,6 @@ func (c *rc) limitNotice() string {
 	if !warn {
 		return ""
 	}
-	return "You are using " + plainAmt(used, b.Decimals) + " of your " + plainAmt(b.CreditLimit, b.Decimals) +
-		" credit limit (" + itoa(c.Net.Policy.LimitWarningPercent) + " percent or more). A trade that would take you past the limit is refused."
+	return messages.Text("notice.credit_limit_used", plainAmt(used, b.Decimals), plainAmt(b.CreditLimit, b.Decimals),
+		itoa(c.Net.Policy.LimitWarningPercent))
 }

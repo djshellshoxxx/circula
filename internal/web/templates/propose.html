@@ -3,14 +3,14 @@
   {{template "csrf" .}}{{template "idem" .}}
   <input type="hidden" name="step" value="review">
   <input type="hidden" name="listing_id" value="{{.Val "listing_id"}}">
-  {{template "select" dict "P" . "Name" "counterparty_id" "Label" "Who is the trade with?" "Opts" .D.Members}}
-  <fieldset class="radio"><legend>Direction</legend>
+  {{template "select" dict "P" . "Name" "counterparty_id" "Label" (msg "trade.propose.counterparty") "Opts" .D.Members}}
+  <fieldset class="radio"><legend>{{msg "trade.propose.direction"}}</legend>
     {{with .Err "direction"}}<p class="error" id="e-direction">{{.}}</p>{{end}}
-    <label><input type="radio" name="direction" id="f-direction" value="pay"{{if ne (.Val "direction") "request"}} checked{{end}}> I pay them</label>
-    <label><input type="radio" name="direction" value="request"{{if eq (.Val "direction") "request"}} checked{{end}}> They pay me</label>
+    <label><input type="radio" name="direction" id="f-direction" value="pay"{{if ne (.Val "direction") "request"}} checked{{end}}> {{msg "trade.propose.pay"}}</label>
+    <label><input type="radio" name="direction" value="request"{{if eq (.Val "direction") "request"}} checked{{end}}> {{msg "trade.propose.receive"}}</label>
   </fieldset>
-  {{template "field" dict "P" . "Name" "amount" "Label" "Amount" "Hint" (printf "Amount in credits, up to %d decimal places." .Dec) "Mode" "decimal" "Req" true}}
-  {{template "field" dict "P" . "Name" "note" "Label" "What is it for? (optional)" "Type" "textarea" "Max" 500}}
-  <div class="actions"><button type="submit">Review trade</button> <a class="btn secondary" href="/n/{{.Slug}}">Cancel</a></div>
+  {{template "field" dict "P" . "Name" "amount" "Label" (msg "trade.amount") "Hint" (msg "trade.propose.amount_hint" .Dec) "Mode" "decimal" "Req" true}}
+  {{template "field" dict "P" . "Name" "note" "Label" (msg "trade.propose.note") "Type" "textarea" "Max" 500}}
+  <div class="actions"><button type="submit">{{msg "trade.propose.review"}}</button> <a class="btn secondary" href="/n/{{.Slug}}">{{msg "trade.cancel"}}</a></div>
 </form>
 {{end}}

@@ -88,12 +88,31 @@ func (t *txImpl) UpdateReReview(r ReReview) error {
 }
 
 const reportCols = `id,network_id,reporter_id,target_type,target_id,category,note,status,created_at,
-	COALESCE(handled_by,''),handled_at,handling_note`
+	COALESCE(handled_by,''),handled_at,handling_note,dispute_id`
+
+// reportIndependentOfMemberSQL resolves a report's subject in its network.
+// The report alias is r and the one argument is the reviewing member ID.
+// Unresolved subjects fail closed. Queue, audit and export admission queries
+// share this predicate so role changes cannot expose a subject's reporter.
+const reportIndependentOfMemberSQL = `COALESCE((CASE r.target_type
+	WHEN 'member' THEN (SELECT m.id FROM members m WHERE m.network_id = r.network_id AND m.id = r.target_id)
+	WHEN 'listing' THEN (SELECT m.id FROM listings l JOIN members m ON m.network_id = l.network_id AND m.id = l.member_id
+		WHERE l.network_id = r.network_id AND l.id = r.target_id)
+	WHEN 'transaction' THEN (SELECT CASE
+		WHEN pa.member_id = r.reporter_id THEN pm.id
+		WHEN pb.member_id = r.reporter_id THEN am.id END
+		FROM transactions tr
+		JOIN accounts pa ON pa.network_id = tr.network_id AND pa.id = tr.payer_account_id
+		JOIN accounts pb ON pb.network_id = tr.network_id AND pb.id = tr.payee_account_id
+		JOIN members am ON am.network_id = tr.network_id AND am.id = pa.member_id
+		JOIN members pm ON pm.network_id = tr.network_id AND pm.id = pb.member_id
+		WHERE tr.network_id = r.network_id AND tr.id = r.target_id AND am.id <> pm.id)
+	END) <> ?, 0)`
 
 func (t *txImpl) InsertReport(r Report) error {
-	_, err := t.exec(`INSERT INTO reports(id,network_id,reporter_id,target_type,target_id,category,note,status,created_at)
-		VALUES (?,?,?,?,?,?,?,?,?)`, r.ID, r.NetworkID, r.ReporterID, r.TargetType, r.TargetID, r.Category, r.Note,
-		r.Status, ms(r.CreatedAt))
+	_, err := t.exec(`INSERT INTO reports(id,network_id,reporter_id,target_type,target_id,category,note,status,created_at,dispute_id)
+		VALUES (?,?,?,?,?,?,?,?,?,?)`, r.ID, r.NetworkID, r.ReporterID, r.TargetType, r.TargetID, r.Category, r.Note,
+		r.Status, ms(r.CreatedAt), nullStr(r.DisputeID))
 	return err
 }
 
@@ -101,11 +120,13 @@ func scanReport(s rowScanner) (*Report, error) {
 	var r Report
 	var created int64
 	var handled sql.NullInt64
+	var dispute sql.NullString
 	if err := s.Scan(&r.ID, &r.NetworkID, &r.ReporterID, &r.TargetType, &r.TargetID, &r.Category, &r.Note,
-		&r.Status, &created, &r.HandledBy, &handled, &r.HandlingNote); err != nil {
+		&r.Status, &created, &r.HandledBy, &handled, &r.HandlingNote, &dispute); err != nil {
 		return nil, err
 	}
 	r.CreatedAt, r.HandledAt = fromMS(created), ptrTime(handled)
+	r.DisputeID = dispute.String
 	return &r, nil
 }
 
@@ -121,11 +142,24 @@ func (t *txImpl) UpdateReport(r Report) error {
 }
 
 func (t *txImpl) ListReports(netID string, f ReportFilter) ([]*Report, error) {
-	q := `SELECT ` + reportCols + ` FROM reports WHERE network_id = ?`
+	q := `SELECT ` + reportCols + ` FROM reports r WHERE network_id = ?`
 	args := []any{netID}
+	if f.ExcludeSubjectMemberID != "" {
+		q += ` AND ` + reportIndependentOfMemberSQL
+		args = append(args, f.ExcludeSubjectMemberID)
+	}
+	if f.ConflictMemberID != "" {
+		q += ` AND NOT ` + reportIndependentOfMemberSQL
+		args = append(args, f.ConflictMemberID)
+	}
 	if f.Status != "" {
 		q += ` AND status = ?`
 		args = append(args, f.Status)
+	}
+	if f.DisputeID != "" {
+		q += ` AND (r.dispute_id = ? OR (r.target_type = 'transaction' AND r.target_id =
+			(SELECT d.tx_id FROM disputes d WHERE d.network_id = r.network_id AND d.id = ?)))`
+		args = append(args, f.DisputeID, f.DisputeID)
 	}
 	if f.AfterID != "" {
 		q += ` AND id < ?`

@@ -9,6 +9,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/histbal"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 // histBalanceExample is the format example shown in the hint (UX-061).
@@ -33,7 +34,7 @@ type histBalanceVM struct {
 // builds the view model. An empty raw yields the bare form. The zone is never
 // inferred: only histbal.ParseInstant decides what is acceptable.
 func buildHistBalanceVM(ctx context.Context, raw string, now time.Time, rd histbal.Reader, actor domain.Actor, netID, unit string) (histBalanceVM, error) {
-	vm := histBalanceVM{Raw: raw, Hint: "Use a full date and time with Z or a numeric offset, for example " + histBalanceExample + "."}
+	vm := histBalanceVM{Raw: raw, Hint: messages.Text("histbal.hint", histBalanceExample)}
 	if raw == "" {
 		return vm, nil
 	}
@@ -41,7 +42,7 @@ func buildHistBalanceVM(ctx context.Context, raw string, now time.Time, rd histb
 	if err != nil {
 		var ie *histbal.InputError
 		if errors.As(err, &ie) {
-			vm.FieldError = ie.Reason
+			vm.FieldError = histBalanceReason(ie.Reason)
 			return vm, nil
 		}
 		return vm, err
@@ -51,7 +52,7 @@ func buildHistBalanceVM(ctx context.Context, raw string, now time.Time, rd histb
 		// The reader re-checks precision and the future bound on its own clock.
 		var ie *histbal.InputError
 		if errors.As(err, &ie) {
-			vm.FieldError = ie.Reason
+			vm.FieldError = histBalanceReason(ie.Reason)
 			return vm, nil
 		}
 		return vm, err
@@ -64,33 +65,53 @@ func buildHistBalanceVM(ctx context.Context, raw string, now time.Time, rd histb
 	vm.Submitted = true
 	vm.Balance = makeBalance(bal, res.Decimals, unit)
 	vm.AsOf = histbal.FormatInstant(res.AsOf)
-	vm.Explanation = "This is the posted balance of your account at this instant. It counts only postings made up to then."
+	vm.Explanation = messages.Text("histbal.explanation")
 	return vm, nil
+}
+
+// histBalanceReason translates only the web display of known shared reasons.
+// API reason constants retain their protocol text; unknown reasons remain plain
+// data and are escaped by the historical-balance template.
+func histBalanceReason(reason string) string {
+	switch reason {
+	case histbal.ReasonMissing:
+		return messages.Text("histbal.reason.missing")
+	case histbal.ReasonFormat:
+		return messages.Text("histbal.reason.format", histBalanceExample)
+	case histbal.ReasonPrecision:
+		return messages.Text("histbal.reason.precision")
+	case histbal.ReasonFuture:
+		return messages.Text("histbal.reason.future")
+	default:
+		return reason
+	}
 }
 
 // histBalanceSrc defines the "histbal" fragment. It is parsed on its own for
 // renderHistBalance and into the history page set, so the page includes it as
 // a template call rather than as pre-rendered template.HTML.
 const histBalanceSrc = `{{define "histbal"}}<section aria-labelledby="histbal-h">
-<h2 id="histbal-h">Balance at an exact time</h2>
+<h2 id="histbal-h">{{msg "histbal.title"}}</h2>
 <form method="get" action="">
 <div class="field">
-<label for="histbal-at">Date and time (with Z or offset)</label>
+<label for="histbal-at">{{msg "histbal.at_label"}}</label>
 <p id="histbal-hint" class="hint">{{.Hint}}</p>
-{{if .FieldError}}<p id="histbal-err" class="error" role="alert">Date and time: {{.FieldError}}</p>{{end}}
+{{if .FieldError}}<p id="histbal-err" class="error" role="alert">{{msg "histbal.field_error" .FieldError}}</p>{{end}}
 <input id="histbal-at" name="at" type="text" autocomplete="off" spellcheck="false" value="{{.Raw}}" aria-describedby="histbal-hint{{if .FieldError}} histbal-err{{end}}"{{if .FieldError}} aria-invalid="true"{{end}}>
 </div>
-<button type="submit">Show balance</button>
+<button type="submit">{{msg "histbal.show"}}</button>
 </form>
 {{if .Submitted}}<div id="histbal-result" aria-live="polite">
 <p><span aria-label="{{.Balance.Spoken}}">{{.Balance.Signed}} &middot; {{.Balance.State}}</span></p>
-<p>At <time datetime="{{.AsOf}}">{{.AsOf}}</time> (UTC)</p>
-{{if .NoPostings}}<p>No postings as of this instant</p>{{end}}
+{{$at := msgAround "histbal.at_utc"}}<p>{{$at.Before}}<time datetime="{{.AsOf}}">{{.AsOf}}</time>{{$at.After}}</p>
+{{if .NoPostings}}<p>{{msg "histbal.no_postings"}}</p>{{end}}
 <p>{{.Explanation}}</p>
 </div>{{end}}
 </section>{{end}}`
 
-var histBalanceTmpl = template.Must(template.New("histbal-root").Parse(histBalanceSrc))
+var histBalanceTmpl = template.Must(template.New("histbal-root").Funcs(template.FuncMap{
+	"msg": messages.Text, "msgAround": messages.Around,
+}).Parse(histBalanceSrc))
 
 // renderHistBalance writes the fragment to w. html/template escapes every value.
 func renderHistBalance(w io.Writer, vm histBalanceVM) error {

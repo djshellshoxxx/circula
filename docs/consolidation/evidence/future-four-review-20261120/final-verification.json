@@ -1,0 +1,48 @@
+{
+  "checked_at": "2026-11-20 16:49:29 UTC",
+  "source_target_drift": [
+    {
+      "pr": 113,
+      "changes": {}
+    },
+    {
+      "pr": 114,
+      "changes": {}
+    },
+    {
+      "pr": 115,
+      "changes": {}
+    },
+    {
+      "pr": 120,
+      "changes": {}
+    }
+  ],
+  "boundaries": [
+    {
+      "module": "receipts",
+      "core_or_foreign_repo_import_literals": [],
+      "init_functions": [],
+      "manifest_disabled_hold_no_future_dependencies": true
+    },
+    {
+      "module": "governance",
+      "core_or_foreign_repo_import_literals": [],
+      "init_functions": [],
+      "manifest_disabled_hold_no_future_dependencies": true
+    },
+    {
+      "module": "areas",
+      "core_or_foreign_repo_import_literals": [],
+      "init_functions": [],
+      "manifest_disabled_hold_no_future_dependencies": true
+    },
+    {
+      "module": "qr",
+      "core_or_foreign_repo_import_literals": [],
+      "init_functions": [],
+      "manifest_disabled_hold_no_future_dependencies": true
+    }
+  ],
+  "runtime_execution": "No Go, Node test, fuzz, vulnerability reproduction or load command executed during this read-only review. Provider results and historical source-bound evidence were inspected."
+}

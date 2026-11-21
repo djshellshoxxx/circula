@@ -1,0 +1,15 @@
+{{define "content"}}
+<p>{{msg "report.review_explanation"}}</p>
+{{with .D}}
+{{if .Rows}}
+<ul class="rows">
+{{range .Rows}}<li>
+  <p><strong>{{.Category}}</strong> &middot; <span class="tag">{{.Status}}</span></p>
+  <p>{{msg "report.review_reference" .ID}}</p>
+</li>{{end}}
+</ul>
+{{template "pager" dict "Next" .Next "Href" (printf "/n/%s/disputes/%s/reports?after=" $.Slug .DisputeID)}}
+{{else}}<p>{{msg "report.review_empty"}}</p>{{end}}
+<p><a href="/n/{{$.Slug}}/disputes/{{.DisputeID}}">{{msg "report.review_back"}}</a></p>
+{{end}}
+{{end}}

@@ -8,6 +8,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 func (s *server) adminRoutes() {
@@ -35,8 +36,41 @@ func (s *server) adminHome(w http.ResponseWriter, r *http.Request, c *rc) {
 
 type memberRow struct {
 	*domain.Member
-	Roles   string
-	Actions []option
+	StatusLabel string
+	Roles       string
+	Actions     []option
+}
+
+func memberStatusLabel(status domain.MemberStatus) string {
+	switch status {
+	case domain.MemberPending, domain.MemberActive, domain.MemberSuspended, domain.MemberDeparted:
+		return messages.Text("admin.members.status." + string(status))
+	}
+	return string(status)
+}
+
+func memberRoleLabel(role domain.Role) string {
+	switch role {
+	case domain.RoleAdmin, domain.RoleReviewer:
+		return messages.Text("admin.members.role." + string(role))
+	}
+	return string(role)
+}
+
+func removalReasonLabel(code string) string {
+	switch code {
+	case domain.RemovalRuleBreach, domain.RemovalConfirmedFraud, domain.RemovalDisputeNonResponse:
+		return messages.Text("admin.member_action.removal_reason." + code)
+	}
+	return code
+}
+
+func newMemberRow(m *domain.Member) memberRow {
+	var roles []string
+	for _, role := range m.Roles {
+		roles = append(roles, memberRoleLabel(role))
+	}
+	return memberRow{Member: m, StatusLabel: memberStatusLabel(m.Status), Roles: strings.Join(roles, ", "), Actions: actionsFor(m)}
 }
 
 type memberActionDef struct {
@@ -46,18 +80,18 @@ type memberActionDef struct {
 }
 
 var memberActions = map[string]memberActionDef{
-	"approve":         {"Approve", "The person becomes an active member and can trade.", false, false},
-	"deny":            {"Deny", "The request is closed and the person does not join.", true, false},
-	"suspend":         {"Suspend", "The member can no longer propose, accept or post. They can still view history and decline trades.", true, false},
-	"restore":         {"Restore", "The member becomes active again.", true, false},
-	"remove":          {"Remove", "The membership ends. Open proposals are cancelled and the member keeps read-only access to their own history. This cannot be undone: a departed member cannot rejoin.", false, false}, // reason code instead (GOV-011)
-	"grant-admin":     {"Make administrator", "The member can change policy, limits and memberships and see other members' balances.", false, false},
-	"revoke-admin":    {"Remove administrator role", "The member loses administrator rights. A network must keep at least one administrator.", false, false},
-	"grant-reviewer":  {"Make dispute reviewer", "The member can decide disputes they are not a party to.", false, false},
-	"revoke-reviewer": {"Remove reviewer role", "The member can no longer decide disputes.", false, false},
-	"flag":            {"Mark as in default", "The member is marked as in default (a governance marker); the network policy decides what that blocks.", true, false},
-	"unflag":          {"Clear default marker", "The default marker is removed.", true, false},
-	"limit":           {"Set credit limit", "Sets this member's credit limit. Leave the amount empty to go back to the network default.", true, true},
+	"approve":         {messages.Text("admin.member_action.approve"), messages.Text("admin.member_action.approve_consequence"), false, false},
+	"deny":            {messages.Text("admin.member_action.deny"), messages.Text("admin.member_action.deny_consequence"), true, false},
+	"suspend":         {messages.Text("admin.member_action.suspend"), messages.Text("admin.member_action.suspend_consequence"), true, false},
+	"restore":         {messages.Text("admin.member_action.restore"), messages.Text("admin.member_action.restore_consequence"), true, false},
+	"remove":          {messages.Text("admin.member_action.remove"), messages.Text("admin.member_action.remove_consequence"), false, false}, // reason code instead (GOV-011)
+	"grant-admin":     {messages.Text("admin.member_action.grant_admin"), messages.Text("admin.member_action.grant_admin_consequence"), false, false},
+	"revoke-admin":    {messages.Text("admin.member_action.revoke_admin"), messages.Text("admin.member_action.revoke_admin_consequence"), false, false},
+	"grant-reviewer":  {messages.Text("admin.member_action.grant_reviewer"), messages.Text("admin.member_action.grant_reviewer_consequence"), false, false},
+	"revoke-reviewer": {messages.Text("admin.member_action.revoke_reviewer"), messages.Text("admin.member_action.revoke_reviewer_consequence"), false, false},
+	"flag":            {messages.Text("admin.member_action.flag"), messages.Text("admin.member_action.flag_consequence"), true, false},
+	"unflag":          {messages.Text("admin.member_action.unflag"), messages.Text("admin.member_action.unflag_consequence"), true, false},
+	"limit":           {messages.Text("admin.member_action.limit"), messages.Text("admin.member_action.limit_consequence"), true, true},
 }
 
 func actionsFor(m *domain.Member) []option {
@@ -123,11 +157,7 @@ func (s *server) adminMembers(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	var rows []memberRow
 	for _, m := range pg.Members {
-		var roles []string
-		for _, ro := range m.Roles {
-			roles = append(roles, string(ro))
-		}
-		rows = append(rows, memberRow{Member: m, Roles: strings.Join(roles, ", "), Actions: actionsFor(m)})
+		rows = append(rows, newMemberRow(m))
 	}
 	base := c.base() + "/admin/members?" + url.Values{"status": {f}}.Encode()
 	pn := pageNav{Total: total}
@@ -142,7 +172,7 @@ func (s *server) adminMembers(w http.ResponseWriter, r *http.Request, c *rc) {
 			pn.Next = base + "&after=" + url.QueryEscape(pg.Members[n-1].ID)
 		}
 	}
-	s.render(w, r, c, "admin_members", 200, &page{Title: "Members", D: map[string]any{"Rows": rows, "Pages": pn},
+	s.render(w, r, c, "admin_members", 200, &page{Title: messages.Text("admin.members.title"), D: map[string]any{"Rows": rows, "Pages": pn},
 		V: map[string]string{"status": f}})
 }
 
@@ -163,9 +193,9 @@ type memberAct struct {
 func newMemberAct(key string, def memberActionDef, m *domain.Member) *memberAct {
 	a := &memberAct{Key: key, Def: def, M: m}
 	if key == "remove" {
-		a.Codes = []option{{"", "Choose a reason"}}
+		a.Codes = []option{{"", messages.Text("admin.member_action.choose_reason")}}
 		for _, c := range domain.RemovalReasons {
-			a.Codes = append(a.Codes, option{c, domain.RemovalReasonLabel(c)})
+			a.Codes = append(a.Codes, option{c, removalReasonLabel(c)})
 		}
 	}
 	return a
@@ -186,7 +216,7 @@ func (s *server) memberActionForm(w http.ResponseWriter, r *http.Request, c *rc)
 		s.fail(w, r, domain.NotFound("page"))
 		return
 	}
-	s.render(w, r, c, "admin_member_act", 200, &page{Title: def.Verb + ": " + m.DisplayName + "?",
+	s.render(w, r, c, "admin_member_act", 200, &page{Title: messages.Text("admin.member_action.confirm_title", def.Verb, m.DisplayName),
 		D: newMemberAct(r.PathValue("action"), def, m)})
 }
 
@@ -199,7 +229,7 @@ func (s *server) memberActionPost(w http.ResponseWriter, r *http.Request, c *rc)
 		return
 	}
 	v := formValues(r)
-	p := &page{Title: def.Verb + ": " + m.DisplayName + "?", D: newMemberAct(key, def, m), V: v}
+	p := &page{Title: messages.Text("admin.member_action.confirm_title", def.Verb, m.DisplayName), D: newMemberAct(key, def, m), V: v}
 	reason := strings.TrimSpace(v["reason"])
 	ctx, id, nid := r.Context(), m.ID, c.netID()
 	var err error
@@ -216,7 +246,7 @@ func (s *server) memberActionPost(w http.ResponseWriter, r *http.Request, c *rc)
 		_, err = s.svc.DepartMember(ctx, c.actor, nid, service.DepartInput{MemberID: id, ReasonCode: v["reason_code"],
 			Reason: reason, MatterTxID: strings.TrimSpace(v["transaction_id"])})
 		if service.IsRemovalConflict(err) { // GOV-011, SEC-010: say why, keep the form
-			p.Summary = "Not done. You took part in the matter of this removal (the named trade, or a trade of this member that is still under dispute or re-review), so another administrator must decide it. Nothing changed."
+			p.Summary = messages.Text("admin.member_action.removal_conflict")
 			s.render(w, r, c, "admin_member_act", http.StatusForbidden, p)
 			return
 		}
@@ -236,7 +266,7 @@ func (s *server) memberActionPost(w http.ResponseWriter, r *http.Request, c *rc)
 			n, perr := domain.ParseAmount(v["amount"], c.Net.Policy.Decimals)
 			if perr != nil {
 				p.Errors = []fieldErr{{"amount", c.amountHelp()}}
-				p.Summary = "Not saved. Fix the problems below. Nothing changed."
+				p.Summary = messages.Text("admin.member_action.invalid")
 				s.render(w, r, c, "admin_member_act", 422, p)
 				return
 			}
@@ -248,7 +278,7 @@ func (s *server) memberActionPost(w http.ResponseWriter, r *http.Request, c *rc)
 		s.formFail(w, r, c, "admin_member_act", p, err)
 		return
 	}
-	s.setFlash(w, r, def.Verb+": done for "+m.DisplayName+".")
+	s.setFlash(w, r, messages.Text("admin.member_action.done", def.Verb, m.DisplayName))
 	http.Redirect(w, r, c.base()+"/admin/members", http.StatusSeeOther)
 }
 
@@ -258,8 +288,33 @@ type invData struct {
 }
 
 type invRow struct {
-	ID, Status string
-	Expires    any
+	ID, Status   string
+	Expires      any
+	ExpiresLabel string
+	CanRevoke    bool
+}
+
+// invitationStatus preserves the existing used/revoked/expired precedence and
+// strict expiry boundary. Display labels never decide whether revocation is shown.
+func invitationStatus(i *domain.Invitation, now time.Time) (string, bool) {
+	switch {
+	case i.UsedAt != nil:
+		return messages.Text("admin.invitations.status.used"), false
+	case i.RevokedAt != nil:
+		return messages.Text("admin.invitations.status.revoked"), false
+	case i.ExpiresAt.Before(now):
+		return messages.Text("admin.invitations.status.expired"), false
+	default:
+		return messages.Text("admin.invitations.status.unused"), true
+	}
+}
+
+func (c *rc) invitationRow(i *domain.Invitation, now time.Time) invRow {
+	status, canRevoke := invitationStatus(i, now)
+	// Status is always one of the catalogue labels above, never submitted text.
+	// The plain accessible name uses the same viewer zone/layout as the time element.
+	return invRow{ID: i.ID, Status: status, Expires: c.when(i.ExpiresAt),
+		ExpiresLabel: c.at(i.ExpiresAt).Format("2 Jan 2006, 15:04 MST"), CanRevoke: canRevoke}
 }
 
 func (s *server) invitations(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -275,18 +330,9 @@ func (s *server) renderInvites(w http.ResponseWriter, r *http.Request, c *rc, st
 	}
 	now := s.opts.Clock.Now()
 	for _, i := range ls {
-		status := "Unused"
-		switch {
-		case i.UsedAt != nil:
-			status = "Used"
-		case i.RevokedAt != nil:
-			status = "Revoked"
-		case i.ExpiresAt.Before(now):
-			status = "Expired"
-		}
-		d.List = append(d.List, invRow{i.ID, status, c.when(i.ExpiresAt)})
+		d.List = append(d.List, c.invitationRow(i, now))
 	}
-	p.Title, p.D = "Invitations", d
+	p.Title, p.D = messages.Text("admin.invitations.title"), d
 	s.render(w, r, c, "admin_invites", st, p)
 }
 
@@ -295,7 +341,7 @@ func (s *server) invitationCreate(w http.ResponseWriter, r *http.Request, c *rc)
 	p := &page{V: v}
 	days, err := parseDays(v["days"])
 	if err != nil {
-		p.Summary, p.Errors = "Not created. Fix the problems below. Nothing changed.", []fieldErr{{"days", "Valid for: enter a whole number of days from 1 to 90."}}
+		p.Summary, p.Errors = messages.Text("admin.invitations.invalid"), []fieldErr{{"days", messages.Text("admin.invitations.days_error")}}
 		s.renderInvites(w, r, c, 422, p, "")
 		return
 	}
@@ -334,7 +380,7 @@ func (s *server) invitationRevoke(w http.ResponseWriter, r *http.Request, c *rc)
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "Invitation revoked.")
+	s.setFlash(w, r, messages.Text("admin.invitations.revoked"))
 	http.Redirect(w, r, c.base()+"/admin/invitations", http.StatusSeeOther)
 }
 

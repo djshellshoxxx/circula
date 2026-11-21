@@ -1,0 +1,36 @@
+{
+  "head": "f4f718b44ae19e7eea32b9bf214a47ea178ccce3",
+  "tree": "eed8d05a8e5eb1f89ae6b0f61efb1c8fad6ef433",
+  "cwd": "/workspace/scratch/4d30fa819181/circula",
+  "status_before": "",
+  "command": [
+    "golangci-lint",
+    "run",
+    "--timeout",
+    "10m",
+    "--concurrency",
+    "1"
+  ],
+  "environment_overrides": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1"
+  },
+  "started_at_utc": "2026-11-20T08:11:30.744902+00:00",
+  "finished_at_utc": "2026-11-20T08:12:55.055753+00:00",
+  "elapsed_seconds": 84.311,
+  "exit_code": 1,
+  "timed_out": false,
+  "head_after": "f4f718b44ae19e7eea32b9bf214a47ea178ccce3",
+  "tree_after": "eed8d05a8e5eb1f89ae6b0f61efb1c8fad6ef433",
+  "status_after": "",
+  "source_unchanged": true,
+  "test_and_subtest_events": {},
+  "packages": {},
+  "skipped_tests": [],
+  "failed_tests": []
+}

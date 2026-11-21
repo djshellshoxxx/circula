@@ -1,0 +1,12 @@
+--- FAIL: TestTermsRulesLeaveCatalogueEscapesMessages (0.27s)
+    --- FAIL: TestTermsRulesLeaveCatalogueEscapesMessages/terms (0.07s)
+        terms_rules_leave_catalog_test.go:201: page ignored catalogue text or trusted its markup
+    --- FAIL: TestTermsRulesLeaveCatalogueEscapesMessages/admin_terms (0.07s)
+        terms_rules_leave_catalog_test.go:201: page ignored catalogue text or trusted its markup
+    --- FAIL: TestTermsRulesLeaveCatalogueEscapesMessages/rules (0.06s)
+        terms_rules_leave_catalog_test.go:201: page ignored catalogue text or trusted its markup
+    --- FAIL: TestTermsRulesLeaveCatalogueEscapesMessages/leave (0.07s)
+        terms_rules_leave_catalog_test.go:201: page ignored catalogue text or trusted its markup
+FAIL
+FAIL	command-line-arguments	0.283s
+FAIL

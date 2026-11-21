@@ -28,10 +28,12 @@ looks exactly like a wrong code, so do not tell members "that login does not exi
 
 ## Case 2: member lost the password and the codes
 
-For an ordinary member whose only non-departed membership is in this network,
+For an ordinary member whose only membership is in this network,
 ask a network administrator (Network admin, Members, **Reset password**).
-Administrator accounts and accounts with a non-departed membership in another
-network require the platform operator (Case 3).
+Administrator accounts and accounts with a membership in another network
+require the platform operator (Case 3). This includes departed and anonymised
+memberships: the person retains access to their ledger and transaction history,
+so the password still protects authority outside this administrator's network.
 
 1. Check the person's identity out of band (in person, phone you know).
 2. Give a reason (it is recorded). The page shows a temporary password once.
@@ -42,7 +44,7 @@ network require the platform operator (Case 3).
    and recovery codes were revoked: they should make new codes afterwards.
 
 Rules: you cannot reset yourself; only active, non-administrator members of
-your network with no non-departed membership elsewhere are eligible;
+your network with no membership elsewhere are eligible;
 10 resets per hour per administrator. Look for `member.password_reset` in the network audit
 log and `person.password_reset` in the platform log.
 

@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-20",
+  "repository": "djshellshoxxx/circula",
+  "scope": "Normal merges into four existing isolated future branches",
+  "records": [
+    {
+      "sha": "5200c5bf940f051a86d6e502787af06892200974",
+      "merged": true,
+      "message": "Pull Request successfully merged",
+      "reviewed_head": "6186416ddd83c365405a798130999cb1e4df0f31",
+      "reviewed_base": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+      "target": "future/fnet-203-receipts-20261116",
+      "qualified_runs": [
+        44555363075,
+        44555363061
+      ],
+      "tree": "f611a03c49b5862052271789e9b353e09ecbb7da",
+      "parents": [
+        "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+        "6186416ddd83c365405a798130999cb1e4df0f31"
+      ],
+      "merged_at": "2026-11-20T16:56:45Z",
+      "url": "https://github.com/djshellshoxxx/circula/pull/113"
+    },
+    {
+      "sha": "5eac085005361e973ca8f358e01f039aea718bed",
+      "merged": true,
+      "message": "Pull Request successfully merged",
+      "reviewed_head": "711833c510b14e84c3a7441b3b63f2f990bc8368",
+      "reviewed_base": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+      "target": "future/fnet-208-governance-20261116",
+      "qualified_runs": [
+        44555364365,
+        44555364562
+      ],
+      "tree": "3c776a8d327c37798cffdcc27b6b8ed6c6c5cddd",
+      "parents": [
+        "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+        "711833c510b14e84c3a7441b3b63f2f990bc8368"
+      ],
+      "merged_at": "2026-11-20T16:56:51Z",
+      "url": "https://github.com/djshellshoxxx/circula/pull/114"
+    },
+    {
+      "sha": "6aac35e226135a53d69c1e6ce74e340dcfe1d85f",
+      "merged": true,
+      "message": "Pull Request successfully merged",
+      "reviewed_head": "52cf9c3afadb950e4dd428807319e3c96f3004a9",
+      "reviewed_base": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+      "target": "future/fnet-206-areas-20261116",
+      "qualified_runs": [
+        44555371649,
+        44555371753
+      ],
+      "tree": "0f4b70bcf024b5993d41165ef1905f0b9b64d8f3",
+      "parents": [
+        "8b444b20139e3e687db494b3fe36bb3643148e5b",
+        "52cf9c3afadb950e4dd428807319e3c96f3004a9"
+      ],
+      "merged_at": "2026-11-20T16:56:56Z",
+      "url": "https://github.com/djshellshoxxx/circula/pull/115"
+    },
+    {
+      "sha": "6028dae56723b8488db6e52e25c83da7888777c1",
+      "merged": true,
+      "message": "Pull Request successfully merged",
+      "reviewed_head": "a91bb5fdc97fc540a1617538073e92509ceba485",
+      "reviewed_base": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+      "target": "future/fux-102-qr-20261116",
+      "qualified_runs": [
+        44555388643,
+        44555388749
+      ],
+      "tree": "05ea33f8cadd386e717b7ed836e76bc7e8abea90",
+      "parents": [
+        "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+        "a91bb5fdc97fc540a1617538073e92509ceba485"
+      ],
+      "merged_at": "2026-11-20T16:57:01Z",
+      "url": "https://github.com/djshellshoxxx/circula/pull/120"
+    }
+  ],
+  "qualification": {
+    "applicable_successful_jobs": 40,
+    "failed_applicable_jobs": 0,
+    "pending_applicable_jobs": 0,
+    "skipped_conditional_core_matrix_records": 4,
+    "configured_native_core_executions_not_run": 8,
+    "dedicated_native_module_jobs_passed": 12,
+    "qr_native_scope": "Node syntax and 27-case camera lifecycle suite; no real-device or fresh QR Go/SQLite claim"
+  },
+  "preservation": {
+    "all_source_refs_fetched_after_merge": true,
+    "automatic_branch_deletion": false,
+    "trees_equal_reviewed_sources": true,
+    "expected_both_parents_verified": true,
+    "future_features_enabled": false,
+    "integration_gate": "HOLD"
+  },
+  "limits": "This post-snapshot receipt follows the frozen 148-head inventory. It does not activate modules in Core, claim unexecuted checks, deploy or publish a release."
+}

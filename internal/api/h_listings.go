@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -110,7 +112,15 @@ func (s *server) patchListing(c *reqCtx) error { // API-047 (merge-patch + If-Ma
 	if err := c.requireIfMatch(listingETag(cur)); err != nil {
 		return err
 	}
-	u := service.ListingUpdate{ListingID: cur.ID}
+	u := service.ListingUpdate{ListingID: cur.ID, ExpectedRevision: service.ListingRevision(cur)}
+	// Wildcard checks existence only. Explicit validators also bind the
+	// service write unit, covering owner edits made outside this adapter.
+	for _, tag := range strings.Split(c.r.Header.Get("If-Match"), ",") {
+		if strings.TrimSpace(tag) == "*" {
+			u.ExpectedRevision = ""
+			break
+		}
+	}
 	if in.Title != nil {
 		v, err := rawString("title", in.Title)
 		if err != nil {
@@ -149,6 +159,9 @@ func (s *server) patchListing(c *reqCtx) error { // API-047 (merge-patch + If-Ma
 		}
 	}
 	l, err := s.svc.UpdateListing(c.r.Context(), c.actor, c.netID, u)
+	if errors.Is(err, service.ErrListingChanged) {
+		return &apiError{status: 412, code: "precondition-failed", detail: "If-Match does not match the current version"}
+	}
 	if err != nil {
 		return err
 	}

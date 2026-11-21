@@ -16,6 +16,13 @@ Spec decisions and acceptance mapping: `docs/specs/addenda/SEC-011.md`.
    - API: `POST /api/v1/admin/adjustments/{id}/approve|reject|cancel`, `GET /api/v1/admin/adjustments?status=` and `GET .../{id}`. Approve returns the posted transaction.
 5. Requests not decided within 7 days (`service.Config.PendingAdjustmentTTL`) expire and post nothing.
 
+An approver's administrator grant history must establish independence from the
+requester within 32 grant records. Founder self-grants and explicit operator
+grants are the supported roots; the existing new-administrator waiting period
+still applies except at the founder root. Live temporary break-glass authority
+keeps its existing exemption. Missing history, repeated ancestors, or an
+exhausted lookup limit refuse the decision and suppress the decision buttons.
+
 ## Service API (internal/service)
 
 - `CreateAdjustmentRequest(ctx, actor, netID, AdjustInput) (*AdjustResult, error)`: exactly one of `Tx` or `Pending` is set. Idempotency key required, retries return the original result.
@@ -29,6 +36,7 @@ Spec decisions and acceptance mapping: `docs/specs/addenda/SEC-011.md`.
 |---|---|
 | Proposer approves or rejects own request | `forbidden` |
 | Approver is the adjusted member | `forbidden` |
+| Administrator grant history does not establish independent authority | `forbidden`, request and ledger unchanged |
 | Request of another network, unknown id | `not-found` |
 | Already decided, expired | `invalid-transaction-state` (an expired request is closed and audited by the attempt) |
 | Target departed, proposer no longer administrator, network closed | `invalid-transaction-state`, request stays pending until it expires or is cancelled |

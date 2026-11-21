@@ -1,0 +1,1318 @@
+test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) ... 
+  test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=nan, zipped=False) ... FAIL
+  test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=nan, zipped=True) ... FAIL
+  test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=inf, zipped=False) ... FAIL
+  test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=inf, zipped=True) ... FAIL
+  test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=-inf, zipped=False) ... FAIL
+  test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=-inf, zipped=True) ... FAIL
+test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) ... 
+  test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=nan, nested_row=False) ... FAIL
+  test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=nan, nested_row=True) ... FAIL
+  test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=inf, nested_row=False) ... FAIL
+  test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=inf, nested_row=True) ... FAIL
+  test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=-inf, nested_row=False) ... FAIL
+  test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=-inf, nested_row=True) ... FAIL
+test_manifest_boolean_size_does_not_match_one_byte (test_read_export.ReferenceExportTests.test_manifest_boolean_size_does_not_match_one_byte) ... FAIL
+test_manifest_case_aliases_accept_valid_names (test_read_export.ReferenceExportTests.test_manifest_case_aliases_accept_valid_names) ... 
+  test_manifest_case_aliases_accept_valid_names (test_read_export.ReferenceExportTests.test_manifest_case_aliases_accept_valid_names) (fmt='json') ... FAIL
+  test_manifest_case_aliases_accept_valid_names (test_read_export.ReferenceExportTests.test_manifest_case_aliases_accept_valid_names) (fmt='csv') ... FAIL
+test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) ... 
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='manifest', alias='LEDGER_SEQ') ... FAIL
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='manifest', alias='ſCOPE') ... FAIL
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='manifest', alias='FILES') ... FAIL
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='file', alias='ROWS') ... FAIL
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='file', alias='BYTES') ... FAIL
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='file', alias='SHA256') ... FAIL
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='file', alias='NAME') ... FAIL
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='reconciliation', alias='ENTRIES') ... FAIL
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='reconciliation', alias='ENTRY_SUM') ... FAIL
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='reconciliation', alias='BALANCE_TOTAL') ... FAIL
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='accounts', alias='NONZERO') ... FAIL
+  test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='accounts', alias='SHA256') ... FAIL
+test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) ... FAIL
+test_manifest_case_aliases_do_not_fold_ligatures (test_read_export.ReferenceExportTests.test_manifest_case_aliases_do_not_fold_ligatures) ... ok
+test_manifest_case_aliases_preserve_null_rules (test_read_export.ReferenceExportTests.test_manifest_case_aliases_preserve_null_rules) ... 
+  test_manifest_case_aliases_preserve_null_rules (test_read_export.ReferenceExportTests.test_manifest_case_aliases_preserve_null_rules) (name='FILES') ... FAIL
+  test_manifest_case_aliases_preserve_null_rules (test_read_export.ReferenceExportTests.test_manifest_case_aliases_preserve_null_rules) (name='RECONCILIATION') ... FAIL
+  test_manifest_case_aliases_preserve_null_rules (test_read_export.ReferenceExportTests.test_manifest_case_aliases_preserve_null_rules) (name='ACCOUNTS') ... FAIL
+test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) ... 
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='schema_version', alias='SCHEMA_VERSION') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='ledger_seq', alias='LEDGER_SEQ') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='scope', alias='ſCOPE') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='network_id', alias='networK_id') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='decimals', alias='DECIMALS') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='format', alias='FORMAT') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='generated_at', alias='GENERATED_AT') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='files', alias='FILES') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='name', alias='NAME') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='rows', alias='ROWſ') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='bytes', alias='BYTES') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='sha256', alias='SHA256') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='reconciliation', alias='RECONCILIATION') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='entries', alias='ENTRIES') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='entry_sum', alias='ENTRY_SUM') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='balance_total', alias='BALANCE_TOTAL') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='accounts', alias='ACCOUNTS') ... FAIL
+  test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='nonzero', alias='NONZERO') ... FAIL
+test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) ... 
+  test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='rows', convert='bool', fmt='json') ... FAIL
+  test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='rows', convert='bool', fmt='csv') ... FAIL
+  test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='rows', convert='float', fmt='json') ... FAIL
+  test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='rows', convert='float', fmt='csv') ... FAIL
+  test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='bytes', convert='float', fmt='json') ... FAIL
+  test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='bytes', convert='float', fmt='csv') ... FAIL
+test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) ... FAIL
+test_manifest_metadata_preserves_supported_values (test_read_export.ReferenceExportTests.test_manifest_metadata_preserves_supported_values) ... ok
+test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) ... 
+  test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='ledger_seq', value=False) ... FAIL
+  test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='ledger_seq', value=1.0) ... FAIL
+  test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='ledger_seq', value=9223372036854775808) ... FAIL
+  test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='decimals', value=True) ... FAIL
+  test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='decimals', value=2.0) ... FAIL
+  test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='decimals', value=9223372036854775808) ... FAIL
+  test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='scope', value=False) ... FAIL
+  test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='format', value=7) ... FAIL
+  test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='network_id', value=[]) ... FAIL
+  test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='generated_at', value=0) ... FAIL
+test_manifest_preserves_existing_missing_and_null_behavior (test_read_export.ReferenceExportTests.test_manifest_preserves_existing_missing_and_null_behavior) ... ok
+test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) ... 
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='schema_version', earlier=True) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='rows', earlier=False) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='rows', earlier=9223372036854775808) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='bytes', earlier=0.0) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='sha256', earlier=7) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='files', earlier=False) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='files', earlier=[True]) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='scope', earlier=False) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='format', earlier=7) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='network_id', earlier=[]) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='decimals', earlier=False) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='ledger_seq', earlier=1.0) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='generated_at', earlier=0) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='generated_at', earlier='not-a-time') ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='reconciliation', earlier=False) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='entries', earlier=True) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='entry_sum', earlier=0.0) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='balance_total', earlier='0') ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='accounts', earlier=[]) ... FAIL
+  test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='nonzero', earlier=True) ... FAIL
+test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) ... 
+  test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='not-a-time') ... FAIL
+  test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-02-29T00:00:00Z') ... FAIL
+  test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-13-01T00:00:00Z') ... FAIL
+  test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19T24:00:00Z') ... FAIL
+  test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19T00:00:60Z') ... FAIL
+  test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19T00:00:00') ... FAIL
+  test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19 00:00:00Z') ... FAIL
+  test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19T00:00:00+25:00') ... FAIL
+  test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19T00:00:00+00:61') ... FAIL
+  test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='２０２６-11-19T00:00:00Z') ... FAIL
+test_manifest_unknown_fields_remain_ignored (test_read_export.ReferenceExportTests.test_manifest_unknown_fields_remain_ignored) ... ok
+test_manifest_valid_duplicates_keep_final_values (test_read_export.ReferenceExportTests.test_manifest_valid_duplicates_keep_final_values) ... ok
+
+======================================================================
+FAIL: test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=nan, zipped=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 533, in test_json_constants_rejected_in_manifest
+    self.assert_invalid(*fixture("members"), zipped=zipped,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=nan, zipped=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 533, in test_json_constants_rejected_in_manifest
+    self.assert_invalid(*fixture("members"), zipped=zipped,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=inf, zipped=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 533, in test_json_constants_rejected_in_manifest
+    self.assert_invalid(*fixture("members"), zipped=zipped,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=inf, zipped=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 533, in test_json_constants_rejected_in_manifest
+    self.assert_invalid(*fixture("members"), zipped=zipped,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=-inf, zipped=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 533, in test_json_constants_rejected_in_manifest
+    self.assert_invalid(*fixture("members"), zipped=zipped,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) (value=-inf, zipped=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 533, in test_json_constants_rejected_in_manifest
+    self.assert_invalid(*fixture("members"), zipped=zipped,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=nan, nested_row=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 553, in test_json_constants_rejected_in_members
+    self.assert_invalid(man, tables, zipped=True, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      1 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=nan, nested_row=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 553, in test_json_constants_rejected_in_members
+    self.assert_invalid(man, tables, zipped=True, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      1 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=inf, nested_row=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 553, in test_json_constants_rejected_in_members
+    self.assert_invalid(man, tables, zipped=True, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      1 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=inf, nested_row=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 553, in test_json_constants_rejected_in_members
+    self.assert_invalid(man, tables, zipped=True, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      1 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=-inf, nested_row=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 553, in test_json_constants_rejected_in_members
+    self.assert_invalid(man, tables, zipped=True, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      1 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) (value=-inf, nested_row=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 553, in test_json_constants_rejected_in_members
+    self.assert_invalid(man, tables, zipped=True, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      1 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_boolean_size_does_not_match_one_byte (test_read_export.ReferenceExportTests.test_manifest_boolean_size_does_not_match_one_byte)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 353, in test_manifest_boolean_size_does_not_match_one_byte
+    self.assert_invalid(*fixture("members"), fmt="csv", zipped=True, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_accept_valid_names (test_read_export.ReferenceExportTests.test_manifest_case_aliases_accept_valid_names) (fmt='json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 498, in test_manifest_case_aliases_accept_valid_names
+    self.assert_valid(man, tables, fmt=fmt, zipped=True, transform_manifest=transform)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : unsupported schema_version None
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_accept_valid_names (test_read_export.ReferenceExportTests.test_manifest_case_aliases_accept_valid_names) (fmt='csv')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 498, in test_manifest_case_aliases_accept_valid_names
+    self.assert_valid(man, tables, fmt=fmt, zipped=True, transform_manifest=transform)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : unsupported schema_version None
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='manifest', alias='LEDGER_SEQ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='manifest', alias='ſCOPE')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='manifest', alias='FILES')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='file', alias='ROWS')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='file', alias='BYTES')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='file', alias='SHA256')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='file', alias='NAME')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='reconciliation', alias='ENTRIES')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='reconciliation', alias='ENTRY_SUM')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='reconciliation', alias='BALANCE_TOTAL')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='accounts', alias='NONZERO')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) (target='accounts', alias='SHA256')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 473, in test_manifest_case_aliases_apply_later_values
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 476, in test_manifest_case_aliases_apply_later_values
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_preserve_null_rules (test_read_export.ReferenceExportTests.test_manifest_case_aliases_preserve_null_rules) (name='FILES')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 518, in test_manifest_case_aliases_preserve_null_rules
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_preserve_null_rules (test_read_export.ReferenceExportTests.test_manifest_case_aliases_preserve_null_rules) (name='RECONCILIATION')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 518, in test_manifest_case_aliases_preserve_null_rules
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_preserve_null_rules (test_read_export.ReferenceExportTests.test_manifest_case_aliases_preserve_null_rules) (name='ACCOUNTS')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 518, in test_manifest_case_aliases_preserve_null_rules
+    self.assert_invalid(*fixture(), corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='schema_version', alias='SCHEMA_VERSION')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='ledger_seq', alias='LEDGER_SEQ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='scope', alias='ſCOPE')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='network_id', alias='networK_id')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='decimals', alias='DECIMALS')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='format', alias='FORMAT')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='generated_at', alias='GENERATED_AT')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='files', alias='FILES')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='name', alias='NAME')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='rows', alias='ROWſ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='bytes', alias='BYTES')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='sha256', alias='SHA256')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='reconciliation', alias='RECONCILIATION')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='entries', alias='ENTRIES')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='entry_sum', alias='ENTRY_SUM')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='balance_total', alias='BALANCE_TOTAL')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='accounts', alias='ACCOUNTS')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) (name='nonzero', alias='NONZERO')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 454, in test_manifest_case_aliases_reject_shadowed_type_errors
+    self.assert_invalid(man, tables, zipped=True,
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='rows', convert='bool', fmt='json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 343, in test_manifest_file_counts_require_integer_tokens
+    self.assert_invalid(*fixture("members"), fmt=fmt, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='rows', convert='bool', fmt='csv')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 343, in test_manifest_file_counts_require_integer_tokens
+    self.assert_invalid(*fixture("members"), fmt=fmt, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='rows', convert='float', fmt='json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 343, in test_manifest_file_counts_require_integer_tokens
+    self.assert_invalid(*fixture("members"), fmt=fmt, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='rows', convert='float', fmt='csv')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 343, in test_manifest_file_counts_require_integer_tokens
+    self.assert_invalid(*fixture("members"), fmt=fmt, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='bytes', convert='float', fmt='json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 343, in test_manifest_file_counts_require_integer_tokens
+    self.assert_invalid(*fixture("members"), fmt=fmt, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) (field='bytes', convert='float', fmt='csv')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 343, in test_manifest_file_counts_require_integer_tokens
+    self.assert_invalid(*fixture("members"), fmt=fmt, corrupt=corrupt)
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 346, in test_manifest_file_counts_require_integer_tokens
+    self.assert_invalid(man, tables, corrupt=lambda m, f: m["files"][0].update(rows=True))
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      1 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='ledger_seq', value=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 361, in test_manifest_metadata_rejects_wrong_types
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 0, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='ledger_seq', value=1.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 361, in test_manifest_metadata_rejects_wrong_types
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='ledger_seq', value=9223372036854775808)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 361, in test_manifest_metadata_rejects_wrong_types
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 9223372036854775808, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='decimals', value=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 361, in test_manifest_metadata_rejects_wrong_types
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='decimals', value=2.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 361, in test_manifest_metadata_rejects_wrong_types
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='decimals', value=9223372036854775808)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 361, in test_manifest_metadata_rejects_wrong_types
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='scope', value=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 361, in test_manifest_metadata_rejects_wrong_types
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope False, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='format', value=7)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 361, in test_manifest_metadata_rejects_wrong_types
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='network_id', value=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 361, in test_manifest_metadata_rejects_wrong_types
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) (name='generated_at', value=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 361, in test_manifest_metadata_rejects_wrong_types
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='schema_version', earlier=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='rows', earlier=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='rows', earlier=9223372036854775808)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='bytes', earlier=0.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='sha256', earlier=7)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='files', earlier=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='files', earlier=[True])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='scope', earlier=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='format', earlier=7)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='network_id', earlier=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='decimals', earlier=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='ledger_seq', earlier=1.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='generated_at', earlier=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='generated_at', earlier='not-a-time')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='reconciliation', earlier=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='entries', earlier=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='entry_sum', earlier=0.0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='balance_total', earlier='0')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='accounts', earlier=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) (name='nonzero', earlier=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 413, in test_manifest_rejects_shadowed_type_errors
+    self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : accounts                     3 rows
+entries                      2 rows
+export ok: scope ledger, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='not-a-time')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 371, in test_manifest_timestamps_reject_malformed_values
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-02-29T00:00:00Z')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 371, in test_manifest_timestamps_reject_malformed_values
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-13-01T00:00:00Z')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 371, in test_manifest_timestamps_reject_malformed_values
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19T24:00:00Z')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 371, in test_manifest_timestamps_reject_malformed_values
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19T00:00:60Z')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 371, in test_manifest_timestamps_reject_malformed_values
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19T00:00:00')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 371, in test_manifest_timestamps_reject_malformed_values
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19 00:00:00Z')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 371, in test_manifest_timestamps_reject_malformed_values
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19T00:00:00+25:00')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 371, in test_manifest_timestamps_reject_malformed_values
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='2026-11-19T00:00:00+00:61')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 371, in test_manifest_timestamps_reject_malformed_values
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) (value='２０２６-11-19T00:00:00Z')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 371, in test_manifest_timestamps_reject_malformed_values
+    self.assert_invalid(*fixture("members"),
+  File "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline/test_read_export.py", line 119, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+----------------------------------------------------------------------
+Ran 16 tests in 6.778s
+
+FAILED (failures=96)

@@ -1,0 +1,5 @@
+{"ImportPath":"github.com/djshellshoxxx/circula/internal/service_test [github.com/djshellshoxxx/circula/internal/service.test]","Action":"build-output","Output":"github.com/djshellshoxxx/circula/internal/service_test: /tmp/circula-runtime-4d30/go/pkg/tool/linux_amd64/compile: signal: killed\n"}
+{"ImportPath":"github.com/djshellshoxxx/circula/internal/service_test [github.com/djshellshoxxx/circula/internal/service.test]","Action":"build-fail"}
+{"Time":"2026-11-20T00:27:11.707023636-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/internal/service"}
+{"Time":"2026-11-20T00:27:11.707178971-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Output":"FAIL\tgithub.com/djshellshoxxx/circula/internal/service [build failed]\n"}
+{"Time":"2026-11-20T00:27:11.707185621-08:00","Action":"fail","Package":"github.com/djshellshoxxx/circula/internal/service","Elapsed":0,"FailedBuild":"github.com/djshellshoxxx/circula/internal/service_test [github.com/djshellshoxxx/circula/internal/service.test]"}

@@ -1,36 +1,37 @@
 {{define "content"}}
 {{with .D}}
 {{if .Frozen}}<section class="notice" role="alert" aria-labelledby="frz-h">
-  <h2 id="frz-h">This network is read-only</h2>
-  <p>Frozen since {{.FrozenSince}}. Members can read balances and history, but every change is refused (status 423) until the ledger check passes again.</p>
-  <p>Reason: {{.FrozenReason}}</p>
-  <p><a href="/n/{{$.Slug}}/admin/audit">Audit and checks</a></p>
+  <h2 id="frz-h">{{msg "overview.frozen_title"}}</h2>
+  {{$frozen := msgAround "overview.frozen"}}<p>{{$frozen.Before}}{{.FrozenSince}}{{$frozen.After}}</p>
+  <p>{{msg "overview.frozen_reason" .FrozenReason}}</p>
+  <p><a href="/n/{{$.Slug}}/admin/audit">{{msg "overview.link_audit"}}</a></p>
 </section>{{end}}
 <section aria-labelledby="att-h">
-  <h2 id="att-h">Needs attention</h2>
-  <p>Counted from the ledger and the dispute records when this page loaded, {{.AsOf}}.</p>
+  <h2 id="att-h">{{msg "overview.attention"}}</h2>
+  {{$counted := msgAround "overview.counted"}}<p>{{$counted.Before}}{{.AsOf}}{{$counted.After}}</p>
   <ul class="rows">{{range .Rows}}
     <li>{{.Text}}{{if and .Href .Count}} <a href="{{.Href}}">{{.Label}}</a>{{end}}</li>{{end}}
-    <li>{{.Check}}{{with .CheckAt}} {{.}}{{end}} <a href="/n/{{$.Slug}}/admin/audit">Audit and checks</a></li>
+    <li>{{.Check}}{{with .CheckAt}} {{.}}{{end}} <a href="/n/{{$.Slug}}/admin/audit">{{msg "overview.link_audit"}}</a></li>
   </ul>
 </section>
+{{if .HasCheck}}{{template "historical_limit_coverage" .HistoricalLimits}}{{end}}
 {{end}}
-<h2>Manage the network</h2>
+<h2>{{msg "overview.manage_title"}}</h2>
 <ul class="rows">
-<li><a href="/n/{{.Slug}}/admin/members">Members</a>: approve, suspend, restore, remove, roles and credit limits</li>
-<li><a href="/n/{{.Slug}}/admin/invitations">Invitations</a>: create and revoke invitation links</li>
-<li><a href="/n/{{.Slug}}/admin/policy">Policy</a>: limits, expiry, join mode</li>
-<li><a href="/n/{{.Slug}}/admin/terms">Terms</a>: the terms members accept when they join, and new versions of them</li>
-<li><a href="/n/{{.Slug}}/admin/adjust">Adjustments</a>: audited corrections to a member's balance</li>
-<li><a href="/n/{{.Slug}}/admin/reverse">Reverse a trade</a>: give back a completed trade, with a reason</li>
-<li><a href="/n/{{.Slug}}/admin/announcements">Announcements</a>: notices on every member's home page</li>
-<li><a href="/n/{{.Slug}}/admin/adjustments/pending">Adjustments awaiting approval</a>: second-administrator approval (dual control)</li>
-<li><a href="/n/{{.Slug}}/admin/audit">Audit and checks</a></li>
-<li><a href="/n/{{.Slug}}/admin/network">Pause or close</a>: pause trading, or close the network</li>
-<li><a href="/n/{{.Slug}}/admin/exports">Exports</a></li>
-<li><a href="/n/{{.Slug}}/admin/break-glass">Operator access</a>: sessions in which platform staff reached this network</li>
-<li><a href="/n/{{.Slug}}/admin/reports">Reports</a>: abuse reports about listings and members</li>
-<li><a href="/n/{{.Slug}}/review">Dispute review queue</a></li>
-<li><a href="/help#support-boundaries">Support boundaries</a>: who can help with network rules, trades, software and platform policy</li>
+{{$members := msgAround "overview.manage_members"}}<li>{{$members.Before}}<a href="/n/{{.Slug}}/admin/members">{{msg "overview.link_members"}}</a>{{$members.After}}</li>
+{{$invitations := msgAround "overview.manage_invitations"}}<li>{{$invitations.Before}}<a href="/n/{{.Slug}}/admin/invitations">{{msg "overview.link_invitations"}}</a>{{$invitations.After}}</li>
+{{$policy := msgAround "overview.manage_policy"}}<li>{{$policy.Before}}<a href="/n/{{.Slug}}/admin/policy">{{msg "overview.link_policy"}}</a>{{$policy.After}}</li>
+{{$terms := msgAround "overview.manage_terms"}}<li>{{$terms.Before}}<a href="/n/{{.Slug}}/admin/terms">{{msg "overview.link_terms"}}</a>{{$terms.After}}</li>
+{{$adjust := msgAround "overview.manage_adjust"}}<li>{{$adjust.Before}}<a href="/n/{{.Slug}}/admin/adjust">{{msg "overview.link_adjust"}}</a>{{$adjust.After}}</li>
+{{$reverse := msgAround "overview.manage_reverse"}}<li>{{$reverse.Before}}<a href="/n/{{.Slug}}/admin/reverse">{{msg "overview.link_reverse"}}</a>{{$reverse.After}}</li>
+{{$announcements := msgAround "overview.manage_announcements"}}<li>{{$announcements.Before}}<a href="/n/{{.Slug}}/admin/announcements">{{msg "overview.link_announcements"}}</a>{{$announcements.After}}</li>
+{{$pending := msgAround "overview.manage_pending"}}<li>{{$pending.Before}}<a href="/n/{{.Slug}}/admin/adjustments/pending">{{msg "overview.link_pending"}}</a>{{$pending.After}}</li>
+<li><a href="/n/{{.Slug}}/admin/audit">{{msg "overview.link_audit"}}</a></li>
+{{$network := msgAround "overview.manage_network"}}<li>{{$network.Before}}<a href="/n/{{.Slug}}/admin/network">{{msg "overview.link_network"}}</a>{{$network.After}}</li>
+<li><a href="/n/{{.Slug}}/admin/exports">{{msg "overview.link_exports"}}</a></li>
+{{$operator := msgAround "overview.manage_operator"}}<li>{{$operator.Before}}<a href="/n/{{.Slug}}/admin/break-glass">{{msg "overview.link_operator"}}</a>{{$operator.After}}</li>
+{{$reports := msgAround "overview.manage_reports"}}<li>{{$reports.Before}}<a href="/n/{{.Slug}}/admin/reports">{{msg "overview.link_reports"}}</a>{{$reports.After}}</li>
+<li><a href="/n/{{.Slug}}/review">{{msg "overview.link_review"}}</a></li>
+{{$support := msgAround "overview.manage_support"}}<li>{{$support.Before}}<a href="/help#support-boundaries">{{msg "overview.link_support"}}</a>{{$support.After}}</li>
 </ul>
 {{end}}

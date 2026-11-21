@@ -1,0 +1,16 @@
+{
+  "source_base": "789f082a337eac18f9628976846536e6230f5975",
+  "helper_blob": "cd69c353d8b122a879a4b30e84a150b3d7473962",
+  "test_blob": "7ed6beaf73835912e9d86295679dc56786f448e9",
+  "command": [
+    "node",
+    "--test",
+    "scripts/test_e2e_kbd.cjs"
+  ],
+  "node_version": "v24.22.3",
+  "started_utc": "2026-11-19T13:59:11.797788+00:00",
+  "wall_seconds": 0.3,
+  "exit_code": 1,
+  "log_sha256": "8ff3607bce782478a35c96ada23a5920802b14ad8eda626ad606ebfca7ab2dc1",
+  "scope": "Actual production keyboard helper through small page/DOM adapter; no browser or Go build."
+}

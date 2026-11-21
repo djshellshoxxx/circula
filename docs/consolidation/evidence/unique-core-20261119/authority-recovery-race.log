@@ -1,0 +1,3 @@
+github.com/djshellshoxxx/circula/internal/service_test: /tmp/circula-runtime-4d30/go/pkg/tool/linux_amd64/compile: signal: killed
+FAIL	github.com/djshellshoxxx/circula/internal/service [build failed]
+FAIL

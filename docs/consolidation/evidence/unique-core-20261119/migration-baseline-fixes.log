@@ -1,0 +1,7 @@
+?   	github.com/djshellshoxxx/circula/internal/integrity	[no test files]
+=== RUN   TestEventOrderMigrationPreservesExportChecksum
+--- PASS: TestEventOrderMigrationPreservesExportChecksum (3.05s)
+=== RUN   TestPersonalDataInventoryCoversSchema
+--- PASS: TestPersonalDataInventoryCoversSchema (0.82s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	4.903s

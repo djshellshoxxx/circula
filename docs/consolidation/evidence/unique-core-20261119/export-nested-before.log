@@ -1,0 +1,229 @@
+.FFFF.FFFFFFFFFFFF
+======================================================================
+FAIL: test_manifest_nested_object_merge_retains_scalar_nulls (test_read_export.ReferenceExportTests.test_manifest_nested_object_merge_retains_scalar_nulls) (target='reconciliation', later={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 558, in test_manifest_nested_object_merge_retains_scalar_nulls
+    self.assert_valid(*fixture(), corrupt=update)
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : accounts                     3 rows
+entries                      2 rows
+FAIL reconciliation: 'entries'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_object_merge_retains_scalar_nulls (test_read_export.ReferenceExportTests.test_manifest_nested_object_merge_retains_scalar_nulls) (target='reconciliation', later={'ENTRIES': None})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 558, in test_manifest_nested_object_merge_retains_scalar_nulls
+    self.assert_valid(*fixture(), corrupt=update)
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : accounts                     3 rows
+entries                      2 rows
+FAIL reconciliation: reconciliation.entries must be an integer in the signed 64-bit range
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_object_merge_retains_scalar_nulls (test_read_export.ReferenceExportTests.test_manifest_nested_object_merge_retains_scalar_nulls) (target='accounts', later={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 558, in test_manifest_nested_object_merge_retains_scalar_nulls
+    self.assert_valid(*fixture(), corrupt=update)
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : accounts                     3 rows
+entries                      2 rows
+FAIL reconciliation: 'nonzero'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_object_merge_retains_scalar_nulls (test_read_export.ReferenceExportTests.test_manifest_nested_object_merge_retains_scalar_nulls) (target='accounts', later={'NONZERO': None, 'SHA256': None})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 558, in test_manifest_nested_object_merge_retains_scalar_nulls
+    self.assert_valid(*fixture(), corrupt=update)
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : accounts                     3 rows
+entries                      2 rows
+FAIL reconciliation: reconciliation.accounts.nonzero must be an integer in the signed 64-bit range
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='reconciliation', same_names=False, fmt='json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : accounts                     3 rows
+entries                      2 rows
+FAIL reconciliation: 'entries'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='reconciliation', same_names=False, fmt='csv')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : entries                      2 rows
+accounts                     3 rows
+FAIL reconciliation: 'entries'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='reconciliation', same_names=True, fmt='json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : accounts                     3 rows
+entries                      2 rows
+FAIL reconciliation: 'entries'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='reconciliation', same_names=True, fmt='csv')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : entries                      2 rows
+accounts                     3 rows
+FAIL reconciliation: 'entries'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='accounts', same_names=False, fmt='json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : accounts                     3 rows
+entries                      2 rows
+FAIL reconciliation: 'nonzero'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='accounts', same_names=False, fmt='csv')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : entries                      2 rows
+accounts                     3 rows
+FAIL reconciliation: 'nonzero'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='accounts', same_names=True, fmt='json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : accounts                     3 rows
+entries                      2 rows
+FAIL reconciliation: 'nonzero'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='accounts', same_names=True, fmt='csv')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : entries                      2 rows
+accounts                     3 rows
+FAIL reconciliation: 'nonzero'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='both', same_names=False, fmt='json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : accounts                     3 rows
+entries                      2 rows
+FAIL reconciliation: 'entries'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='both', same_names=False, fmt='csv')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : entries                      2 rows
+accounts                     3 rows
+FAIL reconciliation: 'entries'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='both', same_names=True, fmt='json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : accounts                     3 rows
+entries                      2 rows
+FAIL reconciliation: 'entries'
+export verification failed: 1 problem(s)
+
+
+======================================================================
+FAIL: test_manifest_nested_objects_merge_in_member_order (test_read_export.ReferenceExportTests.test_manifest_nested_objects_merge_in_member_order) (target='both', same_names=True, fmt='csv')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 547, in test_manifest_nested_objects_merge_in_member_order
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+  File "/workspace/scratch/4d30fa819181/circula-export/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : entries                      2 rows
+accounts                     3 rows
+FAIL reconciliation: 'entries'
+export verification failed: 1 problem(s)
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 3.374s
+
+FAILED (failures=16)

@@ -13,7 +13,13 @@ Each backup is two files:
   - `app_version`, `schema_version`
   - `bytes` and `sha256` of the `.db` file
   - `integrity_check` (`ok` when SQLite's integrity check passed)
-  - `ledger_verification`: `status` (`ok`, `failed`, or `not-run`), network counts, and the reason when not run
+  - `ledger_verification`: overall `status` (`ok`, `failed`, or `not-run`), network counts, `platform_audit` with its own
+    status, and the reason when not run. Platform failure affects the overall status without increasing network counts.
+    Historical manifests omit `platform_audit`; absence makes no platform coverage claim. Their existing signatures remain valid.
+  - `ledger_verification.historical_limit_coverage`, when recorded: `status` (`complete` or `partial`) and counts of
+    `checked_debits`, `system_debits`, `legacy_unverified_debits`, and `unverifiable_debits`, summed across financial
+    networks. Platform audit is excluded. An omitted object means unknown/not recorded, including older manifests;
+    their exact canonical payloads and existing signatures remain valid.
   - `encrypted`, `cipher`, `plaintext_bytes`, `plaintext_sha256`: present on encrypted backups (see below). `bytes` and
     `sha256` then describe the ciphertext file on disk
   - `hmac_sha256`: present when `backup-key` is configured (see below). It also covers the encryption fields
@@ -22,8 +28,20 @@ Each snapshot is verified before it is named: it must pass the integrity check a
 the ledger verification. A backup is written under a `.partial` name first and renamed only after every check passed.
 A backup whose ledger verification failed is still kept, because it is evidence. Its manifest says `failed`.
 
-The backup is the exact snapshot of the source (CMD-01). Ledger verification records its own run in the database it
-checks, so it runs on a throw-away copy of the snapshot; the digest of the snapshot is taken before the checks and
+Historical credit-limit coverage describes the evidence available, separately from whether the check passed. Debits
+that predate evidence collection are explicitly unverified; they make coverage partial without making an otherwise
+valid ledger fail. Complete coverage can still contain an invariant failure, reported by the existing ledger status.
+Missing evidence for a later debit is both a finding and partial coverage. If any network's coverage is unknown, the
+aggregate is omitted instead of treating that network as fully checked. `verify-ledger`, check results and backup
+output show coverage separately from success or failure.
+
+SQLite snapshots retain the posting witnesses and saved-check coverage. Portable export schema 1 retains its existing
+reconciliation format and does not include these historical-limit witnesses; use the live database or a restored
+SQLite backup for the full historical credit-limit check. New signed backup manifests authenticate every coverage
+field using the existing version 2 payload; the historical version 1 signature payload remains unchanged.
+
+The backup is the exact snapshot of the source (CMD-01). Network and platform verification are read-only and run on a
+throw-away copy of the snapshot; the digest of the snapshot is taken before the checks and
 compared after them, and a backup that changed is discarded. Backup files and manifests are created 0600 and
 `backup-dir` is 0700 (SA-06).
 
@@ -214,7 +232,7 @@ A failed drill blocks the release until the cause is recorded and fixed.
 
 ## Audit anchors beside backups (RB-010)
 
-Each scheduled backup also writes `<backup>.anchor.json` with every network's audit chain head (see
+Each scheduled backup also writes `<backup>.anchor.json` with platform and network audit checkpoints (see
 [configuration.md](configuration.md#audit-anchors-rb-010)). The file is not encrypted and holds no personal data, only hashes,
 sequence numbers and network ids and slugs. After a restore, run `circula audit-anchor verify` with the newest anchor you
 kept off-host.

@@ -198,7 +198,7 @@ func (s *Service) FinaliseClosures(ctx context.Context, actor domain.Actor) (int
 			continue
 		}
 		if !c.Done() {
-			closed, err := s.finaliseOne(ctx, actor, c.NetworkID)
+			closed, err := s.finaliseOne(ctx, actor, c)
 			if err != nil {
 				return done, err
 			}
@@ -214,7 +214,17 @@ func (s *Service) FinaliseClosures(ctx context.Context, actor domain.Actor) (int
 	return done, nil
 }
 
-func (s *Service) finaliseOne(ctx context.Context, actor domain.Actor, netID string) (bool, error) {
+// sameClosureSchedule compares the immutable announcement, not its completion
+// fields. A job's earlier list is only a candidate set: an administrator may
+// cancel or replace an announcement before the worker acquires its write unit.
+func sameClosureSchedule(a, b *domain.Closure) bool {
+	return a.NetworkID == b.NetworkID && a.Reason == b.Reason && a.ScheduledBy == b.ScheduledBy &&
+		a.ScheduledAt.Equal(b.ScheduledAt) && a.ClosingAt.Equal(b.ClosingAt) &&
+		a.NoticeDays == b.NoticeDays && a.ReadOnlyDays == b.ReadOnlyDays
+}
+
+func (s *Service) finaliseOne(ctx context.Context, actor domain.Actor, candidate domain.Closure) (bool, error) {
+	netID := candidate.NetworkID
 	closed := false
 	err := s.update(ctx, func(tx store.Tx) error {
 		n, err := tx.GetNetwork(netID)
@@ -225,6 +235,11 @@ func (s *Service) finaliseOne(ctx context.Context, actor domain.Actor, netID str
 			return err
 		}
 		if n.Status != domain.NetworkActive || n.Closure == nil || n.Closure.Done() {
+			return nil
+		}
+		// Check the current announcement and deadline inside the transaction,
+		// before proposals, notifications, audits or network status can change.
+		if !sameClosureSchedule(n.Closure, &candidate) || !n.Closure.Due(s.now()) || s.IsFrozen(netID) {
 			return nil
 		}
 		// (c) cancel open proposals, telling both parties.
@@ -309,7 +324,20 @@ func ManifestChecksum(m *Manifest) string {
 // stores its checksum with the reconciliation summary (sum of entries and
 // balance totals, both zero in a sound ledger).
 func (s *Service) recordFinalExport(ctx context.Context, actor domain.Actor, netID string) error {
-	man, err := s.Export(ctx, actor, netID, ExportLedger, FormatJSON, &MemSink{})
+	var closure *domain.Closure
+	if err := s.view(ctx, func(tx store.Tx) (err error) {
+		closure, err = tx.GetClosure(netID)
+		return err
+	}); err != nil {
+		return err
+	}
+	if closure == nil || !closure.Done() || !closure.ErasedAt.IsZero() {
+		return domain.InvalidState("no closed network awaiting a final export")
+	}
+	if closure.FinalSHA256 != "" {
+		return nil // preserve both legacy hashes and another worker's checkpoint
+	}
+	man, err := s.closureManifest(ctx, actor, closure)
 	if err != nil {
 		return err
 	}
@@ -319,27 +347,27 @@ func (s *Service) recordFinalExport(ctx context.Context, actor domain.Actor, net
 		if err != nil {
 			return err
 		}
-		if c == nil || !c.Done() || !c.ErasedAt.IsZero() {
+		if c == nil || !c.Done() || !c.ErasedAt.IsZero() || !c.ClosedAt.Equal(closure.ClosedAt) {
 			return domain.InvalidState("no closed network awaiting a final export")
 		}
 		if c.FinalSHA256 != "" {
 			return nil // another worker completed the same retry
 		}
-		bal, ent, err := tx.Totals(netID)
-		if err != nil {
-			return err
-		}
-		if err := tx.SetClosureFinal(netID, man.LedgerSeq, sum, bal, ent); err != nil {
+		// The summary belongs to the same read snapshot as the hashed rows.
+		bal, ent := man.Reconciliation.BalanceTotal, man.Reconciliation.EntrySum
+		if err := tx.SetClosureFinal(netID, closureExportVersion, man.LedgerSeq, sum, bal, ent); err != nil {
 			return err
 		}
 		return s.emit(tx, netID, "", actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: ActClosureExported, TargetType: "network",
-			TargetID: netID, After: map[string]any{"sha256": sum, "ledger_seq": man.LedgerSeq, "entries_sum": ent, "balance_total": bal}})
+			TargetID: netID, After: map[string]any{"checkpoint_version": closureExportVersion, "sha256": sum,
+				"ledger_seq": man.LedgerSeq, "entries_sum": ent, "balance_total": bal}})
 	})
 }
 
 // ClosureCheck compares the stored final checksum with one recomputed now.
 type ClosureCheck struct {
 	Stored, Recomputed string
+	Version            int
 	Match              bool
 	LedgerSeq          int64
 	BalanceTotal       int64
@@ -372,12 +400,20 @@ func (s *Service) VerifyClosureExport(ctx context.Context, actor domain.Actor, n
 	if c == nil || !c.Done() || c.FinalSHA256 == "" {
 		return nil, domain.InvalidState("the network has no completed closure with a final export")
 	}
-	man, err := s.Export(ctx, actor, netID, ExportLedger, FormatJSON, &MemSink{})
+	switch c.FinalExportVersion {
+	case 0:
+		return nil, domain.InvalidState("legacy closure checkpoint has no saved generation timestamp and cannot be recomputed; the stored checksum is unchanged")
+	case closureExportVersion:
+		// The persisted version defines the byte representation to verify.
+	default:
+		return nil, domain.InvalidState("closure checkpoint version %d is not supported; the stored checksum is unchanged", c.FinalExportVersion)
+	}
+	man, err := s.closureManifest(ctx, actor, c)
 	if err != nil {
 		return nil, err
 	}
 	re := ManifestChecksum(man)
-	return &ClosureCheck{Stored: c.FinalSHA256, Recomputed: re, Match: re == c.FinalSHA256, LedgerSeq: c.FinalLedgerSeq,
+	return &ClosureCheck{Stored: c.FinalSHA256, Recomputed: re, Version: c.FinalExportVersion, Match: re == c.FinalSHA256, LedgerSeq: c.FinalLedgerSeq,
 		BalanceTotal: c.FinalBalanceTotal, EntriesSum: c.FinalEntriesSum, Erased: !c.ErasedAt.IsZero()}, nil
 }
 

@@ -88,15 +88,21 @@ func recoveryHash(personID, norm string) string {
 // hashes are stored. It needs the current password and a full-scope session
 // or token (not a network-restricted one). Every previous code stops working.
 // Password guesses are throttled like login guesses.
-func (s *Service) GenerateRecoveryCodes(ctx context.Context, actor domain.Actor, password string) ([]string, error) {
+func (s *Service) GenerateRecoveryCodes(ctx context.Context, actor domain.Actor, password string) (result []string, resultErr error) {
+	defer func() { s.observeAuthentication("password_proof", resultErr) }()
 	if actor.MustChangePassword {
 		return nil, domain.PasswordChangeRequired()
 	}
 	if actor.PersonID == "" || !actor.Can(domain.ScopeWrite) || actor.NetworkScope != "" {
 		return nil, domain.ErrForbidden
 	}
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer work.Release()
 	var hash string
-	err := s.update(ctx, func(tx store.Tx) error {
+	err = s.update(ctx, func(tx store.Tx) error {
 		if err := s.reserveAttempt(tx, recgenKey(actor.PersonID)); err != nil {
 			return err
 		}
@@ -107,7 +113,11 @@ func (s *Service) GenerateRecoveryCodes(ctx context.Context, actor domain.Actor,
 	if err != nil {
 		return nil, err
 	}
-	if !verifyPassword(password, hash) {
+	ok, err := verifyPassword(ctx, work, password, hash)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
 		return nil, domain.ErrUnauthenticated // the attempt was counted above
 	}
 	codes := make([]string, RecoveryCodeCount)
@@ -170,7 +180,8 @@ func (s *Service) RecoveryCodesRemaining(ctx context.Context, actor domain.Actor
 //     unit; of N parallel uses of one code exactly one succeeds.
 //   - The remaining codes are deleted because a code in the wrong hands means
 //     the sheet may be compromised; generate a new batch after signing in.
-func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword string) error {
+func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword string) (resultErr error) {
+	defer func() { s.observeAuthentication("recovery", resultErr) }()
 	if err := s.validatePassword(newPassword, login); err != nil {
 		return err // says nothing about the code; the login is the caller's own input
 	}
@@ -178,8 +189,13 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 	if validLogin(login) != nil {
 		return errRecovery()
 	}
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return err
+	}
+	defer work.Release()
 	var person *domain.Person
-	err := s.update(ctx, func(tx store.Tx) error {
+	err = s.update(ctx, func(tx store.Tx) error {
 		if err := s.reserveAttemptCtx(ctx, tx, recoverKey(login)); err != nil {
 			return err
 		}
@@ -215,7 +231,7 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 	if !valid || person == nil || !wellFormed {
 		return errRecovery()
 	}
-	nh, err := hashPassword(newPassword, s.cfg.Argon)
+	nh, err := hashPassword(ctx, work, newPassword, s.cfg.Argon)
 	if err != nil {
 		return err
 	}
@@ -337,7 +353,7 @@ func (s *Service) resetPerson(tx store.Tx, personID, login, tempHash string) err
 // member of THIS network (anyone else is NotFound, so another network's
 // administrator learns nothing); never one's own account (including through a
 // second membership); the target must not hold the administrator role here nor
-// an active membership in any other network (SA2-01: those need the operator
+// a membership in any other network (SA2-01: those need the operator
 // CLI, since a reset hands over the person's whole identity); a reason is mandatory; at most adminResetsPerHour
 // successful resets per administrator per hour. Resetting another
 // administrator is flagged high_risk in the audit event.
@@ -346,11 +362,16 @@ func (s *Service) AdminResetPassword(ctx context.Context, actor domain.Actor, ne
 	if err != nil {
 		return "", err
 	}
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return "", err
+	}
+	defer work.Release()
 	temp, err := s.newTempPassword()
 	if err != nil {
 		return "", err
 	}
-	th, err := hashPassword(temp, s.cfg.Argon)
+	th, err := hashPassword(ctx, work, temp, s.cfg.Argon)
 	if err != nil {
 		return "", err
 	}
@@ -391,7 +412,10 @@ func (s *Service) AdminResetPassword(ctx context.Context, actor domain.Actor, ne
 				return err
 			}
 			for _, o := range others {
-				if o.NetworkID != netID && o.Status != domain.MemberDeparted {
+				// Departed and anonymised memberships still authorize their own
+				// ledger and transaction history (DOM-039). A local administrator
+				// cannot replace the credentials protecting that retained access.
+				if o.NetworkID != netID {
 					return domain.Forbidden("this account can only be reset by the platform operator")
 				}
 			}
@@ -429,11 +453,16 @@ func (s *Service) OperatorResetPassword(ctx context.Context, actor domain.Actor,
 		return "", err
 	}
 	login = normalizeLogin(login)
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return "", err
+	}
+	defer work.Release()
 	temp, err := s.newTempPassword()
 	if err != nil {
 		return "", err
 	}
-	th, err := hashPassword(temp, s.cfg.Argon)
+	th, err := hashPassword(ctx, work, temp, s.cfg.Argon)
 	if err != nil {
 		return "", err
 	}

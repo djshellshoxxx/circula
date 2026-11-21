@@ -1,0 +1,51 @@
+- link "Skip to main content":
+  - /url: "#main"
+- banner:
+  - paragraph:
+    - link "Circula":
+      - /url: /
+  - navigation "Main":
+    - list:
+      - listitem:
+        - link "All networks":
+          - /url: /
+  - paragraph:
+    - link "Time zone":
+      - /url: /account/time-zone
+    - text: ·
+    - link "Password":
+      - /url: /account/password
+    - text: ·
+    - link "Security":
+      - /url: /account/security
+  - button "Sign out"
+- main:
+  - heading "End this session?" [level=1]
+  - alert "There is a problem":
+    - heading "There is a problem" [level=2]
+    - paragraph: Not signed out. Confirm that you want to end this session. Nothing changed.
+    - list:
+      - listitem:
+        - link "I want to end this session.":
+          - /url: "#f-confirm"
+  - heading "Other session" [level=2]
+  - term: Signed in
+  - definition:
+    - time: 19 Nov 2026, 13:27 UTC
+  - term: Last active
+  - definition:
+    - time: 19 Nov 2026, 13:27 UTC
+  - paragraph: This sign-in will stop working immediately. You will stay signed in here. Your other sessions and API tokens will keep working.
+  - checkbox "I want to end this session." [invalid]
+  - text: I want to end this session.
+  - paragraph: I want to end this session.
+  - button "End session"
+  - link "Keep session":
+    - /url: /account/sessions
+- contentinfo:
+  - paragraph: Credits are accounting units used inside one network. They are a record of who has given and received value; they have no value outside it and are not guaranteed to be accepted.
+  - paragraph:
+    - 'link "Help: credits, balances and statuses"':
+      - /url: /help
+    - text: · Reference
+    - code: c0923acec98122c140fe7b2f

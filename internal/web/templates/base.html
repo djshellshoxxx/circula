@@ -32,12 +32,13 @@
   <p><strong>{{msg "session.ending"}}</strong> <span id="session-msg"></span></p>
   <p><button type="button" id="session-extend">{{msg "session.extend"}}</button> <a id="session-login" href="/login">{{msg "session.sign_in"}}</a> <button type="button" id="session-dismiss" class="link">{{msg "session.dismiss"}}</button></p>
 </div>{{end}}
+<p id="page-loading" class="page-loading" role="status" aria-live="polite" aria-atomic="true" data-navigation-message="{{msg "loading.navigation"}}" data-submission-message="{{msg "loading.submission"}}"></p>
 <main id="main" tabindex="-1">
   <h1 id="page-title">{{.Title}}</h1>
   {{if .SnapshotAt}}{{$fresh := msgAround "freshness.snapshot"}}<p id="figure-freshness">{{$fresh.Before}}{{.SnapshotAt}}{{$fresh.After}}</p>
   <p id="figure-stale" class="notice" role="status" hidden data-offline-message="{{msg "freshness.offline" "{snapshot}"}}" data-history-message="{{msg "freshness.history" "{snapshot}"}}"></p>{{end}}
   {{with .Flash}}<div class="flash" role="status" id="flash" tabindex="-1">{{.}}</div>{{end}}
-  {{if .FrozenSince}}<div class="notice" role="note"><strong>{{msg "common.notice"}}</strong> This network is read-only while its ledger is being checked, since {{.FrozenSince}}. You can read balances and history; anything that would change them is refused until the check passes.</div>{{else}}{{with .Notice}}<div class="notice" role="note"><strong>{{msg "common.notice"}}</strong> {{.}}</div>{{end}}{{end}}
+  {{if .FrozenSince}}{{$frozen := msgAround "notice.frozen"}}<div class="notice" role="note"><strong>{{msg "common.notice"}}</strong> {{$frozen.Before}}{{.FrozenSince}}{{$frozen.After}}</div>{{else}}{{with .Notice}}<div class="notice" role="note"><strong>{{msg "common.notice"}}</strong> {{.}}</div>{{end}}{{end}}
   {{with .Warn}}<div class="notice" role="note"><strong>{{msg "balance.limit_notice"}}</strong> {{.}}</div>{{end}}
   {{if or .Errors .Summary}}
   <div id="error-summary" class="errsum" role="alert" tabindex="-1" aria-labelledby="errsum-h">
@@ -50,7 +51,7 @@
 </main>
 <footer class="foot">
   <p>{{msg "footer.credits"}}</p>
-  <p><a href="/help">{{msg "footer.help"}}</a>{{if .ReqID}} &middot; {{msg "common.reference"}} <code>{{.ReqID}}</code>{{end}}</p>
+  <p><a href="/help">{{msg "footer.help"}}</a>{{if .Slug}} &middot; <a href="/n/{{.Slug}}/about">{{msg "footer.about"}}</a>{{end}}{{if .ReqID}} &middot; {{msg "common.reference"}} <code>{{.ReqID}}</code>{{end}}</p>
 </footer>
 </body>
 </html>{{end}}
@@ -94,3 +95,18 @@
 <div class="field" id="f-terms_version"><input type="hidden" name="terms_version" value="{{.Version}}">
   <label><input type="checkbox" name="accept_terms" value="1"> {{msg "terms.accept"}}</label></div>
 {{end}}{{end}}
+
+{{define "historical_limit_coverage"}}
+<section aria-labelledby="historical-limits-h">
+<h2 id="historical-limits-h">{{msg "admin.check.history.title"}}</h2>
+{{with .}}
+<p>{{if eq .Status "complete"}}{{msg "admin.check.history.complete"}}{{else if eq .Status "partial"}}{{msg "admin.check.history.partial"}}{{else}}{{msg "admin.check.history.unknown"}}{{end}}</p>
+<ul>
+  <li>{{msg "admin.check.history.checked" .CheckedDebits}}</li>
+  <li>{{msg "admin.check.history.system" .SystemDebits}}</li>
+  <li>{{msg "admin.check.history.legacy" .LegacyUnverifiedDebits}}</li>
+  <li>{{msg "admin.check.history.unverifiable" .UnverifiableDebits}}</li>
+</ul>
+{{else}}<p>{{msg "admin.check.history.unknown"}}</p>{{end}}
+</section>
+{{end}}

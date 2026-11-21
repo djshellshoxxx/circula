@@ -1,0 +1,34 @@
+{
+  "head": "b00a0738bc8fdf3ac92a814fd57fba4fab97d320",
+  "tree": "afdc0bd17ba15c908c7b6572cdcdea1f242db463",
+  "cwd": "/workspace/scratch/4d30fa819181/circula",
+  "status_before": "",
+  "command": [
+    "bash",
+    "-c",
+    "set -e; python3 -m unittest discover -s scripts -p \"test_*.py\"; node --test scripts/test_app_messages.cjs scripts/test_e2e_kbd.cjs"
+  ],
+  "environment_overrides": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOTMPDIR": "/workspace/scratch/4d30fa819181/runtime/go-tmp",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1"
+  },
+  "started_at_utc": "2026-11-20T09:28:03.192932+00:00",
+  "finished_at_utc": "2026-11-20T09:28:17.786523+00:00",
+  "elapsed_seconds": 14.593,
+  "exit_code": 0,
+  "timed_out": false,
+  "head_after": "b00a0738bc8fdf3ac92a814fd57fba4fab97d320",
+  "tree_after": "afdc0bd17ba15c908c7b6572cdcdea1f242db463",
+  "status_after": "",
+  "source_unchanged": true,
+  "test_and_subtest_events": {},
+  "packages": {},
+  "skipped_tests": [],
+  "failed_tests": []
+}

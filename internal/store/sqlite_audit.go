@@ -71,6 +71,11 @@ func (t *txImpl) ListAudit(netID string, f AuditFilter) ([]*domain.AuditEvent, e
 	}
 	q += ` WHERE e.network_id = ? AND e.seq > ?`
 	args = append(args, netID, f.AfterSeq)
+	if f.ExcludeReportSubjectMemberID != "" {
+		q += ` AND (e.target_type <> 'report' OR EXISTS (SELECT 1 FROM reports r
+			WHERE r.network_id = e.network_id AND r.id = e.target_id AND ` + reportIndependentOfMemberSQL + `))`
+		args = append(args, f.ExcludeReportSubjectMemberID)
+	}
 	if f.Action != "" {
 		q += ` AND e.action = ?`
 		args = append(args, f.Action)

@@ -44,16 +44,16 @@ Summary: built 31, not built 7, partial 22.
 | UX-019 | P0 | built | Confirmation message after posting; Evidence: `TestLoginTradeFlow` (posted balance confirmation; does not independently assert available-credit copy). Citations are not execution results |
 | UX-020 | P0 | built | Refusal copy names cause and that nothing changed |
 | UX-021 | P0 | built | Field messages name the field, describe the problem in words and suggest a correction; table tests over every domain code and every service field name |
-| UX-022 | P0 | partial | Error summary present; focus move and value retention not verified |
+| UX-022 | P0 | partial | Source refresh 2026-11-20: base templates link invalid fields, retain nonsecret values and provide a focusable summary; `internal/web/static/app.js` moves focus. HTTP catalogue tests cover retained values. Browser focus and manual accessibility qualification remain separate. |
 | UX-023 | P0 | partial | inputmode decimal on amount fields; format text in helper |
-| UX-024 | P1 | partial | [Refreshed 2026-11-16; was "not built".] Member display time zone built: `PATCH /api/v1/me` (`internal/api/routes.go:22`), `GET /me` returns `time_zone`, web settings (`internal/web/h_account_f2.go`). Zone abbreviation and `time` element with `datetime` UNVERIFIED |
+| UX-024 | P1 | partial | Source refresh 2026-11-20: `internal/web/render.go` applies the chosen zone, its abbreviation and a UTC `time[datetime]`; `TestTimeZoneDisplay` covers trade/detail/history and per-person settings. Browser/manual qualification remains separate. |
 | UX-025 | P0 | built | Generic 5xx page with request reference |
 | UX-026 | P0 | partial | Live region on some pages; asynchronous announcements not verified |
 | UX-027 | P0 | partial | Disabled controls explained in text; not audited for all |
 | UX-028 | P0 | partial | Loading state not implemented; empty and error states present |
 | UX-029 | P0 | built | Permission failure page with link home; Evidence: `TestInvitationOnlyJoinHidesNetworkFromNonmembers` (identical missing/hidden network response; permission-page explanation and Home link still need inspection). Citations are not execution results |
 | UX-030 | P0 | built | Two-minute warning with Stay signed in extension |
-| UX-031 | P1 | partial | Suspended notice not verified in templates |
+| UX-031 | P1 | partial | Source refresh 2026-11-20: `internal/web/render.go` and the shared base template provide the persistent suspended-membership notice, read-only explanation and administrator contact guidance (`notice.membership_suspended`). Manual screen-reader qualification remains separate. |
 | UX-032 | P0 | built | Confirmation step names object for remove and cancel; Evidence: `TestAdminMembersAdjustPolicy`, `TestOpenGrantConfirmationForms` (suspension and grant confirmation forms; not every destructive action). Citations are not execution results |
 | UX-033 | P0 | partial | 112 viewport/error cases passed at d75f31e; broader data/native coverage remains; known return-link gate separate |
 | UX-034 | P0 | partial | 20 enlargement/spacing probes passed at d75f31e, including own-trade/onboarding paths; wider functionality/native coverage remains |

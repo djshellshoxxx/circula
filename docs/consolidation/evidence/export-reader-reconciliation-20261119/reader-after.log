@@ -1,0 +1,46 @@
+test_dos_zip_file_types (test_read_export.ReferenceExportTests.test_dos_zip_file_types) ... ok
+test_empty_ledger_and_zero_balance_accounts (test_read_export.ReferenceExportTests.test_empty_ledger_and_zero_balance_accounts) ... ok
+test_integrity_checks_remain_enforced (test_read_export.ReferenceExportTests.test_integrity_checks_remain_enforced) ... ok
+test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) ... ok
+test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) ... ok
+test_malformed_csv_reports_failure_without_traceback (test_read_export.ReferenceExportTests.test_malformed_csv_reports_failure_without_traceback) ... ok
+test_malformed_manifest_is_reported_without_traceback (test_read_export.ReferenceExportTests.test_malformed_manifest_is_reported_without_traceback) ... ok
+test_manifest_boolean_size_does_not_match_one_byte (test_read_export.ReferenceExportTests.test_manifest_boolean_size_does_not_match_one_byte) ... ok
+test_manifest_case_aliases_accept_valid_names (test_read_export.ReferenceExportTests.test_manifest_case_aliases_accept_valid_names) ... ok
+test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) ... ok
+test_manifest_case_aliases_do_not_fold_ligatures (test_read_export.ReferenceExportTests.test_manifest_case_aliases_do_not_fold_ligatures) ... ok
+test_manifest_case_aliases_preserve_null_rules (test_read_export.ReferenceExportTests.test_manifest_case_aliases_preserve_null_rules) ... ok
+test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) ... ok
+test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) ... ok
+test_manifest_metadata_preserves_supported_values (test_read_export.ReferenceExportTests.test_manifest_metadata_preserves_supported_values) ... ok
+test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) ... ok
+test_manifest_preserves_existing_missing_and_null_behavior (test_read_export.ReferenceExportTests.test_manifest_preserves_existing_missing_and_null_behavior) ... ok
+test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) ... ok
+test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) ... ok
+test_manifest_unknown_fields_remain_ignored (test_read_export.ReferenceExportTests.test_manifest_unknown_fields_remain_ignored) ... ok
+test_manifest_valid_duplicates_keep_final_values (test_read_export.ReferenceExportTests.test_manifest_valid_duplicates_keep_final_values) ... ok
+test_member_budget_rejects_unchecked_suffixes (test_read_export.ReferenceExportTests.test_member_budget_rejects_unchecked_suffixes) ... ok
+test_mine_summary_rules (test_read_export.ReferenceExportTests.test_mine_summary_rules) ... ok
+test_old_packages_without_optional_summary (test_read_export.ReferenceExportTests.test_old_packages_without_optional_summary) ... ok
+test_rejects_duplicate_manifest_declarations (test_read_export.ReferenceExportTests.test_rejects_duplicate_manifest_declarations) ... ok
+test_rejects_duplicate_zip_members (test_read_export.ReferenceExportTests.test_rejects_duplicate_zip_members) ... ok
+test_rejects_inconsistent_summary_fields (test_read_export.ReferenceExportTests.test_rejects_inconsistent_summary_fields) ... ok
+test_rejects_ledger_rows_with_valid_file_checksums (test_read_export.ReferenceExportTests.test_rejects_ledger_rows_with_valid_file_checksums) ... ok
+test_rejects_malformed_summary (test_read_export.ReferenceExportTests.test_rejects_malformed_summary) ... ok
+test_rejects_nonregular_zip_members (test_read_export.ReferenceExportTests.test_rejects_nonregular_zip_members) ... ok
+test_rejects_raw_nul_zip_names_before_zipfile_normalization (test_read_export.ReferenceExportTests.test_rejects_raw_nul_zip_names_before_zipfile_normalization) ... ok
+test_rejects_unlisted_package_members (test_read_export.ReferenceExportTests.test_rejects_unlisted_package_members) ... ok
+test_rejects_unsafe_manifest_names (test_read_export.ReferenceExportTests.test_rejects_unsafe_manifest_names) ... ok
+test_rejects_zip_path_aliases (test_read_export.ReferenceExportTests.test_rejects_zip_path_aliases) ... ok
+test_schema_version_requires_an_integer (test_read_export.ReferenceExportTests.test_schema_version_requires_an_integer) ... ok
+test_unrelated_scopes_reject_summary (test_read_export.ReferenceExportTests.test_unrelated_scopes_reject_summary) ... ok
+test_valid_scopes_formats_and_package_types (test_read_export.ReferenceExportTests.test_valid_scopes_formats_and_package_types) ... ok
+test_zip_compression_completion_state_must_be_available (test_read_export.ReferenceExportTests.test_zip_compression_completion_state_must_be_available) ... ok
+test_zip_compression_requires_complete_streams (test_read_export.ReferenceExportTests.test_zip_compression_requires_complete_streams) ... ok
+test_zip_compression_valid_streams (test_read_export.ReferenceExportTests.test_zip_compression_valid_streams) ... ok
+test_zip_sizes_match_the_complete_member (test_read_export.ReferenceExportTests.test_zip_sizes_match_the_complete_member) ... ok
+
+----------------------------------------------------------------------
+Ran 41 tests in 18.657s
+
+OK

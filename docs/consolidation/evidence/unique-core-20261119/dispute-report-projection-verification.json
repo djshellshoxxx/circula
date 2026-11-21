@@ -1,0 +1,318 @@
+{
+  "task": "SEC-025 same-dispute independent-reviewer read-only transaction report projection",
+  "commit": "1995ad07957bbbf2c55c95a10373dda88e4fff91",
+  "base_commit": "bf8b37748f2a65ce9bccd991faac3793f8f20e61",
+  "integrated_base_commit": "f4fce9b62e812da756bb3c0078f264f7409e557b",
+  "base_annotation_parent_equivalent": "f4f718b44ae19e7eea32b9bf214a47ea178ccce3",
+  "branch": "fix/dispute-reviewer-report-projection-20261120",
+  "worktree": "/workspace/scratch/4d30fa819181/circula-reviewer-reports",
+  "worktree_clean": true,
+  "go_version": "go version go1.26.11 linux/amd64",
+  "qualification": "All six focused package selections passed with race instrumentation across the initial run and unchanged relocated-cache service retry. Both earlier killed service builds remain recorded as inconclusive; no full-repository pass is claimed.",
+  "runs": [
+    {
+      "log": "/workspace/scratch/4d30fa819181/analysis/dispute-report-focused.jsonl",
+      "log_sha256": "c9bb9e432cf36a751426eb810fc81b7e8b3cdcc2065a6ff9230aab07959655e8",
+      "exit_code": 1,
+      "environment": {
+        "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+        "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "1",
+        "GOGC": "20",
+        "CGO_ENABLED": "1",
+        "GOMEMLIMIT": "256MiB"
+      },
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-race",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./internal/store",
+        "./internal/service",
+        "./internal/api",
+        "./internal/web",
+        "./internal/web/messages",
+        "./internal/contract",
+        "-run",
+        "^Test(DisputeReports.*|TransactionReport.*|Report.*|Reports.*|HandleReport|InboxReportMessages|EveryCatalogueEntryFormats|APIMatchesOpenAPI|RouteInventoryMatchesAuthorizationTable|RouteAuthorizationMatrix|DisputeListsAndDashboardAreNotCapped|TradeDetailLinksDisputeForDeciders|DisputeResponseAndReReviewAPI|DisputeResponseAndReReviewPages)$"
+      ],
+      "packages": {
+        "github.com/djshellshoxxx/circula/internal/store": {
+          "top_level_passes": 1,
+          "subtest_passes": 0,
+          "executed_test_failures": 0,
+          "skips": 0,
+          "status": "passed",
+          "elapsed_seconds": 2.654
+        },
+        "github.com/djshellshoxxx/circula/internal/service": {
+          "top_level_passes": 0,
+          "subtest_passes": 0,
+          "executed_test_failures": 0,
+          "skips": 0,
+          "status": "blocked_before_execution",
+          "elapsed_seconds": 0.001
+        },
+        "github.com/djshellshoxxx/circula/internal/api": {
+          "top_level_passes": 9,
+          "subtest_passes": 5,
+          "executed_test_failures": 0,
+          "skips": 0,
+          "status": "passed",
+          "elapsed_seconds": 26.409
+        },
+        "github.com/djshellshoxxx/circula/internal/web": {
+          "top_level_passes": 11,
+          "subtest_passes": 0,
+          "executed_test_failures": 0,
+          "skips": 0,
+          "status": "passed",
+          "elapsed_seconds": 22.498
+        },
+        "github.com/djshellshoxxx/circula/internal/web/messages": {
+          "top_level_passes": 3,
+          "subtest_passes": 26,
+          "executed_test_failures": 0,
+          "skips": 0,
+          "status": "passed",
+          "elapsed_seconds": 1.045
+        },
+        "github.com/djshellshoxxx/circula/internal/contract": {
+          "top_level_passes": 2,
+          "subtest_passes": 0,
+          "executed_test_failures": 0,
+          "skips": 0,
+          "status": "passed",
+          "elapsed_seconds": 8.82
+        }
+      },
+      "top_level_passes": 26,
+      "subtest_passes": 31,
+      "executed_test_failures": 0,
+      "skips": 0,
+      "race_reports": 0,
+      "build_failures": [
+        "github.com/djshellshoxxx/circula/internal/service_test [github.com/djshellshoxxx/circula/internal/service.test]"
+      ],
+      "first_test_event": "2026-11-20T00:24:44.883845207-08:00",
+      "last_test_event": "2026-11-20T00:26:38.09880236-08:00"
+    },
+    {
+      "log": "/workspace/scratch/4d30fa819181/analysis/dispute-report-service-retry.jsonl",
+      "log_sha256": "e95bb551bd4de8001245519f1b6fd9268abb3a4e72688414eab46ccdcef88941",
+      "exit_code": 1,
+      "environment": {
+        "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+        "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "1",
+        "GOGC": "20",
+        "CGO_ENABLED": "1",
+        "GOMEMLIMIT": "128MiB"
+      },
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-race",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./internal/service",
+        "-run",
+        "^Test(DisputeReports.*|TransactionReport.*|Report.*|Reports.*|HandleReport|InboxReportMessages|EveryCatalogueEntryFormats|APIMatchesOpenAPI|RouteInventoryMatchesAuthorizationTable|RouteAuthorizationMatrix|DisputeListsAndDashboardAreNotCapped|TradeDetailLinksDisputeForDeciders|DisputeResponseAndReReviewAPI|DisputeResponseAndReReviewPages)$"
+      ],
+      "packages": {
+        "github.com/djshellshoxxx/circula/internal/service": {
+          "top_level_passes": 0,
+          "subtest_passes": 0,
+          "executed_test_failures": 0,
+          "skips": 0,
+          "status": "blocked_before_execution",
+          "elapsed_seconds": 0
+        }
+      },
+      "top_level_passes": 0,
+      "subtest_passes": 0,
+      "executed_test_failures": 0,
+      "skips": 0,
+      "race_reports": 0,
+      "build_failures": [
+        "github.com/djshellshoxxx/circula/internal/service_test [github.com/djshellshoxxx/circula/internal/service.test]"
+      ],
+      "first_test_event": "2026-11-20T00:27:11.707023636-08:00",
+      "last_test_event": "2026-11-20T00:27:11.707185621-08:00"
+    },
+    {
+      "log": "/workspace/scratch/4d30fa819181/analysis/dispute-report-service-relocated-cache.jsonl",
+      "log_sha256": "8c16e1b44110ce170e41bdbb21435c254aeac6406143fce055cd833271ec1286",
+      "exit_code": 0,
+      "environment": {
+        "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+        "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "1",
+        "GOGC": "20",
+        "CGO_ENABLED": "1",
+        "GOMEMLIMIT": "256MiB",
+        "GOTMPDIR": "/workspace/scratch/4d30fa819181/runtime/go-tmp"
+      },
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-race",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./internal/service",
+        "-run",
+        "^Test(DisputeReports.*|TransactionReport.*|Report.*|Reports.*|HandleReport|InboxReportMessages|EveryCatalogueEntryFormats|APIMatchesOpenAPI|RouteInventoryMatchesAuthorizationTable|RouteAuthorizationMatrix|DisputeListsAndDashboardAreNotCapped|TradeDetailLinksDisputeForDeciders|DisputeResponseAndReReviewAPI|DisputeResponseAndReReviewPages)$"
+      ],
+      "packages": {
+        "github.com/djshellshoxxx/circula/internal/service": {
+          "top_level_passes": 15,
+          "subtest_passes": 27,
+          "executed_test_failures": 0,
+          "skips": 0,
+          "status": "passed",
+          "elapsed_seconds": 35.018
+        }
+      },
+      "top_level_passes": 15,
+      "subtest_passes": 27,
+      "executed_test_failures": 0,
+      "skips": 0,
+      "race_reports": 0,
+      "build_failures": [],
+      "first_test_event": "2026-11-20T00:34:47.168572729-08:00",
+      "last_test_event": "2026-11-20T00:35:22.186987618-08:00"
+    }
+  ],
+  "top_level_passes": 41,
+  "subtest_passes": 58,
+  "executed_test_failures": 0,
+  "skips": 0,
+  "race_reports": 0,
+  "pending_direct_service_fixtures": [],
+  "lightweight_checks": [
+    "gofmt",
+    "git diff --check",
+    "catalogue JSON parsing (1443 entries)",
+    "OpenAPI YAML parsing"
+  ],
+  "migration_0023_with_integrated_gate": "TestTransactionReportMigrationPreservesAndRetries passed under race, including preservation, rollback, retry and reopen; package elapsed 2.654 s",
+  "scope_note": "docs/consolidation/DISPUTE_REPORT_PROJECTION_20261120.md",
+  "optional_later_design": "/workspace/scratch/4d30fa819181/analysis/member_listing_report_context_design.md",
+  "remaining_boundaries": [
+    "System-account transaction subject semantics",
+    "Explicit member/listing dispute context (feasible later extension; no blanket policy hold)",
+    "All-conflicted administrator operational procedure"
+  ],
+  "diff_sha256": "53f74e24cab4188b0cb7a936c453dc1fd80dc312a88b0e30f9647c1ea1d59d3e",
+  "changed_files_sha256": [
+    {
+      "path": "docs/api/openapi.yaml",
+      "sha256": "72d79dd7c2f9556dbd08d8fd34a5b7fd49594378f865435fd4cdb68a7c73342c"
+    },
+    {
+      "path": "docs/consolidation/DISPUTE_REPORT_PROJECTION_20261120.md",
+      "sha256": "3e37ed465622d0b25f30cb4510e255831efa0b5263d4ff86e7305da4d2114c62"
+    },
+    {
+      "path": "docs/consolidation/TRANSACTION_REPORTS_20261120.md",
+      "sha256": "6604beb332bbf3f00ba064ac07c1ca5eca9a84a9956c1f750f4562c189047c0f"
+    },
+    {
+      "path": "docs/specs/09-security-privacy.md",
+      "sha256": "260e45d13d03531fe1df3e205c1c9c5d5f0ade2eacdb60e9f4ed173155df9d0c"
+    },
+    {
+      "path": "internal/api/dispute_reports_test.go",
+      "sha256": "424f01fdff4f933cba5b35655c0c89f057871cbec216ba34994b1ceb84af2647"
+    },
+    {
+      "path": "internal/api/h_dispute_reports.go",
+      "sha256": "88576ebb24e516f688fad57690986702fd65e28f28dd88167fe7ed6f74f9fffa"
+    },
+    {
+      "path": "internal/api/h_disputes.go",
+      "sha256": "350d3a1e83b5be50599cef8d8dc2ed23ab4031f9917c527b05ee40a55372ea68"
+    },
+    {
+      "path": "internal/api/routes.go",
+      "sha256": "54844f263d634c45f87a751de0b6386924b9cb9ccd86c03ec176ad7e8121c4d7"
+    },
+    {
+      "path": "internal/api/testdata/route_authz.txt",
+      "sha256": "71a8330147472ebcf490373be175c1e362eb03b16b9ebdcf7cc9d54372569f98"
+    },
+    {
+      "path": "internal/contract/contract_test.go",
+      "sha256": "02e8579e9efb80213757f36970a9c5457948134d4baea10c6c1ca4900e5fd99d"
+    },
+    {
+      "path": "internal/contract/transaction_reports_test.go",
+      "sha256": "62d2f37af99bbd2e44042d331890f7a256c1d2187a323a53fd0d6704f9f79942"
+    },
+    {
+      "path": "internal/repository/iface_notify.go",
+      "sha256": "fe4261c52b6369cafb2d9257489f2b6523b7dea326b6ca298b535f0a8bfac998"
+    },
+    {
+      "path": "internal/service/dispute_reports.go",
+      "sha256": "9567f3b6e9a17d875c87fb28f999ed58fa09f72ee6ffc19ae7b041f8c1084971"
+    },
+    {
+      "path": "internal/service/dispute_reports_test.go",
+      "sha256": "d54995c1f4a3787e8e0631a580d33ab018bd5e7bd81a10271d132180dfe72ee3"
+    },
+    {
+      "path": "internal/service/disputes_decide.go",
+      "sha256": "01061685815ec28487dc9af0234df03ba99e8e2fe06aed68005c3c724bf1c602"
+    },
+    {
+      "path": "internal/service/reports.go",
+      "sha256": "34c9964fbf877eb5890f60ed683e9b2ac58b96f00621f1a3b3a2ec5ca714d842"
+    },
+    {
+      "path": "internal/store/sqlite_notify.go",
+      "sha256": "d061dc2d3fff3b51a265ef6642383baa0bcd4b73fccc20fe7f78de0024359196"
+    },
+    {
+      "path": "internal/web/dispute_reports_test.go",
+      "sha256": "5c6edea1bddfdb0fbffa766ce8eeea5f378687df7bfa47668c8f43d4264aace4"
+    },
+    {
+      "path": "internal/web/h_dispute_reports.go",
+      "sha256": "f052908eab26015c00f16c5c02c4163fe1bbda970bc9a89ab8b87185be8c06be"
+    },
+    {
+      "path": "internal/web/h_disputes.go",
+      "sha256": "9f295ea36004e943874d714a7143f594f0a4dddc796255c70b8fdfd752094fb1"
+    },
+    {
+      "path": "internal/web/messages/en.json",
+      "sha256": "f14d05822e746bd4cbd013835aa84b770e66ca70427d23bd3ea69df22f8e628d"
+    },
+    {
+      "path": "internal/web/messages/messages_test.go",
+      "sha256": "3542735a09c3c1d8d2c0695a8577404fa3f5dfc31003f00f6d4dc632f431f017"
+    },
+    {
+      "path": "internal/web/templates/dispute_reports.html",
+      "sha256": "759f29897661b0b3cf95ab61851e7ffb02a28dbd0795653c85238bed306b2d80"
+    },
+    {
+      "path": "internal/web/templates/dispute_view.html",
+      "sha256": "0ec39633322e7a241e9d6bf036e2ce3ec467483e59c2fac17d80d2d7315a2051"
+    }
+  ],
+  "post_execution_changes": "Only documentation of actual execution and its remaining service qualification changed after the run; production and test source did not change.",
+  "recorded_at": "2026-11-20T08:37:06.846057+00:00",
+  "qualification_doc_commit": "fe573c2c5a90f828c35805d2beee62f06b38cd44"
+}

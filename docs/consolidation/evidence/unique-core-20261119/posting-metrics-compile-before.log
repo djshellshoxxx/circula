@@ -1,0 +1,7 @@
+# github.com/djshellshoxxx/circula/internal/service_test [github.com/djshellshoxxx/circula/internal/service.test]
+internal/service/posting_observe_test.go:64:50: undefined: service.CounterpartyPays
+FAIL	github.com/djshellshoxxx/circula/internal/service [build failed]
+# github.com/djshellshoxxx/circula/cmd/circula [github.com/djshellshoxxx/circula/cmd/circula.test]
+cmd/circula/metrics_hooks_test.go:75:45: undefined: service.CounterpartyPays
+FAIL	github.com/djshellshoxxx/circula/cmd/circula [build failed]
+FAIL

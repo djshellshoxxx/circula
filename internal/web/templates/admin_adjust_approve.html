@@ -1,21 +1,21 @@
 {{define "content"}}
 {{with .D}}
-<p>Nothing is posted until you confirm approval.</p>
+<p>{{msg "admin.adjust.approval_notice"}}</p>
 <dl class="kv">
-  <dt>Member</dt><dd>{{.Name}}</dd>
-  <dt>Requested by</dt><dd>{{.Proposer}}</dd>
-  <dt>Direction</dt><dd>{{.Dir}}</dd>
-  <dt>Amount</dt><dd>{{.Amount}} {{$.Unit}}s</dd>
-  <dt>Reason</dt><dd>{{.Reason}}</dd>
-  {{if .RelatedTxID}}<dt>Related transaction</dt><dd><a href="/n/{{$.Slug}}/trades/{{.RelatedTxID}}">The original entry</a></dd>{{end}}
-  <dt>Their balance now</dt><dd>{{template "balance" .Before}}</dd>
-  <dt>Their balance after</dt><dd>{{template "balance" .After}}</dd>
+  <dt>{{msg "admin.adjust.member"}}</dt><dd>{{.Name}}</dd>
+  <dt>{{msg "admin.adjust.requested_by"}}</dt><dd>{{.Proposer}}</dd>
+  <dt>{{msg "admin.adjust.direction"}}</dt><dd>{{.Dir}}</dd>
+  <dt>{{msg "admin.adjust.amount"}}</dt><dd>{{msg "admin.adjust.amount_value" .Amount (unit $.Unit .AmountMinor $.Dec)}}</dd>
+  <dt>{{msg "admin.adjust.reason"}}</dt><dd>{{.Reason}}</dd>
+  {{if .RelatedTxID}}<dt>{{msg "admin.adjust.related"}}</dt><dd><a href="/n/{{$.Slug}}/trades/{{.RelatedTxID}}">{{msg "admin.adjust.original_entry"}}</a></dd>{{end}}
+  <dt>{{msg "admin.adjust.balance_now"}}</dt><dd>{{template "balance" .Before}}</dd>
+  <dt>{{msg "admin.adjust.balance_after"}}</dt><dd>{{template "balance" .After}}</dd>
 </dl>
-<p>The request, permissions and available credit are checked again when you confirm. Balances may change while you review.</p>
+<p>{{msg "admin.adjust.approval_recheck"}}</p>
 <form method="post" action="/n/{{$.Slug}}/admin/adjustments/{{.ID}}/approve">
   {{template "csrf" $}}
   <input type="hidden" name="review_proof" value="{{.Proof}}">
-  <div class="actions"><button type="submit" name="step" value="confirm" class="danger">Approve and post</button> <button type="submit" name="step" value="back" class="secondary">Go back without approving</button></div>
+  <div class="actions"><button type="submit" name="step" value="confirm" class="danger">{{msg "admin.adjust.approve"}}</button> <button type="submit" name="step" value="back" class="secondary">{{msg "admin.adjust.back_without"}}</button></div>
 </form>
 {{end}}
 {{end}}

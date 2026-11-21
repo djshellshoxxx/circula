@@ -3,9 +3,11 @@ package web
 import (
 	"net/http"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 // decisionData is the review-your-decision screen.
@@ -28,28 +30,28 @@ func (s *server) decisionReview(w http.ResponseWriter, r *http.Request, c *rc, i
 	var words string
 	switch in.Outcome {
 	case domain.OutcomeDismissed:
-		words = "Dismissed: the balances stand as they are."
+		words = messages.Text("dispute.decision.dismissed")
 	case domain.OutcomeUpheld:
-		amt, words = remaining, "Upheld: the whole remaining trade is reversed."
+		amt, words = remaining, messages.Text("dispute.decision.upheld")
 	case domain.OutcomePartiallyUpheld:
-		amt, words = in.Amount, "Partly upheld: part of the trade is reversed."
+		amt, words = in.Amount, messages.Text("dispute.decision.partial")
 		if amt > remaining {
-			s.disputeFail(w, r, c, id, domain.Invalid("amount", "must be at most the remaining reversible amount "+domain.FormatAmount(remaining, pol.Decimals)))
+			s.disputeFail(w, r, c, id, domain.Invalid("amount", messages.Text("dispute.decision.amount_max", domain.FormatAmount(remaining, pol.Decimals))))
 			return
 		}
 	default:
-		s.disputeFail(w, r, c, id, domain.Invalid("outcome", "choose dismissed, upheld or partly upheld"))
+		s.disputeFail(w, r, c, id, domain.Invalid("outcome", messages.Text("dispute.decision.outcome_required")))
 		return
 	}
 	switch {
 	case rat == "":
-		s.disputeFail(w, r, c, id, domain.Invalid("rationale", "required: both parties will see it"))
+		s.disputeFail(w, r, c, id, domain.Invalid("rationale", messages.Text("dispute.decision.rationale_required")))
 		return
-	case len(rat) > 2000:
-		s.disputeFail(w, r, c, id, domain.Invalid("rationale", "too long: use 2000 characters or fewer"))
+	case utf8.RuneCountInString(in.Rationale) > 2000:
+		s.disputeFail(w, r, c, id, domain.Invalid("rationale", messages.Text("dispute.decision.rationale_too_long")))
 		return
 	}
-	p := &page{Title: "Review your decision", V: formValues(r), D: &decisionData{ID: id, Outcome: words,
+	p := &page{Title: messages.Text("dispute.decision.title"), V: formValues(r), D: &decisionData{ID: id, Outcome: words,
 		Amount: domain.FormatAmount(amt, pol.Decimals), Unit: unitFor(pol.CurrencyName, amt, pol.Decimals), Payer: v.PayerName, Payee: v.PayeeName,
 		Rationale: rat, Reverses: amt > 0}}
 	s.render(w, r, c, "dispute_decide_review", 200, p)

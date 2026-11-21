@@ -1,0 +1,6 @@
+Candidate based on 0daa4d6: decimal-place match plus singular remediation
+GOMAXPROCS=1 GOMEMLIMIT=250MiB GOGC=40; default vet enabled
+Command: /workspace/scratch/beb70d57deba/toolchain/go/bin/go test -p 1 ./internal/web/messages -count=1
+ok  	github.com/djshellshoxxx/circula/internal/web/messages	0.054s
+
+Exit: 0

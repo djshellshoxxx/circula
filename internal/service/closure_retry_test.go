@@ -47,7 +47,7 @@ func TestClosureFinalExportRetriesAfterFailure(t *testing.T) {
 		t.Fatalf("first finalise: %d, %v", n, err)
 	}
 	c := tu.Must(e.Svc.GetNetwork(e.Ctx, admin, net.ID)).Closure
-	if c == nil || !c.Done() || c.FinalSHA256 != "" {
+	if c == nil || !c.Done() || c.FinalSHA256 != "" || c.FinalExportVersion != 0 {
 		t.Fatalf("failed export state: %+v", c)
 	}
 	e.Clock.Advance(time.Duration(c.ReadOnlyDays+1) * 24 * time.Hour)
@@ -74,5 +74,9 @@ func TestClosureFinalExportRetriesAfterFailure(t *testing.T) {
 	var checksum string
 	if err := e.Store.DB().QueryRow(`SELECT final_sha256 FROM network_closures WHERE network_id=?`, net.ID).Scan(&checksum); err != nil || len(checksum) != 64 {
 		t.Fatalf("recovered checksum %q: %v", checksum, err)
+	}
+	e.Clock.Advance(time.Hour)
+	if chk := tu.Must(e.Svc.VerifyClosureExport(e.Ctx, admin, net.ID)); !chk.Match || chk.Version != 1 || chk.Stored != checksum {
+		t.Fatalf("recovered checkpoint after elapsed time = %+v", chk)
 	}
 }

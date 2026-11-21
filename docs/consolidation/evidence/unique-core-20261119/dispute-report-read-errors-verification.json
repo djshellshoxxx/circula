@@ -1,0 +1,57 @@
+{
+  "source_commit": "7dc19820aaf06a25e9210d91e775043071b508de",
+  "worktree": "/workspace/scratch/4d30fa819181/circula-dispute-report-read",
+  "command": [
+    "/tmp/circula-runtime-4d30/go/bin/go",
+    "test",
+    "-race",
+    "-p",
+    "1",
+    "-count=1",
+    "-json",
+    "./internal/service",
+    "-run",
+    "^TestDisputeReportsPreserveDisputeReadErrors$"
+  ],
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTMPDIR": "/workspace/scratch/4d30fa819181/analysis/read-error-go-build",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1"
+  },
+  "source_sha256_before": {
+    "internal/service/dispute_reports.go": "972ef8dc48832f6e9d50749af6a732187662d2ca78cd6e8c2d86a01701285691",
+    "internal/service/dispute_reports_read_error_test.go": "d3d54609e134ce4c8fc8983ab9dc20a0647f5396d212f2faa9593be85da8f33b"
+  },
+  "started_utc": "2026-11-20T08:46:08.252157+00:00",
+  "status": "passed",
+  "scope": "One benign repository-read regression in the full service package; not a full-suite result.",
+  "finished_utc": "2026-11-20T08:46:50.239122+00:00",
+  "wall_seconds": 41.986,
+  "exit_code": 0,
+  "source_sha256_after": {
+    "internal/service/dispute_reports.go": "972ef8dc48832f6e9d50749af6a732187662d2ca78cd6e8c2d86a01701285691",
+    "internal/service/dispute_reports_read_error_test.go": "d3d54609e134ce4c8fc8983ab9dc20a0647f5396d212f2faa9593be85da8f33b"
+  },
+  "log_path": "/workspace/scratch/4d30fa819181/analysis/dispute-report-read-errors-focused.jsonl",
+  "log_sha256": "8b3a7334c79a6d720b3d3544b4dc82c293c0a2ac86ba91a50bd7e84c5606e258",
+  "top_level_passes": [
+    "TestDisputeReportsPreserveDisputeReadErrors"
+  ],
+  "subcase_pass_count": 7,
+  "package_passes": [
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Elapsed": 2.247
+    }
+  ],
+  "failure_events": [],
+  "skip_events": [],
+  "non_json_output": [],
+  "race_warning_seen": false,
+  "source_unchanged": true
+}

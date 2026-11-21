@@ -819,3 +819,103 @@ func TestConcurrentWritersNeverSilentlyLoseWrites(t *testing.T) {
 		t.Errorf("stored %d rows, acknowledged %d", stored, len(acked))
 	}
 }
+
+// Fail when the head migration is recorded, after its SQL has succeeded but
+// before its transaction commits. This also exercises a one-statement head
+// migration: the schema must be byte-for-byte unchanged (no partial DDL), the
+// previous version must still be recorded, and removing the blocker must allow
+// a clean reopen without losing existing data.
+func TestFailingHeadMigrationRollsBackAndReopensCleanly(t *testing.T) {
+	ctx := context.Background()
+	path := filepath.Join(t.TempDir(), "mig.db")
+	head := store.SchemaVersion()
+	if head < 2 {
+		t.Fatalf("need at least two migrations, have %d", head)
+	}
+
+	// Build the database at head-1 with one committed row.
+	prev, err := store.OpenAtVersion(ctx, path, head-1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := prev.DB().Exec(`INSERT INTO persons(id,login,password_hash,created_at) VALUES ('p1','before-upgrade','h',1)`); err != nil {
+		t.Fatal(err)
+	}
+	if err := prev.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	raw, err := store.OpenRaw(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// migrateTo executes the migration SQL before inserting its version. ABORT
+	// rejects that INSERT only; the runner must roll back the preceding DDL too.
+	const failure = "injected failure after migration SQL"
+	stmt := fmt.Sprintf(`CREATE TRIGGER test_fail_migration_record
+		AFTER INSERT ON schema_migrations WHEN NEW.version = %d
+		BEGIN SELECT RAISE(ABORT, '%s'); END`, head, failure)
+	if _, err := raw.ExecContext(ctx, stmt); err != nil {
+		t.Fatalf("plant blocker: %v", err)
+	}
+	before := schemaSnapshot(t, raw)
+	if err := raw.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	s, err := store.Open(ctx, path)
+	if err == nil {
+		_ = s.Close()
+		t.Fatal("open succeeded although the head migration must fail")
+	}
+	if !strings.Contains(err.Error(), fmt.Sprintf("migration %04d_", head)) {
+		t.Errorf("error does not name the failing migration: %v", err)
+	}
+	if !strings.Contains(err.Error(), failure) {
+		t.Fatalf("failure did not reach the post-SQL migration record: %v", err)
+	}
+
+	raw, err = store.OpenRaw(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := schemaSnapshot(t, raw); got != before {
+		t.Fatalf("failed migration left partial schema changes:\nbefore:\n%s\nafter:\n%s", before, got)
+	}
+	if v, err := store.AppliedVersion(ctx, raw); err != nil || v != head-1 {
+		t.Fatalf("applied version = %d err=%v, want %d", v, err, head-1)
+	}
+	if err := raw.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	// Remove the blocker; the same file now upgrades and keeps its data.
+	raw, err = store.OpenRaw(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.ExecContext(ctx, `DROP TRIGGER test_fail_migration_record`); err != nil {
+		t.Fatal(err)
+	}
+	if err := raw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	s, err = store.Open(ctx, path)
+	if err != nil {
+		t.Fatalf("reopen after clearing blocker: %v", err)
+	}
+	defer func() { _ = s.Close() }()
+	var n int
+	var v int
+	if err := s.DB().QueryRow(`SELECT COUNT(*), MAX(version) FROM schema_migrations`).Scan(&n, &v); err != nil || v != head || n != head {
+		t.Fatalf("after upgrade: %d rows, max %d (err %v), want head %d", n, v, err, head)
+	}
+	if err := s.DB().QueryRow(`SELECT COUNT(*) FROM persons WHERE id='p1' AND login='before-upgrade'`).Scan(&n); err != nil || n != 1 {
+		t.Fatalf("pre-upgrade row lost: n=%d err=%v", n, err)
+	}
+}
+
+// ---- reopen and ledger verification ---------------------------------------
+
+// Committed postings survive close and reopen, and the ledger verifies after
+// the restart with the store's own read-only checks.

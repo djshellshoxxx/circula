@@ -1,0 +1,148 @@
+{
+  "head": "b00a0738bc8fdf3ac92a814fd57fba4fab97d320",
+  "tree": "afdc0bd17ba15c908c7b6572cdcdea1f242db463",
+  "cwd": "/workspace/scratch/4d30fa819181/circula-final-check",
+  "status_before": "",
+  "command": [
+    "go",
+    "test",
+    "-json",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout",
+    "25m",
+    "./..."
+  ],
+  "environment_overrides": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOTMPDIR": "/workspace/scratch/4d30fa819181/runtime/go-tmp",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1",
+    "CIRCULA_QA001_FAILDIR": "/workspace/scratch/4d30fa819181/analysis/qualification/b00a073-qa001-normal-failures"
+  },
+  "started_at_utc": "2026-11-20T09:24:08.034700+00:00",
+  "finished_at_utc": "2026-11-20T09:29:51.175842+00:00",
+  "elapsed_seconds": 343.141,
+  "exit_code": 1,
+  "timed_out": false,
+  "head_after": "b00a0738bc8fdf3ac92a814fd57fba4fab97d320",
+  "tree_after": "afdc0bd17ba15c908c7b6572cdcdea1f242db463",
+  "status_after": "",
+  "source_unchanged": true,
+  "test_and_subtest_events": {
+    "pass": 3418,
+    "skip": 6,
+    "fail": 2
+  },
+  "packages": {
+    "github.com/djshellshoxxx/circula/cmd/circula": {
+      "action": "pass",
+      "elapsed": 79.486
+    },
+    "github.com/djshellshoxxx/circula/internal/api": {
+      "action": "pass",
+      "elapsed": 18.648
+    },
+    "github.com/djshellshoxxx/circula/internal/contract": {
+      "action": "pass",
+      "elapsed": 4.2780000000000005
+    },
+    "github.com/djshellshoxxx/circula/internal/domain": {
+      "action": "pass",
+      "elapsed": 0.073
+    },
+    "github.com/djshellshoxxx/circula/internal/histbal": {
+      "action": "pass",
+      "elapsed": 0.002
+    },
+    "github.com/djshellshoxxx/circula/internal/httpx": {
+      "action": "pass",
+      "elapsed": 0.003
+    },
+    "github.com/djshellshoxxx/circula/internal/integrity": {
+      "action": "pass",
+      "elapsed": 0.002
+    },
+    "github.com/djshellshoxxx/circula/internal/logx": {
+      "action": "pass",
+      "elapsed": 0.005
+    },
+    "github.com/djshellshoxxx/circula/internal/repository": {
+      "action": "pass",
+      "elapsed": 0.087
+    },
+    "github.com/djshellshoxxx/circula/internal/service": {
+      "action": "pass",
+      "elapsed": 80.817
+    },
+    "github.com/djshellshoxxx/circula/internal/store": {
+      "action": "pass",
+      "elapsed": 28.057
+    },
+    "github.com/djshellshoxxx/circula/internal/storetest": {
+      "action": "skip",
+      "elapsed": 0
+    },
+    "github.com/djshellshoxxx/circula/internal/testutil": {
+      "action": "skip",
+      "elapsed": 0
+    },
+    "github.com/djshellshoxxx/circula/internal/web": {
+      "action": "fail",
+      "elapsed": 52.592
+    },
+    "github.com/djshellshoxxx/circula/internal/web/messages": {
+      "action": "pass",
+      "elapsed": 0.089
+    },
+    "github.com/djshellshoxxx/circula/scripts/sbom": {
+      "action": "pass",
+      "elapsed": 0.03
+    },
+    "github.com/djshellshoxxx/circula/scripts/traceability": {
+      "action": "pass",
+      "elapsed": 1.806
+    }
+  },
+  "skipped_tests": [
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "test": "TestBackupStagingRefusesForeignOwnedParent"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "test": "TestBackupWorkLeaseChild"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "test": "TestRestoreSwapCrashChild"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "test": "TestLoginTimingStatistical"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "test": "TestLoadConcurrentTrades"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "test": "TestQA010CrashChild"
+    }
+  ],
+  "failed_tests": [
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/web",
+      "test": "TestAdminHomeLinksToSupportBoundaries"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/web",
+      "test": "TestValidationMessagesNameFieldAndFix"
+    }
+  ]
+}

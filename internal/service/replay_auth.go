@@ -29,6 +29,7 @@ const (
 	ReplayConsistencyCheck
 	ReplayInvitationCreate
 	ReplayInvitationAccept
+	ReplayReportHandle
 	ReplayExport
 )
 
@@ -38,6 +39,7 @@ type ReplayAuthorization struct {
 	Permission    ReplayPermission
 	MemberID      string
 	TransactionID string
+	ReportID      string
 	ExportScope   ExportScope
 }
 
@@ -128,6 +130,12 @@ func (s *Service) AuthorizeReplay(ctx context.Context, actor domain.Actor, netID
 			return p.requireLasting()
 		case ReplayAdmin, ReplayConsistencyCheck:
 			return p.requireAdmin()
+		case ReplayReportHandle:
+			if err := p.requireAdmin(); err != nil {
+				return err
+			}
+			_, err := loadIndependentReport(tx, p, in.ReportID)
+			return err
 		case ReplayInvitationCreate:
 			if err := p.requireAdmin(); err != nil {
 				return err

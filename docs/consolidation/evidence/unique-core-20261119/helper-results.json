@@ -1,0 +1,37 @@
+{
+  "source_for_helper_runs": "a29a0943258be14d292a0d0998c0f0661c80d248",
+  "hygiene_source": "f4f718b44ae19e7eea32b9bf214a47ea178ccce3",
+  "python": {
+    "command": "python -m unittest discover -s scripts -p test_*.py -v",
+    "tests": 65,
+    "result": "pass",
+    "seconds": 12.928
+  },
+  "node": {
+    "command": "node --test scripts/test_app_messages.cjs scripts/test_e2e_kbd.cjs",
+    "tests": 23,
+    "result": "pass"
+  },
+  "hygiene": {
+    "result": "pass",
+    "change": "migration 0023 received the required reviewed-rebuild explanation; no SQL behavior changed"
+  },
+  "files_sha256": {
+    "scripts/read-export.py": "08c798deb757de602de82ef3a28cb48111692a90eb6dfcde30e28d4650d7e371",
+    "scripts/test_read_export.py": "8d3c246319c3a606678d8fac65028c34fee38ecf7eb5bcef2938f71553993967",
+    "scripts/check_migrations.py": "113045452bccf79b761e1656a16aa44b2014c217c890f6ab9e066a8259f9316a",
+    "scripts/test_check_migrations.py": "b25699064eded37a903f89eb45f4ea70d73799b174af4d09dfb1a83b20a05afe",
+    "scripts/check_thresholds.py": "0132f2911926f93adda0ef4e363089f7175625f4bb90e767e3a8fd83c294569e",
+    "scripts/test_check_thresholds.py": "f3f7bfb0574ffc3b84e9a4709ae11e67bb78991e8cbf8a8233a88480060ed6d7",
+    "scripts/run_qa001.py": "0a624df08eedbcf8ecfe9aa79e7c21d4f89e333dc8cde6679d1ce8c6984499aa",
+    "scripts/test_run_qa001.py": "3c388cc08544fdedc891352ca1ef3c73ae9e3f807431694e6452becd4befa948",
+    "scripts/test_app_messages.cjs": "c69cfef3a6a2c9b40e778006c68d00c8ba2bd4130792c1144db8371ecfb7fbfa",
+    "scripts/test_e2e_kbd.cjs": "61b2dcd3982254f4e75f6ae819b2a7d0d2ee0ea6276e2b6be8291358986faad7",
+    "internal/web/static/app.js": "3ab17b579116b9db210408dd617dea90bdfe7b8666d3ab736c64f069ec3f6a72"
+  },
+  "logs_sha256": {
+    "helper-python.log": "a38df5efa057c0316c9063322e712d97dc6b9fc6440a2ac5162daef54eceb0e9",
+    "helper-node.log": "2b701a9173df855803ad3f790eb6d0c6514f3be839b61f1bb95e038ccf80c310",
+    "hygiene.log": "6ccc9d2a2644ec2d1748ac4d48433334718dbdb139eff5dae1c5bf0406190b44"
+  }
+}

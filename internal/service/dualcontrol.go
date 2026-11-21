@@ -17,6 +17,7 @@ import (
 const DefaultNewAdminApprovalDelay = 24 * time.Hour
 
 // maxGrantChain bounds the walk up the chain of who made whom administrator.
+// A permitted root must be found within this many grant records.
 const maxGrantChain = 32
 
 // requireIndependentApprover enforces A3-01 for a member deciding a request:
@@ -39,7 +40,7 @@ func (s *Service) requireIndependentApprover(tx store.Tx, p *principal, pa *doma
 			break
 		}
 		if by == cur { // the founder's own creation-time grant is the root of trust: no wait
-			break
+			return nil
 		}
 		if first && s.cfg.NewAdminApprovalDelay > 0 && s.now().Before(at.Add(s.cfg.NewAdminApprovalDelay)) {
 			return domain.Forbidden("a newly granted administrator cannot decide adjustment requests for %s", s.cfg.NewAdminApprovalDelay)
@@ -48,9 +49,14 @@ func (s *Service) requireIndependentApprover(tx store.Tx, p *principal, pa *doma
 		if by == pa.Proposer && cur != pa.Proposer {
 			return domain.Forbidden("an administrator appointed by the requester cannot decide this adjustment request")
 		}
+		if by == "" { // an explicit operator grant is also a root, after the wait
+			return nil
+		}
 		cur = by
 	}
-	return nil
+	// Missing history, a repeated member, or exhausted work cannot establish
+	// independence. Decision endpoints and their read-only hint all fail closed.
+	return domain.Forbidden("administrator grant history does not establish independent authority")
 }
 
 // ApproveAdjustment posts a pending adjustment on the second administrator's

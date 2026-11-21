@@ -1,12 +1,28 @@
 # Core consolidation handoff
 
-> Later consolidation: [combined recovery and validation status](../audits/CONSOLIDATION_CONTINUATION_2026-11-19.md). This file retains its original source snapshot and execution scope; final candidate status is recorded in PR #99.
+## Current continuation
+
+The current source, recovered implementation, completed repairs, verification
+boundaries and remaining gates are recorded in
+[UNIQUE_CORE_CONTINUATION_20261119.md](UNIQUE_CORE_CONTINUATION_20261119.md).
+The owned continuation is [PR #127](https://github.com/djshellshoxxx/circula/pull/127),
+which recovers PR #125 and adds the reviewed correctness repairs. Main was last
+observed at `aa01563f`. Complete combined qualification and a main merge remain
+pending in that record; focused worker passes do not qualify a later combination.
+All earlier reports and the snapshot below remain historical source-specific
+records. Existing future-module and policy holds continue to apply.
+
+## Historical initial-recovery checkpoint
 
 ## Resume point
 
 - Repository: `https://github.com/djshellshoxxx/circula`.
 - Baseline fetched from main: `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`.
-- Authoritative candidate: `integration/core-recovery-20261119`.
+- Authoritative candidate: `integration/core-recovery-20261119`, PR #102.
+- First published head c97233fb5b795e85b4a81e19809bb9d9c76a15d1 has the same
+  tree as local 5da8bc7. Check the live PR for subsequent heads.
+- Additive enumeration: 120 branches / 102 PRs at 10:59:30 UTC; see
+  BRANCH_REFRESH_20261119.md. Original discovery remains preserved.
 - Read FEATURE_MATRIX.md, TEST_RESULTS.md, SECURITY_AUDIT.md and
   REMAINING_WORK.md before continuing. The current branch contains its source
   and evidence; older root HANDOFF sections remain historical.
@@ -21,27 +37,40 @@
   fail-before/pass-after evidence recorded.
 - Web interrupted export handling aborts partial responses; pagination preserves
   owner scope/type/query and avoids phantom final pages; focused checks passed.
-- 123 shared validation/admin-reset English catalogue entries with plain-text
-  interpolation and escaping checks; no language expansion.
+- 196 English entries across validation/admin-reset, marketplace/directory and
+  browser warning flows, with plain-text interpolation and escaping checks.
+- Real HTTP committed-export interruption regression passes in both formats
+  and fails against the exact main baseline; no production change in that
+  follow-up. Trade/history and inbox/report continuations remain active.
 
 ## Active isolation
 
-Do not modify active API-036/#90 or #96 branches. Re-fetch their current heads
-and checks before considering integration. FNET-204/#92 targets its isolated
+Do not modify active API-036/#90, #99 or #101 branches. #96 is closed and
+superseded by #101. #90 must not merge alone before #99's live-session token
+authority repair. Re-fetch current heads and checks before integration. FNET-204/#92 targets its isolated
 future branch; never retarget it into main here. Existing policy holds remain.
 
 ## Execution and publication
 
 The original executor disconnected during compilation and its temporary
 worktrees were lost. Persistent analysis and immutable GitHub source blobs
-enabled recovery. Only completed post-restart test runs are evidence. Keep
+enabled recovery. A second executor restart interrupted the combined race run on 5da8bc7;
+its recorder wrote no result. Only completed runs are evidence. Keep
 source/checkpoints in the repository and publish through the connected provider
 when the Git CLI lacks write credentials. Build caches and temporary logs may
 use temporary storage when the shared workspace disk is full.
 
-The next action is to finish the current broader verification, integrate the
-isolated catalogue slices, publish a reviewable candidate, and observe its
-required checks. Do not claim background continuation unless an actual running
+The next action is to finish the two isolated catalogue slices, update PR #102
+with the verified transport regression and inventory refresh, and complete
+broader qualification using the persistent cache under the task workspace.
+Do not launch parallel cold SQLite compilations on this constrained executor.
+The earlier CGO-disabled build and dependency-audit attempts were killed;
+retain those failures and obtain a real replacement result or explicit blocker. Do not claim background continuation unless an actual running
 worker or persistent execution mechanism exists. No main merge, release, or
 deployment is recorded at this checkpoint; update MAIN_MERGE_LOG.md only after
 observing the result.
+
+The peer consolidation report is preserved at
+`docs/audits/CONSOLIDATION_CONTINUATION_2026-11-19.md`. Its immutable 0a73ee4
+source is now reconciled into this owned continuation; neither active source
+ref was modified. The original branch inventory remains byte-for-byte intact.

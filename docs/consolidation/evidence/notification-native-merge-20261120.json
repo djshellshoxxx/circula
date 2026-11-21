@@ -1,0 +1,23 @@
+{
+  "sha": "54a41b12a314e7652802b71d693e2594c37f172f",
+  "merged": true,
+  "message": "Pull Request successfully merged",
+  "reviewed_head": "66b23f8e9e37ce6efddf56c0215c6f29f741d489",
+  "reviewed_base": "9d861d51b6ca0f3393795a126928fdf4317ca4eb",
+  "target": "future/fux-104-notifications-20261116",
+  "qualified_runs": [
+    44770537562,
+    44770537542,
+    44770537665
+  ],
+  "tree": "774205e9de006c00181c8ef09e192ccb42489e92",
+  "parents": [
+    "9d861d51b6ca0f3393795a126928fdf4317ca4eb",
+    "66b23f8e9e37ce6efddf56c0215c6f29f741d489"
+  ],
+  "merged_at": "2026-11-20T17:10:36Z",
+  "url": "https://github.com/djshellshoxxx/circula/pull/103",
+  "all_13_jobs_passed": true,
+  "disabled": true,
+  "integration": "HOLD"
+}

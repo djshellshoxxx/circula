@@ -1,0 +1,15 @@
+=== RUN   TestAuditCatalogueDataAndControls
+=== RUN   TestAuditCatalogueDataAndControls/admin_audit
+=== RUN   TestAuditCatalogueDataAndControls/my_audit
+--- PASS: TestAuditCatalogueDataAndControls (0.98s)
+    --- PASS: TestAuditCatalogueDataAndControls/admin_audit (0.47s)
+    --- PASS: TestAuditCatalogueDataAndControls/my_audit (0.51s)
+=== RUN   TestLedgerCheckCatalogueCountsAndFindings
+    audit_export_catalog_test.go:100: page lacks "Ledger sequence 9223372036854775807; 1 audit event checked."
+    audit_export_catalog_test.go:100: page lacks "Ledger sequence 9223372036854775807; 1,000 audit events checked."
+--- FAIL: TestLedgerCheckCatalogueCountsAndFindings (0.70s)
+=== RUN   TestAdminExportsCatalogueControls
+--- PASS: TestAdminExportsCatalogueControls (0.24s)
+FAIL
+FAIL	command-line-arguments	1.957s
+FAIL

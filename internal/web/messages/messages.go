@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"golang.org/x/text/feature/plural"
@@ -63,10 +64,24 @@ type Parts struct{ Before, After string }
 
 const textSlot = "\x00"
 
-// Around formats a complete sentence containing exactly one string argument.
-// It lets a template retain its existing time element while escaping both sides.
-func Around(key string) Parts {
-	return splitAround(Text(key, textSlot))
+// Around reserves the final string argument for exactly one template-owned
+// element. Any preceding arguments must be trusted catalogue labels or decimal
+// integer identifiers formatted by the application, never arbitrary text:
+// the sentinel and formatting-error guard are reserved.
+// Both returned strings still require contextual template escaping.
+func Around(key string, labels ...string) Parts {
+	args := make([]any, len(labels)+1)
+	for i, label := range labels {
+		args[i] = label
+	}
+	args[len(labels)] = textSlot
+	return splitAround(Text(key, args...))
+}
+
+// AroundCount selects a counted message around one template-owned element.
+// Its integer cannot introduce formatting markers or trusted HTML.
+func AroundCount(key string, count int) Parts {
+	return splitAround(Text(key, count, textSlot))
 }
 
 func splitAround(text string) Parts {
@@ -75,4 +90,41 @@ func splitAround(text string) Parts {
 	}
 	before, after, _ := strings.Cut(text, textSlot)
 	return Parts{Before: before, After: after}
+}
+
+// TwoParts keeps ordinary text around two template-owned elements in argument
+// order. Catalogue text and values never become trusted HTML through this type.
+type TwoParts struct{ Before, Between, After string }
+
+const firstTextSlot = "\x00first\x00"
+const secondTextSlot = "\x00second\x00"
+
+// AroundTwo accepts only a message key, never user values. The template inserts
+// its own elements into the two string slots; both must occur once, in order.
+func AroundTwo(key string) TwoParts {
+	return splitAroundTwo(Text(key, firstTextSlot, secondTextSlot))
+}
+
+// AroundTwoVersion keeps a version identifier ungrouped before two
+// template-owned elements. Only the application-formatted integer enters the
+// message; arbitrary text remains in the template's escaped data slots.
+func AroundTwoVersion(key string, version int) TwoParts {
+	return splitAroundTwo(Text(key, strconv.Itoa(version), firstTextSlot, secondTextSlot))
+}
+
+// AroundTwoCount selects a counted message before its two template-owned
+// elements. Its integer cannot introduce formatting markers or trusted HTML.
+func AroundTwoCount(key string, count int) TwoParts {
+	return splitAroundTwo(Text(key, count, firstTextSlot, secondTextSlot))
+}
+
+func splitAroundTwo(text string) TwoParts {
+	if strings.Count(text, firstTextSlot) != 1 || strings.Count(text, secondTextSlot) != 1 ||
+		strings.Count(text, textSlot) != 4 || strings.Contains(text, "%!") ||
+		strings.Index(text, firstTextSlot) > strings.Index(text, secondTextSlot) {
+		panic("UI message requires exactly two ordered string slots")
+	}
+	before, rest, _ := strings.Cut(text, firstTextSlot)
+	between, after, _ := strings.Cut(rest, secondTextSlot)
+	return TwoParts{Before: before, Between: between, After: after}
 }

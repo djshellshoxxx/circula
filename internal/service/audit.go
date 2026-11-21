@@ -1,14 +1,11 @@
 package service
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"sort"
-	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/integrity"
 	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
@@ -89,12 +86,5 @@ func dedupe(in []string) []string {
 // AuditHash computes the chain hash of an event over its content and the
 // previous hash. It detects silent edits; it is not tamper-proofing (DAT-030).
 func AuditHash(e *domain.AuditEvent) string {
-	subj := append([]string(nil), e.SubjectIDs...)
-	sort.Strings(subj)
-	h := sha256.New()
-	_, _ = fmt.Fprintf(h, "%s\x1f%s\x1f%s\x1f%d\x1f%d\x1f%s\x1f%s\x1f%s\x1f%s\x1f%s\x1f%s\x1f%s\x1f%s\x1f%s\x1f%s\x1f%s",
-		e.PrevHash, e.ID, e.NetworkID, e.Seq, e.OccurredAt.UnixMilli(), e.ActorType, e.ActorID, e.Action,
-		e.TargetType, e.TargetID, e.RequestID, e.IdemRef, e.SummaryBefore, e.SummaryAfter, e.Reason,
-		strings.Join(subj, ","))
-	return hex.EncodeToString(h.Sum(nil))
+	return integrity.AuditHash(e)
 }

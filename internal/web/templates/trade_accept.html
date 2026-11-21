@@ -2,19 +2,19 @@
 {{with .D}}
 <p class="big">{{.Sentence}}</p>
 <dl class="kv">
-  <dt>Payer</dt><dd>{{.Payer}}{{with $.MemberRef .Tx.PayerMemberID}} (member reference {{.}}){{end}}</dd>
-  <dt>Payee</dt><dd>{{.Payee}}{{with $.MemberRef .Tx.PayeeMemberID}} (member reference {{.}}){{end}}</dd>
-  <dt>Amount</dt><dd>{{plain .Tx.Amount $.Dec}} {{$.Unit}}s</dd>
-  {{if .Tx.Note}}<dt>Note</dt><dd>{{.Tx.Note}}</dd>{{end}}
-  <dt>Your balance now</dt><dd>{{template "balance" .Before}}</dd>
-  <dt>Your balance after posting</dt><dd>{{template "balance" .After}}</dd>
-  <dt>Available to spend now</dt><dd>{{.AvailNow}}</dd>
-  <dt>Available to spend after posting</dt><dd>{{.AvailAfter}}</dd>
+  <dt>{{msg "trade.payer"}}</dt><dd>{{$payerRef := $.MemberRef .Tx.PayerMemberID}}{{if $payerRef}}{{msg "trade.member_with_reference" .Payer $payerRef}}{{else}}{{.Payer}}{{end}}</dd>
+  <dt>{{msg "trade.payee"}}</dt><dd>{{$payeeRef := $.MemberRef .Tx.PayeeMemberID}}{{if $payeeRef}}{{msg "trade.member_with_reference" .Payee $payeeRef}}{{else}}{{.Payee}}{{end}}</dd>
+  <dt>{{msg "trade.amount"}}</dt><dd>{{msg "trade.amount_value" (plain .Tx.Amount $.Dec) (unit $.Unit .Tx.Amount $.Dec)}}</dd>
+  {{if .Tx.Note}}<dt>{{msg "trade.note"}}</dt><dd>{{.Tx.Note}}</dd>{{end}}
+  <dt>{{msg "trade.balance.now"}}</dt><dd>{{template "balance" .Before}}</dd>
+  <dt>{{msg "trade.balance.after_posting"}}</dt><dd>{{template "balance" .After}}</dd>
+  <dt>{{msg "trade.available.now"}}</dt><dd>{{.AvailNow}}</dd>
+  <dt>{{msg "trade.available.after_posting"}}</dt><dd>{{.AvailAfter}}</dd>
 </dl>
-<p>Accepting posts this trade to both accounts straight away.</p>
+<p>{{msg "trade.accept.notice"}}</p>
 <form method="post" action="/n/{{$.Slug}}/trades/{{.Tx.ID}}/accept">
   {{template "csrf" $}}{{template "idem" $}}
-  <div class="actions"><button type="submit">Confirm and accept</button> <a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}">Go back</a></div>
+  <div class="actions"><button type="submit">{{msg "trade.accept.confirm"}}</button> <a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}">{{msg "trade.back"}}</a></div>
 </form>
 {{end}}
 {{end}}

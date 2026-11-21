@@ -1,0 +1,3218 @@
+{
+  "captured_at": "2026-11-20",
+  "repository": "djshellshoxxx/circula",
+  "pull_requests": [
+    {
+      "pr": 113,
+      "metadata": {
+        "url": "https://github.com/djshellshoxxx/circula/pull/113",
+        "number": 113,
+        "state": "open",
+        "merged": false,
+        "mergeable": true,
+        "draft": true,
+        "body": "## Current reviewed candidate\n\nPublished head: `6186416ddd83c365405a798130999cb1e4df0f31`  \nReviewed local composition: `a5fcf75578a26beddce6e8b9110e1c8924bafdd2`  \nExact shared whole tree: `f611a03c49b5862052271789e9b353e09ecbb7da`\n\n## Completed-main baseline restoration\n\nThe preceding analytics Core run exposed inherited notification-erasure and G703 scanner findings. All ten affected owned candidates contained the same older source. After a fresh 38-PR and 59-worktree ownership survey, this update restores exactly four bounded paths from completed accepted-main work:\n\n- Resource-linked notification-body redaction from main ancestor `28326597340a4f0efad33f37feecc380db0de66f`.\n- The accepted resource-relation regression, retaining unrelated/same-name, exact-link, prefix and cross-network controls.\n- The deterministic erasure fixture and credential invariants from accepted ancestor `fc31dc9a6b8c102fe612f47bc543e94e8114df0f`.\n- Only the two existing operator-path G703 annotation comments in `writeAtomicPrivateFile`; its executable body and the remainder of the older util file are unchanged. No broad scanner suppression or configuration change is introduced.\n\nAll other paths, every future-module subtree, root dependencies, workflows and feature flags remain unchanged. The module stays disabled and on integration **HOLD**.\n\n## Actual verification and limits\n\nThe same accepted tests genuinely fail with the old SQL and pass with the restored SQL. On representative `6dce81719ab44e20256e1767f3cc3d5c73b89961`, the selected actual-Core-SQLite race run passed in **33.160s wall**, focused service/store vet in **119.240s**, and module verification in **7.049s**. Formatting and whitespace checks pass. The pinned Core driver graph is unchanged, including SQLite1.60.1, libc1.79.0 and x/sys0.49.0.\n\nThis candidate matches all 440 captured representative Core inputs; independent comparison also verifies the complete internal subtree, embedded data, root module and checksum files. The focused run was executed once on the representative, not separately on every PR.\n\nTwo independent reviews verified the source, original failures, unchanged test bytes, raw-log hashes and all composed trees. Remote commit/tree/ordered-parent and four-path blob readbacks match the frozen local compositions.\n\nThese focused results do not replace current-head full Core, lint, native module or ordinary approval gates. Native module successes on preceding module-identical heads remain dated evidence. The older baseline has no configured traceability generator/Make/CI gate; its handmade matrix is unchanged and no absent check is claimed as a pass. Core #104 has its own separate generated-traceability handoff.\n\nComplete evidence and current ownership: [master consolidation #104](https://github.com/djshellshoxxx/circula/pull/104). The source-specific earlier record is retained below; identities in this section are current.\n\n<details>\n<summary>Earlier module work and qualification record</summary>\n\n## Why\n\nThe advertised receipts branch lacks later source recovered from the verified archive. Reviewing that implementation also exposed a plain offline-parser defect: JCS converted raw numbers to IEEE-754 before integer validation, allowing some fractional or underflowed values to become accepted integers.\n\n## Recovery and repair\n\nRestore saved head `91529c5a3a4268ecf3a919e099ab9aca779aab2d` onto its published ancestor `bd2fbdbd3adf77b27fa12335ff2827359423aea3`. All44 original files are retained,42 byte-identical. All6 original test files, both pinned dependency files and the disabled/HOLD manifest are unchanged. The two changed original files are the current README and the reviewed `canonical.go` repair; one numeric regression file is added.\n\nRecovered functionality includes authorized ephemeral TXT/JSON/print receipts, exact bounded integer projections, strict offline canonical parsing, an optional consented standard JWS/EdDSA certificate candidate, local trust/key lifecycle checks, and no-JS HTTP/CLI seams. This does not enable the module or adopt production signing/key-custody policy.\n\nThe decoder now compares original amount/revision/precision tokens exactly with their already validated integer DTO. Bounded digit/exponent comparison preserves integral decimal/exponent spellings and signed zero without arbitrary-size arithmetic. The certificate issuer/verifier and wire profile are unchanged. The finding is unsigned offline parsing integrity; no signature forgery or authorization bypass is claimed.\n\n## Source and independent review\n\nPublished head: `4f04285a1fb7141a27acd37aab3b7185cc177534`.\nReviewed local composition: `d7578baf80a613b378812889478166b45fc91636` (workflow-only follow-up to the fully tested runtime composition `3466df2fe5a73de17e25c5a68315eead0e3ac926`).\nExact full-tree equality: `58b569a0ba1016737d5c575044a8d9dcc5c8f442`.\n\nThe original archive/restoration/workflow and final15-path documentation follow-up were independently reviewed. The numeric repair authored separately at `abaa1e8942f0997f86ce9e3bbc6d80b2dd65d056` received independent root review. Both reviewed Go blobs exactly match this candidate. All63 published path blobs were verified.\n\nOutside the module and its new dedicated workflow, exactly two files are restored to their already-merged main blobs: the missing audit-anchor `os` import and the departure regression fixture cap. Production limits remain unchanged. Their accepted-main provenance is recorded; no unfinished active-worker source, root dependencies, shared CI or migrations are copied.\n\n## Actual qualification\n\n- Unchanged-source regression:11 fractional/underflow subcases failed as expected because the old decoder accepted them;18 exact boundary/representation controls already passed.\n- Repaired complete module ordinary tests: PASS,84.6% coverage,0.044s package time /5.148s wall.\n- Repaired vet: PASS,13.845s wall; module verification and formatting PASS.\n- Original unchanged archive race suite: PASS,84.1% coverage,87 pass events/no skips. This is preserved as historical source-specific evidence, not claimed for the new numeric repair.\n- Current repaired source full race: PASS,40 top-level tests /118 pass events,zero skips,84.6% coverage,1.279s package /5.349s wall. All three100,000-execution fuzz campaigns passed: CreateReceipt66.539s, DecodeDocument13.546s and VerifyCertificate11.422s wall. Every source/dependency hash stayed unchanged. These results qualify the exact runtime/test/dependency bytes preserved by the workflow-only follow-up. The new provider workflow requests native Linux/macOS race and Windows ordinary tests; those current-head provider gates remain separate.\n\nSee `future/receipts/RECOVERY-20261119.md` and `recovery-evidence-20261119/` for exact commands, original failures, source hashes and independent reviews.\n\n## Native workflow guard correction\n\nThe preceding exact head `3cc55f79` failed the isolation guard on all three native jobs in [run 44531463364](https://github.com/djshellshoxxx/circula/actions/runs/44531463364), before tests ran. Go-generated test package names (`owned.test` and `owned [owned.test]`) did not satisfy the workflow's package-name predicate.\n\nThe independently reviewed follow-up changes only `.github/workflows/future-receipts.yml` (three insertions/two deletions). It checks actual owning `Module.Path` values against the receipts module and the two existing pinned dependencies. Manifest, dependency, test and native execution requirements are preserved; Core and other future-module imports remain rejected.\n\nThe unchanged original guard fails locally on actual dependency output; the corrected guard passes Linux and Windows/Darwin-target dependency listings. Negative Core and areas module controls both fail as required. Independent review verifies all six receipts/logs, unchanged module hashes and workflow syntax. Cross-target dependency listing is not native test execution. The new published head requires fresh native/Core results; the original three provider failures remain preserved.\n\n## Merge and feature boundary\n\nKeep this draft until the actual current head passes all applicable module/Core, native, browser, lint/vulnerability, build, fuzz, reproducibility and ordinary review requirements. It targets only the original isolated receipts branch.\n\nWhole-verifier interoperability, actual Core read-transaction/auth/key adapters, production trust distribution and cryptographic operations, manual browser/accessibility acceptance and explicit later integration selection remain open. The feature stays disabled/HOLD. No Core activation, release or deployment is included.\n\n</details>\n",
+        "title": "FNET-203: recover receipts and preserve exact offline integer values",
+        "base": "future/fnet-203-receipts-20261116",
+        "base_sha": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+        "head": "master/recover-receipts-20261119",
+        "head_sha": "6186416ddd83c365405a798130999cb1e4df0f31",
+        "head_repo_id": 1427759862,
+        "head_repo_full_name": "djshellshoxxx/circula",
+        "merge_commit_sha": "806a7c5d6da173e4b447cc62ce6a90cc1c234b85",
+        "user": {
+          "login": "djshellshoxxx",
+          "name": "djshellshoxxx",
+          "email": null,
+          "avatar_url": "https://avatars.githubusercontent.com/u/127660907?v=4",
+          "id": 127660907
+        },
+        "requested_reviewers": null,
+        "requested_team_reviewers": null,
+        "diff": null,
+        "comments": null,
+        "created_at": "2026-11-19T13:14:12Z",
+        "updated_at": "2026-11-19T15:31:39Z",
+        "closed_at": null,
+        "merged_at": null,
+        "commits": 3,
+        "changed_files": 67,
+        "additions": 5017,
+        "deletions": 35,
+        "display_url": "https://github.com/djshellshoxxx/circula/pull/113",
+        "display_title": "FNET-203: recover receipts and preserve exact offline integer values"
+      },
+      "runs": [
+        {
+          "id": 44555363075,
+          "name": "ci",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 575,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555363075/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555363075/logs",
+          "workflow_id": 391555428,
+          "jobs": [
+            {
+              "id": 135669882378,
+              "name": "test (ubuntu-24.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555363075,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "test with race detector",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                }
+              ]
+            },
+            {
+              "id": 135669882895,
+              "name": "fuzz smoke (RB-017)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555363075,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "seed corpora of every fuzz target (also part of go test ./...)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "fuzz amount parser for 10s",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "fuzz strict JSON decoder for 10s",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 12
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 13
+                }
+              ]
+            },
+            {
+              "id": 135669882915,
+              "name": "vet, gofmt, golangci-lint, govulncheck",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555363075,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Check workflow action pins",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Dependency licences against the approved list (ARC-024)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Secret scan (ARC-023, SEC-027)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "gofmt",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "go vet",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "golangci-lint",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "govulncheck",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post golangci-lint",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 20
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 21
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 22
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                }
+              ]
+            },
+            {
+              "id": 135669882989,
+              "name": "build release targets",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555363075,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "cross-build all OPS-003 targets from this commit",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "upload packaged artifacts for inspection",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135669883035,
+              "name": "reproducible build (two builds, same sha256)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555363075,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "build twice (different directory and cache) and compare",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135669883047,
+              "name": "API contract and load smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555363075,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "contract (JSON API against docs/api/openapi.yaml)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "load smoke (small, QA-008 and QA-040 evidence)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135669883085,
+              "name": "e2e (Playwright, axe, keyboard)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555363075,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "make e2e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "upload failure screenshots",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 6
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 12
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 13
+                }
+              ]
+            },
+            {
+              "id": 135669885251,
+              "name": "test (${{ matrix.os }})",
+              "status": "completed",
+              "conclusion": "skipped",
+              "run_id": 44555363075,
+              "logs_url": null,
+              "steps": null
+            }
+          ]
+        },
+        {
+          "id": 44555363061,
+          "name": "future receipts module",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 3,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555363061/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555363061/logs",
+          "workflow_id": 423856980,
+          "jobs": [
+            {
+              "id": 135669874925,
+              "name": "isolated receipts recovery (ubuntu-24.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555363061,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Record source and toolchain",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check module remains isolated and disabled",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Verify pinned module checksums",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Check Go formatting",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Vet isolated module",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Race and receipts regressions",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Native Windows receipts regressions",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 11
+                },
+                {
+                  "name": "Bounded receipt and certificate fuzzing",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 12
+                },
+                {
+                  "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 24
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 25
+                }
+              ]
+            },
+            {
+              "id": 135669875665,
+              "name": "isolated receipts recovery (windows-2022)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555363061,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Record source and toolchain",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check module remains isolated and disabled",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Verify pinned module checksums",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Check Go formatting",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Vet isolated module",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Race and receipts regressions",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 10
+                },
+                {
+                  "name": "Native Windows receipts regressions",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Bounded receipt and certificate fuzzing",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 12
+                },
+                {
+                  "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 24
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 25
+                }
+              ]
+            },
+            {
+              "id": 135669876038,
+              "name": "isolated receipts recovery (macos-15-intel)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555363061,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Record source and toolchain",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check module remains isolated and disabled",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Verify pinned module checksums",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Check Go formatting",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Vet isolated module",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Race and receipts regressions",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Native Windows receipts regressions",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 11
+                },
+                {
+                  "name": "Bounded receipt and certificate fuzzing",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 12
+                },
+                {
+                  "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 24
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 25
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pr": 114,
+      "metadata": {
+        "url": "https://github.com/djshellshoxxx/circula/pull/114",
+        "number": 114,
+        "state": "open",
+        "merged": false,
+        "mergeable": true,
+        "draft": true,
+        "body": "## Current reviewed candidate\n\nPublished head: `711833c510b14e84c3a7441b3b63f2f990bc8368`  \nReviewed local composition: `f718f83e71484a7193f88ef74e4566fc3bea71f8`  \nExact shared whole tree: `3c776a8d327c37798cffdcc27b6b8ed6c6c5cddd`\n\n## Completed-main baseline restoration\n\nThe preceding analytics Core run exposed inherited notification-erasure and G703 scanner findings. All ten affected owned candidates contained the same older source. After a fresh 38-PR and 59-worktree ownership survey, this update restores exactly four bounded paths from completed accepted-main work:\n\n- Resource-linked notification-body redaction from main ancestor `28326597340a4f0efad33f37feecc380db0de66f`.\n- The accepted resource-relation regression, retaining unrelated/same-name, exact-link, prefix and cross-network controls.\n- The deterministic erasure fixture and credential invariants from accepted ancestor `fc31dc9a6b8c102fe612f47bc543e94e8114df0f`.\n- Only the two existing operator-path G703 annotation comments in `writeAtomicPrivateFile`; its executable body and the remainder of the older util file are unchanged. No broad scanner suppression or configuration change is introduced.\n\nAll other paths, every future-module subtree, root dependencies, workflows and feature flags remain unchanged. The module stays disabled and on integration **HOLD**.\n\n## Actual verification and limits\n\nThe same accepted tests genuinely fail with the old SQL and pass with the restored SQL. On representative `6dce81719ab44e20256e1767f3cc3d5c73b89961`, the selected actual-Core-SQLite race run passed in **33.160s wall**, focused service/store vet in **119.240s**, and module verification in **7.049s**. Formatting and whitespace checks pass. The pinned Core driver graph is unchanged, including SQLite1.60.1, libc1.79.0 and x/sys0.49.0.\n\nThis candidate matches all 440 captured representative Core inputs; independent comparison also verifies the complete internal subtree, embedded data, root module and checksum files. The focused run was executed once on the representative, not separately on every PR.\n\nTwo independent reviews verified the source, original failures, unchanged test bytes, raw-log hashes and all composed trees. Remote commit/tree/ordered-parent and four-path blob readbacks match the frozen local compositions.\n\nThese focused results do not replace current-head full Core, lint, native module or ordinary approval gates. Native module successes on preceding module-identical heads remain dated evidence. The older baseline has no configured traceability generator/Make/CI gate; its handmade matrix is unchanged and no absent check is claimed as a pass. Core #104 has its own separate generated-traceability handoff.\n\nComplete evidence and current ownership: [master consolidation #104](https://github.com/djshellshoxxx/circula/pull/104). The source-specific earlier record is retained below; identities in this section are current.\n\n<details>\n<summary>Earlier module work and qualification record</summary>\n\n## Problem and recovery\n\nThe advertised isolated branch omits later implementation recovered from the verified48-ref Git bundle. This restores archived `6a5af100877aa0117bb43a35eb625dab38ee67f2` onto its exact ancestor `b4f511372ec26dc63d005bb50d87c56e18fc1a88`, preserving every original module path.\n\nRestore transactional proposals, frozen electorates, unique ballots and advisory outcomes, private ballot reads, comments/moderation/process disputes, certification/policy links, idempotency/audit and no-JS HTTP/CLI surfaces. This isolated FNET-208 module is separate from the active Core GOV-021 recovery stream.\n\nAll48 archived files are retained, including all6 original test files. Dependency versions, original tests, manifests, migrations, notices and historical evidence stay exact. The feature remains disabled/HOLD.\n\n## Demonstrated input repair\n\nThe strict duplicate-field check used lowercase conversion, while Go's decoder also accepts Unicode simple-fold aliases. Actual unchanged-source tests reproduced6 parser acceptance failures. The comparison now uses each rune's SimpleFold cycle representative without rewriting input or expanding Unicode. Original regressions and new valid-alias/Unicode-distinction controls remain. This enforces the existing unambiguous-input contract; no authorization bypass is claimed.\n\n## Exact source and review\n\nPublished head: `fbd92a22f06af7bcd96957397958b33e2706807a`.\nFrozen local source: `7ec8147db9fb06674d20983dfcd3b7ac765717ed`.\nVerified complete shared tree: `36ca2f142be776095a97d51cf1caee15d04926e6`.\n\nThe author reviewed the recovered production surface against its contract. A separate reviewer checked the complete new runtime/test delta, relevant callers, every archived-file preservation check, dedicated workflow and accepted-main baselines. Root independently checked the final documentation/evidence-only follow-up and equality of all reviewed runtime/test/dependency/workflow blobs. This is bounded source review, not external product/security certification.\n\nAll73 changed path blobs were verified before publication. Outside `future/governance/` and its new dedicated workflow, exactly two already-merged main files are restored: the audit-anchor missing import and the departure regression fixture cap. Their exact accepted-main blobs and introducing commits are recorded in the recovery document. Production limits, root dependencies, shared CI and unfinished worker source are unchanged.\n\n## Actual qualification and limits\n\nComplete real-driver race:59 passing test events/no skips,75.7% coverage,264.115s cold wall. Vet, checksums, formatting and isolation guards pass. The actual production parser/original fuzz target completed100,000 executions (6.019s wall).\n\nEarlier interrupted/VCS-metadata attempts remain recorded as incomplete/failing where applicable. Parser-only fuzz does not claim full SQLite fuzz instrumentation; the complete real-driver race suite is a separate passing gate. This recovery adopts no binding governance or host retention policy.\n\nThe commands use Go1.26.11 and the genuine pinned SQLite dependency graph. The local linker option `-ldflags=-w` omits only DWARF metadata; no driver or assertion was substituted. Old failures and unreported interrupted commands are preserved.\n\nThe dedicated workflow checks exact dependencies, disabled/HOLD state and import boundaries, then requests native Linux/macOS race and Windows ordinary tests with explicit budgets. `-buildvcs=false` applies only to dependency enumeration; source provenance is recorded separately and actual test/vet flags are retained. Current-publication provider/Core/native/browser/lint/vulnerability/build/fuzz/reproducibility and normal review gates remain required. No unexecuted gate is called a pass.\n\n## Integration boundary\n\nThis draft targets only `future/fnet-208-governance-20261116`. The current directive authorizes reviewed isolated publication and normal gated module-target merges; older copied publication prohibitions are explicitly historical. Core activation remains HOLD.\n\nActual Core authority/transaction/CSRF adapters, manual browser/accessibility acceptance, relevant operational/policy decisions and explicit later integration selection remain separate. No Core feature activation, release or deployment is included. See `future/governance/RECOVERY-20261119.md` and its exact-source evidence directory.\n\n</details>\n",
+        "title": "FNET-208: recover advisory governance and strict JSON field handling",
+        "base": "future/fnet-208-governance-20261116",
+        "base_sha": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+        "head": "master/recover-governance-20261119",
+        "head_sha": "711833c510b14e84c3a7441b3b63f2f990bc8368",
+        "head_repo_id": 1427759862,
+        "head_repo_full_name": "djshellshoxxx/circula",
+        "merge_commit_sha": "e55bc6b9148583a205aff98c2c3cf9a404d6eddb",
+        "user": {
+          "login": "djshellshoxxx",
+          "name": "djshellshoxxx",
+          "email": null,
+          "avatar_url": "https://avatars.githubusercontent.com/u/127660907?v=4",
+          "id": 127660907
+        },
+        "requested_reviewers": null,
+        "requested_team_reviewers": null,
+        "diff": null,
+        "comments": null,
+        "created_at": "2026-11-19T13:24:45Z",
+        "updated_at": "2026-11-19T15:31:41Z",
+        "closed_at": null,
+        "merged_at": null,
+        "commits": 2,
+        "changed_files": 77,
+        "additions": 6809,
+        "deletions": 57,
+        "display_url": "https://github.com/djshellshoxxx/circula/pull/114",
+        "display_title": "FNET-208: recover advisory governance and strict JSON field handling"
+      },
+      "runs": [
+        {
+          "id": 44555364365,
+          "name": "future governance module",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 2,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555364365/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555364365/logs",
+          "workflow_id": 423867735,
+          "jobs": [
+            {
+              "id": 135669872290,
+              "name": "isolated governance service (windows-2022)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555364365,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Record source and toolchain",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check module remains isolated and disabled",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Verify downloaded module checksums",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Check Go formatting",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Vet isolated module",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Race and real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 10
+                },
+                {
+                  "name": "Native Windows real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Bounded strict JSON fuzzing",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 12
+                },
+                {
+                  "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 24
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 25
+                }
+              ]
+            },
+            {
+              "id": 135669872740,
+              "name": "isolated governance service (macos-15-intel)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555364365,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Record source and toolchain",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check module remains isolated and disabled",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Verify downloaded module checksums",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Check Go formatting",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Vet isolated module",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Race and real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Native Windows real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 11
+                },
+                {
+                  "name": "Bounded strict JSON fuzzing",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 12
+                },
+                {
+                  "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 24
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 25
+                }
+              ]
+            },
+            {
+              "id": 135669873285,
+              "name": "isolated governance service (ubuntu-24.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555364365,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Record source and toolchain",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check module remains isolated and disabled",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Verify downloaded module checksums",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Check Go formatting",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Vet isolated module",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Race and real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Native Windows real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 11
+                },
+                {
+                  "name": "Bounded strict JSON fuzzing",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 12
+                },
+                {
+                  "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 24
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 25
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 44555364562,
+          "name": "ci",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 576,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555364562/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555364562/logs",
+          "workflow_id": 391555428,
+          "jobs": [
+            {
+              "id": 135669874765,
+              "name": "build release targets",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555364562,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "cross-build all OPS-003 targets from this commit",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "upload packaged artifacts for inspection",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135669875338,
+              "name": "fuzz smoke (RB-017)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555364562,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "seed corpora of every fuzz target (also part of go test ./...)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "fuzz amount parser for 10s",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "fuzz strict JSON decoder for 10s",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 12
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 13
+                }
+              ]
+            },
+            {
+              "id": 135669875564,
+              "name": "test (ubuntu-24.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555364562,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "test with race detector",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                }
+              ]
+            },
+            {
+              "id": 135669875624,
+              "name": "e2e (Playwright, axe, keyboard)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555364562,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "make e2e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "upload failure screenshots",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 6
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 12
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 13
+                }
+              ]
+            },
+            {
+              "id": 135669875809,
+              "name": "vet, gofmt, golangci-lint, govulncheck",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555364562,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Check workflow action pins",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Dependency licences against the approved list (ARC-024)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Secret scan (ARC-023, SEC-027)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "gofmt",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "go vet",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "golangci-lint",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "govulncheck",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post golangci-lint",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 20
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 21
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 22
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                }
+              ]
+            },
+            {
+              "id": 135669876118,
+              "name": "reproducible build (two builds, same sha256)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555364562,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "build twice (different directory and cache) and compare",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135669876534,
+              "name": "API contract and load smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555364562,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "contract (JSON API against docs/api/openapi.yaml)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "load smoke (small, QA-008 and QA-040 evidence)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135669877407,
+              "name": "test (${{ matrix.os }})",
+              "status": "completed",
+              "conclusion": "skipped",
+              "run_id": 44555364562,
+              "logs_url": null,
+              "steps": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pr": 115,
+      "metadata": {
+        "url": "https://github.com/djshellshoxxx/circula/pull/115",
+        "number": 115,
+        "state": "open",
+        "merged": false,
+        "mergeable": true,
+        "draft": true,
+        "body": "## Current reviewed candidate\n\nPublished head: `52cf9c3afadb950e4dd428807319e3c96f3004a9`  \nReviewed local composition: `7ca7573e55c0e74c672c58e789ca84cbb98b8c98`  \nExact shared whole tree: `0f4b70bcf024b5993d41165ef1905f0b9b64d8f3`\n\n## Completed-main baseline restoration\n\nThe preceding analytics Core run exposed inherited notification-erasure and G703 scanner findings. All ten affected owned candidates contained the same older source. After a fresh 38-PR and 59-worktree ownership survey, this update restores exactly four bounded paths from completed accepted-main work:\n\n- Resource-linked notification-body redaction from main ancestor `28326597340a4f0efad33f37feecc380db0de66f`.\n- The accepted resource-relation regression, retaining unrelated/same-name, exact-link, prefix and cross-network controls.\n- The deterministic erasure fixture and credential invariants from accepted ancestor `fc31dc9a6b8c102fe612f47bc543e94e8114df0f`.\n- Only the two existing operator-path G703 annotation comments in `writeAtomicPrivateFile`; its executable body and the remainder of the older util file are unchanged. No broad scanner suppression or configuration change is introduced.\n\nAll other paths, every future-module subtree, root dependencies, workflows and feature flags remain unchanged. The module stays disabled and on integration **HOLD**.\n\n## Actual verification and limits\n\nThe same accepted tests genuinely fail with the old SQL and pass with the restored SQL. On representative `6dce81719ab44e20256e1767f3cc3d5c73b89961`, the selected actual-Core-SQLite race run passed in **33.160s wall**, focused service/store vet in **119.240s**, and module verification in **7.049s**. Formatting and whitespace checks pass. The pinned Core driver graph is unchanged, including SQLite1.60.1, libc1.79.0 and x/sys0.49.0.\n\nThis candidate matches all 440 captured representative Core inputs; independent comparison also verifies the complete internal subtree, embedded data, root module and checksum files. The focused run was executed once on the representative, not separately on every PR.\n\nTwo independent reviews verified the source, original failures, unchanged test bytes, raw-log hashes and all composed trees. Remote commit/tree/ordered-parent and four-path blob readbacks match the frozen local compositions.\n\nThese focused results do not replace current-head full Core, lint, native module or ordinary approval gates. Native module successes on preceding module-identical heads remain dated evidence. The older baseline has no configured traceability generator/Make/CI gate; its handmade matrix is unchanged and no absent check is claimed as a pass. Core #104 has its own separate generated-traceability handoff.\n\nComplete evidence and current ownership: [master consolidation #104](https://github.com/djshellshoxxx/circula/pull/104). The source-specific earlier record is retained below; identities in this section are current.\n\n<details>\n<summary>Earlier module work and qualification record</summary>\n\n## Problem and recovery\n\nThe advertised isolated branch omits later implementation recovered from the verified48-ref Git bundle. This restores archived `999dcbf12ffcf2bdcd1764393c5f470fe3c6fbc3` onto its exact ancestor `8b444b20139e3e687db494b3fe36bb3643148e5b`, preserving every original module path.\n\nRestore private named-area CRUD/revisions/idempotency, scoped sharing and paging, retention/departure behavior, and bounded no-JS HTTP/CLI surfaces. Coordinates, geometry, distance and map integration are not added.\n\nAll76 archived files are retained, including all7 original test files. Dependency versions, original tests, manifests, migrations, notices and historical evidence stay exact. The feature remains disabled/HOLD.\n\n## Demonstrated input repair\n\nThe strict duplicate-field check used lowercase conversion, while Go's decoder also accepts Unicode simple-fold aliases. Actual unchanged-source tests reproduced5 parser acceptance failures. The comparison now uses each rune's SimpleFold cycle representative without rewriting input or expanding Unicode. Original regressions and new valid-alias/Unicode-distinction controls remain. This enforces the existing unambiguous-input contract; no authorization bypass is claimed.\n\n## Exact source and review\n\nPublished head: `684ca5132690e24104aa389aac16870c18bbc7fd`.\nFrozen local source: `3275ac6016ca7426427da92e7bfa9f620e3b55ad`.\nVerified complete shared tree: `f5de54ced2f6fd363372a4588c292ab900eeef65`.\n\nThe author reviewed the recovered production surface against its contract. A separate reviewer checked the complete new runtime/test delta, relevant callers, every archived-file preservation check, dedicated workflow and accepted-main baselines. Root independently checked the final documentation/evidence-only follow-up and equality of all reviewed runtime/test/dependency/workflow blobs. This is bounded source review, not external product/security certification.\n\nAll104 changed path blobs were verified before publication. Outside `future/areas/` and its new dedicated workflow, exactly two already-merged main files are restored: the audit-anchor missing import and the departure regression fixture cap. Their exact accepted-main blobs and introducing commits are recorded in the recovery document. Production limits, root dependencies, shared CI and unfinished worker source are unchanged.\n\n## Actual qualification and limits\n\nComplete real-driver race:68 passing test events/no skips,10.626s wall. Vet, checksums, formatting and isolation guards pass. The actual production parser/original fuzz target completed100,000 executions (64.137s wall).\n\nThe original fail-before run contains both all5 expected assertion failures and a killed SQLite vet subprocess. Its corrected mixed-result classification, original receipt and full original log hash are preserved. Later current-runtime race/vet passes are separate. Areas runtime results are carried forward only after equality of every Go/test/dependency hash; this is source-equivalent evidence, not a claim that tests ran on the final documentation commit.\n\nThe commands use Go1.26.11 and the genuine pinned SQLite dependency graph. The local linker option `-ldflags=-w` omits only DWARF metadata; no driver or assertion was substituted. Old failures and unreported interrupted commands are preserved.\n\nThe dedicated workflow checks exact dependencies, disabled/HOLD state and import boundaries, then requests native Linux/macOS race and Windows ordinary tests with explicit budgets. `-buildvcs=false` applies only to dependency enumeration; source provenance is recorded separately and actual test/vet flags are retained. Current-publication provider/Core/native/browser/lint/vulnerability/build/fuzz/reproducibility and normal review gates remain required. No unexecuted gate is called a pass.\n\n## Integration boundary\n\nThis draft targets only `future/fnet-206-areas-20261116`. The current directive authorizes reviewed isolated publication and normal gated module-target merges; older copied publication prohibitions are explicitly historical. Core activation remains HOLD.\n\nActual Core authority/transaction/CSRF adapters, manual browser/accessibility acceptance, relevant operational/policy decisions and explicit later integration selection remain separate. No Core feature activation, release or deployment is included. See `future/areas/RECOVERY-20261119.md` and its exact-source evidence directory.\n\n</details>\n",
+        "title": "FNET-206: recover named areas and reject ambiguous Unicode JSON fields",
+        "base": "future/fnet-206-areas-20261116",
+        "base_sha": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+        "head": "master/recover-areas-20261119",
+        "head_sha": "52cf9c3afadb950e4dd428807319e3c96f3004a9",
+        "head_repo_id": 1427759862,
+        "head_repo_full_name": "djshellshoxxx/circula",
+        "merge_commit_sha": "7e5531b6bb3e19fc0691dd556f423d3198f464a2",
+        "user": {
+          "login": "djshellshoxxx",
+          "name": "djshellshoxxx",
+          "email": null,
+          "avatar_url": "https://avatars.githubusercontent.com/u/127660907?v=4",
+          "id": 127660907
+        },
+        "requested_reviewers": null,
+        "requested_team_reviewers": null,
+        "diff": null,
+        "comments": null,
+        "created_at": "2026-11-19T13:24:47Z",
+        "updated_at": "2026-11-19T15:31:42Z",
+        "closed_at": null,
+        "merged_at": null,
+        "commits": 2,
+        "changed_files": 108,
+        "additions": 8471,
+        "deletions": 61,
+        "display_url": "https://github.com/djshellshoxxx/circula/pull/115",
+        "display_title": "FNET-206: recover named areas and reject ambiguous Unicode JSON fields"
+      },
+      "runs": [
+        {
+          "id": 44555371649,
+          "name": "ci",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 577,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555371649/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555371649/logs",
+          "workflow_id": 391555428,
+          "jobs": [
+            {
+              "id": 135670089347,
+              "name": "vet, gofmt, golangci-lint, govulncheck",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555371649,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Check workflow action pins",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Dependency licences against the approved list (ARC-024)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Secret scan (ARC-023, SEC-027)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "gofmt",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "go vet",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "golangci-lint",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "govulncheck",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post golangci-lint",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 20
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 21
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 22
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                }
+              ]
+            },
+            {
+              "id": 135670089371,
+              "name": "test (ubuntu-24.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555371649,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "test with race detector",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                }
+              ]
+            },
+            {
+              "id": 135670089444,
+              "name": "reproducible build (two builds, same sha256)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555371649,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "build twice (different directory and cache) and compare",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135670089607,
+              "name": "build release targets",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555371649,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "cross-build all OPS-003 targets from this commit",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "upload packaged artifacts for inspection",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135670089646,
+              "name": "API contract and load smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555371649,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "contract (JSON API against docs/api/openapi.yaml)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "load smoke (small, QA-008 and QA-040 evidence)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135670089664,
+              "name": "fuzz smoke (RB-017)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555371649,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "seed corpora of every fuzz target (also part of go test ./...)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "fuzz amount parser for 10s",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "fuzz strict JSON decoder for 10s",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 12
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 13
+                }
+              ]
+            },
+            {
+              "id": 135670089772,
+              "name": "e2e (Playwright, axe, keyboard)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555371649,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "make e2e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "upload failure screenshots",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 6
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 12
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 13
+                }
+              ]
+            },
+            {
+              "id": 135670091440,
+              "name": "test (${{ matrix.os }})",
+              "status": "completed",
+              "conclusion": "skipped",
+              "run_id": 44555371649,
+              "logs_url": null,
+              "steps": null
+            }
+          ]
+        },
+        {
+          "id": 44555371753,
+          "name": "future areas module",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 2,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555371753/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555371753/logs",
+          "workflow_id": 423867763,
+          "jobs": [
+            {
+              "id": 135669900087,
+              "name": "isolated areas service (windows-2022)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555371753,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Record source and toolchain",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check module remains isolated and disabled",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Verify downloaded module checksums",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Check Go formatting",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Vet isolated module",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Race and real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 10
+                },
+                {
+                  "name": "Native Windows real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Bounded strict JSON fuzzing",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 12
+                },
+                {
+                  "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 24
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 25
+                }
+              ]
+            },
+            {
+              "id": 135669900507,
+              "name": "isolated areas service (macos-15-intel)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555371753,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Record source and toolchain",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check module remains isolated and disabled",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Verify downloaded module checksums",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Check Go formatting",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Vet isolated module",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Race and real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Native Windows real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 11
+                },
+                {
+                  "name": "Bounded strict JSON fuzzing",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 12
+                },
+                {
+                  "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 24
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 25
+                }
+              ]
+            },
+            {
+              "id": 135669900699,
+              "name": "isolated areas service (ubuntu-24.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555371753,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Record source and toolchain",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check module remains isolated and disabled",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Verify downloaded module checksums",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Check Go formatting",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Vet isolated module",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Race and real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Native Windows real SQLite module regressions",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 11
+                },
+                {
+                  "name": "Bounded strict JSON fuzzing",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 12
+                },
+                {
+                  "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 24
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 25
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pr": 120,
+      "metadata": {
+        "url": "https://github.com/djshellshoxxx/circula/pull/120",
+        "number": 120,
+        "state": "open",
+        "merged": false,
+        "mergeable": true,
+        "draft": true,
+        "body": "## Current reviewed candidate\n\nPublished head: `a91bb5fdc97fc540a1617538073e92509ceba485`  \nReviewed local composition: `9b6cad2a8f9825f0a57e8e210401dee4530e5f97`  \nExact shared whole tree: `05ea33f8cadd386e717b7ed836e76bc7e8abea90`\n\n## Completed-main baseline restoration\n\nThe preceding analytics Core run exposed inherited notification-erasure and G703 scanner findings. All ten affected owned candidates contained the same older source. After a fresh 38-PR and 59-worktree ownership survey, this update restores exactly four bounded paths from completed accepted-main work:\n\n- Resource-linked notification-body redaction from main ancestor `28326597340a4f0efad33f37feecc380db0de66f`.\n- The accepted resource-relation regression, retaining unrelated/same-name, exact-link, prefix and cross-network controls.\n- The deterministic erasure fixture and credential invariants from accepted ancestor `fc31dc9a6b8c102fe612f47bc543e94e8114df0f`.\n- Only the two existing operator-path G703 annotation comments in `writeAtomicPrivateFile`; its executable body and the remainder of the older util file are unchanged. No broad scanner suppression or configuration change is introduced.\n\nAll other paths, every future-module subtree, root dependencies, workflows and feature flags remain unchanged. The module stays disabled and on integration **HOLD**.\n\n## Actual verification and limits\n\nThe same accepted tests genuinely fail with the old SQL and pass with the restored SQL. On representative `6dce81719ab44e20256e1767f3cc3d5c73b89961`, the selected actual-Core-SQLite race run passed in **33.160s wall**, focused service/store vet in **119.240s**, and module verification in **7.049s**. Formatting and whitespace checks pass. The pinned Core driver graph is unchanged, including SQLite1.60.1, libc1.79.0 and x/sys0.49.0.\n\nThis candidate matches all 440 captured representative Core inputs; independent comparison also verifies the complete internal subtree, embedded data, root module and checksum files. The focused run was executed once on the representative, not separately on every PR.\n\nTwo independent reviews verified the source, original failures, unchanged test bytes, raw-log hashes and all composed trees. Remote commit/tree/ordered-parent and four-path blob readbacks match the frozen local compositions.\n\nThese focused results do not replace current-head full Core, lint, native module or ordinary approval gates. Native module successes on preceding module-identical heads remain dated evidence. The older baseline has no configured traceability generator/Make/CI gate; its handmade matrix is unchanged and no absent check is claimed as a pass. Core #104 has its own separate generated-traceability handoff.\n\nComplete evidence and current ownership: [master consolidation #104](https://github.com/djshellshoxxx/circula/pull/104). The source-specific earlier record is retained below; identities in this section are current.\n\n<details>\n<summary>Earlier module work and qualification record</summary>\n\n## Problem and resulting behavior\n\nPending camera permission, playback, scanner imports and decode results could outlive Stop, page exit, document hiding or a newer operation. A late result could reopen capture or overwrite the manual input and submit an obsolete preview. Independent review also reproduced stale completion after an oversized replacement image and after a manual form submission.\n\nThe wrapper now ties every asynchronous completion to its current visible operation. Cancellation immediately stops attached media. Each bundled Nimiq scanner owns a separate video element, so its delayed cleanup cannot stop a newer camera stream. New file selection and actual form submission invalidate previous work. Existing successful native/fallback previews and a file event with no new selection retain their behavior.\n\n## Scope and provenance\n\nThis is a selective adaptation of recovered camera-lifecycle ideas to the current QR implementation; it does not replace the service, API, persistence or scanner library.\n\n- QR scanner and worker distributions, module Go source, dependencies, routes and disabled/HOLD manifest remain unchanged.\n- A separate Node-only workflow qualifies the lifecycle suite on native Linux, macOS and Windows.\n- Exactly two already-accepted main files restore the inherited missing `os` import and the departure test's fixture cap. Both exact blobs and their accepted-main introducing commits are documented; no production cap or unfinished worker source changes.\n\nReviewed local head: `3c1ce7a7dc190271a9a830abc924f4f938049801`  \nPublished head: `2f0c83bc34a52551281769ec17561b18920bd2cf`  \nExact shared whole tree: `6c5f55e7fe658d5144c3c09c010f74923397c7df`  \nIsolated target/base: `future/fux-102-qr-20261116` at `9db8a323d7dcf430d1a58a4a4d10ca3628aeb401`\n\nThe complete six-path candidate and accepted-main follow-up received independent source review. The source script, lifecycle tests and dedicated workflow retain the exact blobs qualified at `7a33e6e1ce18c04f0b0713a4895934f547e45bb9`.\n\n## Observed verification\n\nThe unchanged initial application failed 21 of 23 lifecycle tests; the normal preview and unsupported-camera controls passed. The first repair passed all 23. Independent review then added four cases: the same expanded suite passed 24 and failed three stale-result regressions before the final repair, then passed **27/27 with zero skips** afterwards.\n\nAn independent root rerun also passed all 27 cases and both script syntax checks. A separate reviewer replayed the two originally reported cancellation probes against final source: **2/2 passed**. Two suite cases evaluate the exact bundled Nimiq lifecycle implementation. Action pins, YAML, the disabled module boundary, source scope and whitespace were checked.\n\n**Current-head native/provider results are pending.** These are deterministic DOM/media/decoder tests, not real mobile camera, browser/CSP, accessibility, session or ledger integration acceptance. No payment or authorization bypass is claimed from the preview-navigation defect.\n\nThe module remains disabled and on integration HOLD. Normal current-head checks and review requirements apply before merging into the isolated QR target.\n\n\n</details>\n",
+        "title": "fix(qr): cancel stale camera and image operations",
+        "base": "future/fux-102-qr-20261116",
+        "base_sha": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+        "head": "master/fux102-camera-lifecycle-20261119",
+        "head_sha": "a91bb5fdc97fc540a1617538073e92509ceba485",
+        "head_repo_id": 1427759862,
+        "head_repo_full_name": "djshellshoxxx/circula",
+        "merge_commit_sha": "49d35295aca73e5a8d73be864c3e927a5568c86e",
+        "user": {
+          "login": "djshellshoxxx",
+          "name": "djshellshoxxx",
+          "email": null,
+          "avatar_url": "https://avatars.githubusercontent.com/u/127660907?v=4",
+          "id": 127660907
+        },
+        "requested_reviewers": null,
+        "requested_team_reviewers": null,
+        "diff": null,
+        "comments": null,
+        "created_at": "2026-11-19T14:13:24Z",
+        "updated_at": "2026-11-19T15:31:47Z",
+        "closed_at": null,
+        "merged_at": null,
+        "commits": 2,
+        "changed_files": 10,
+        "additions": 808,
+        "deletions": 37,
+        "display_url": "https://github.com/djshellshoxxx/circula/pull/120",
+        "display_title": "fix(qr): cancel stale camera and image operations"
+      },
+      "runs": [
+        {
+          "id": 44555388643,
+          "name": "ci",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 581,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555388643/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555388643/logs",
+          "workflow_id": 391555428,
+          "jobs": [
+            {
+              "id": 135669970129,
+              "name": "test (ubuntu-24.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555388643,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "test with race detector",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                }
+              ]
+            },
+            {
+              "id": 135669970512,
+              "name": "fuzz smoke (RB-017)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555388643,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "seed corpora of every fuzz target (also part of go test ./...)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "fuzz amount parser for 10s",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "fuzz strict JSON decoder for 10s",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 12
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 13
+                }
+              ]
+            },
+            {
+              "id": 135669970642,
+              "name": "vet, gofmt, golangci-lint, govulncheck",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555388643,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Check workflow action pins",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Dependency licences against the approved list (ARC-024)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Secret scan (ARC-023, SEC-027)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "gofmt",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 8
+                },
+                {
+                  "name": "go vet",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "golangci-lint",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "govulncheck",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post golangci-lint",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 20
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 21
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 22
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 23
+                }
+              ]
+            },
+            {
+              "id": 135669970667,
+              "name": "build release targets",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555388643,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "cross-build all OPS-003 targets from this commit",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "upload packaged artifacts for inspection",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135669970762,
+              "name": "e2e (Playwright, axe, keyboard)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555388643,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "make e2e",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "upload failure screenshots",
+                  "status": "completed",
+                  "conclusion": "skipped",
+                  "number": 6
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 12
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 13
+                }
+              ]
+            },
+            {
+              "id": 135669970826,
+              "name": "reproducible build (two builds, same sha256)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555388643,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "build twice (different directory and cache) and compare",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135669970885,
+              "name": "API contract and load smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555388643,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "contract (JSON API against docs/api/openapi.yaml)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "load smoke (small, QA-008 and QA-040 evidence)",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 9
+                },
+                {
+                  "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 10
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 11
+                }
+              ]
+            },
+            {
+              "id": 135669972762,
+              "name": "test (${{ matrix.os }})",
+              "status": "completed",
+              "conclusion": "skipped",
+              "run_id": 44555388643,
+              "logs_url": null,
+              "steps": null
+            }
+          ]
+        },
+        {
+          "id": 44555388749,
+          "name": "future QR camera lifecycle",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 2,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555388749/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44555388749/logs",
+          "workflow_id": 423921126,
+          "jobs": [
+            {
+              "id": 135669965853,
+              "name": "QR camera lifecycle (windows-2022)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555388749,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Record source and hosted Node version",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Check module remains disabled and isolated",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check script syntax",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Check deferred camera and image lifecycles",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 14
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 15
+                }
+              ]
+            },
+            {
+              "id": 135669966356,
+              "name": "QR camera lifecycle (macos-15-intel)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555388749,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Record source and hosted Node version",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Check module remains disabled and isolated",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check script syntax",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Check deferred camera and image lifecycles",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 14
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 15
+                }
+              ]
+            },
+            {
+              "id": 135669966801,
+              "name": "QR camera lifecycle (ubuntu-24.04)",
+              "status": "completed",
+              "conclusion": "success",
+              "run_id": 44555388749,
+              "logs_url": null,
+              "steps": [
+                {
+                  "name": "Set up job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 1
+                },
+                {
+                  "name": "Keep repository line endings stable",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 2
+                },
+                {
+                  "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 3
+                },
+                {
+                  "name": "Record source and hosted Node version",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 4
+                },
+                {
+                  "name": "Check module remains disabled and isolated",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 5
+                },
+                {
+                  "name": "Check script syntax",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 6
+                },
+                {
+                  "name": "Check deferred camera and image lifecycles",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 7
+                },
+                {
+                  "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 14
+                },
+                {
+                  "name": "Complete job",
+                  "status": "completed",
+                  "conclusion": "success",
+                  "number": 15
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

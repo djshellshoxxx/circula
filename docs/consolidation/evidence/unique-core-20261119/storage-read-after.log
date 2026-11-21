@@ -1,0 +1,30 @@
+=== RUN   TestMemberReadFailureAbortsAndRecovers
+=== RUN   TestMemberReadFailureAbortsAndRecovers/network
+=== RUN   TestMemberReadFailureAbortsAndRecovers/memberships
+=== RUN   TestMemberReadFailureAbortsAndRecovers/forward_page
+=== RUN   TestMemberReadFailureAbortsAndRecovers/backward_page
+--- PASS: TestMemberReadFailureAbortsAndRecovers (4.10s)
+    --- PASS: TestMemberReadFailureAbortsAndRecovers/network (0.84s)
+    --- PASS: TestMemberReadFailureAbortsAndRecovers/memberships (1.09s)
+    --- PASS: TestMemberReadFailureAbortsAndRecovers/forward_page (1.07s)
+    --- PASS: TestMemberReadFailureAbortsAndRecovers/backward_page (1.10s)
+=== RUN   TestFailedRollbackDiscardsConnection
+=== RUN   TestFailedRollbackDiscardsConnection/error
+=== RUN   TestFailedRollbackDiscardsConnection/panic
+--- PASS: TestFailedRollbackDiscardsConnection (0.02s)
+    --- PASS: TestFailedRollbackDiscardsConnection/error (0.01s)
+    --- PASS: TestFailedRollbackDiscardsConnection/panic (0.01s)
+=== RUN   TestMigrationMetadataReadFailureStopsBeforeDDL
+--- PASS: TestMigrationMetadataReadFailureStopsBeforeDDL (0.80s)
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_succeeds
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_fails
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_succeeds
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_fails
+--- PASS: TestMigrationWriteFailureRollsBackAndRecovers (4.92s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_succeeds (0.84s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_fails (1.47s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_succeeds (1.54s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_fails (1.06s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	10.876s

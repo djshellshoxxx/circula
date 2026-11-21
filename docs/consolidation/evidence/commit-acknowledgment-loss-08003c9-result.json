@@ -1,0 +1,31 @@
+{
+  "source": "08003c900e3afdf8c369c1ab8fd0c826422326b7",
+  "snapshot": "standalone git archive",
+  "cwd": "/tmp/circula-ack-08003c9-93",
+  "argv": [
+    "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "test",
+    "-p=1",
+    "-race",
+    "-count=1",
+    "-timeout=2m",
+    "-run",
+    "^(TestCommitAcknowledgmentFailurePreservesPostingAndReplay|TestFailedRollbackDiscardsConnection|TestMigrationMetadataReadFailureStopsBeforeDDL|TestMigrationWriteFailureRollsBackAndRecovers)$",
+    "-v",
+    "./internal/store"
+  ],
+  "env": {
+    "GOMAXPROCS": "1",
+    "GOMEMLIMIT": "250MiB",
+    "GOGC": "40",
+    "GOMODCACHE": "/tmp/circula-go-modcache-93"
+  },
+  "started_utc": "2026-11-19T13:19:02Z",
+  "exit_code": 0,
+  "wall_seconds": 215.825,
+  "finished_utc": "2026-11-19T13:22:38Z",
+  "effective_gocache": "/home/agent/.cache/go-build",
+  "gocache_selection": "GOCACHE unset; go env GOCACHE verified after completion",
+  "top_level_tests_passed": 4,
+  "subtests_passed": 8
+}

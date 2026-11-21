@@ -1,0 +1,36 @@
+=== RUN   TestAuditAnchorRequiresExactlyOneObject
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/whole_signed_object
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/surrounding_whitespace
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/second_object
+    operator_json_test.go:133: verify code=0, want 1; output=audit anchor: ok (1 network(s) at 2026-11-20T06:25:25Z)
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/second_array
+    operator_json_test.go:133: verify code=0, want 1; output=audit anchor: ok (1 network(s) at 2026-11-20T06:25:25Z)
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/trailing_null
+    operator_json_test.go:133: verify code=0, want 1; output=audit anchor: ok (1 network(s) at 2026-11-20T06:25:25Z)
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/trailing_text
+    operator_json_test.go:133: verify code=0, want 1; output=audit anchor: ok (1 network(s) at 2026-11-20T06:25:25Z)
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/incomplete_second_value
+    operator_json_test.go:133: verify code=0, want 1; output=audit anchor: ok (1 network(s) at 2026-11-20T06:25:25Z)
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/null
+    operator_json_test.go:133: verify code=3, want 1; output=audit anchor: FAILED
+          - unsupported anchor version 0
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/array
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/scalar
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/unknown_field
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/unsupported_version
+--- FAIL: TestAuditAnchorRequiresExactlyOneObject (2.16s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/whole_signed_object (0.05s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/surrounding_whitespace (0.04s)
+    --- FAIL: TestAuditAnchorRequiresExactlyOneObject/second_object (0.04s)
+    --- FAIL: TestAuditAnchorRequiresExactlyOneObject/second_array (0.05s)
+    --- FAIL: TestAuditAnchorRequiresExactlyOneObject/trailing_null (0.04s)
+    --- FAIL: TestAuditAnchorRequiresExactlyOneObject/trailing_text (0.04s)
+    --- FAIL: TestAuditAnchorRequiresExactlyOneObject/incomplete_second_value (0.05s)
+    --- FAIL: TestAuditAnchorRequiresExactlyOneObject/null (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/array (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/scalar (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/unknown_field (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/unsupported_version (0.00s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	2.340s
+FAIL

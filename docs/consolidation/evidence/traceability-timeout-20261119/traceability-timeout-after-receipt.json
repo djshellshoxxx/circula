@@ -1,0 +1,24 @@
+{
+  "base_head": "bf1ba2720c81a3d6064ba113dcb2c09bf72d57c1",
+  "command": [
+    "go",
+    "test",
+    "-race",
+    "-v",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout",
+    "3m",
+    "./scripts/traceability"
+  ],
+  "purpose": "After-fix full traceability package with race instrumentation and default vet, including the actual child-timeout and successful-output suppression controls.",
+  "started_at": "2026-11-19T14:00:49.235415+00:00",
+  "source_sha256": {
+    "scripts/traceability/evidence.go": "60233d15557132285a90bb7b268b37f4521f918b16b17bc0c58a3a1aaa9fd535",
+    "scripts/traceability/evidence_test.go": "dec6c4a4e4aa98505438f9cf589cf7c89502a8ed0cad78531f5fbe9a6ee5fbc7"
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 9.449,
+  "finished_at": "2026-11-19T14:00:58.685109+00:00"
+}

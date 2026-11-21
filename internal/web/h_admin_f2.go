@@ -31,10 +31,12 @@ type attentionRow struct {
 }
 
 type overviewData struct {
-	Rows    []attentionRow
-	AsOf    template.HTML
-	Check   string
-	CheckAt template.HTML
+	Rows             []attentionRow
+	AsOf             template.HTML
+	Check            string
+	CheckAt          template.HTML
+	HasCheck         bool
+	HistoricalLimits *service.HistoricalLimitCoverage
 	// Frozen is set while the network is read-only; FrozenReason is the administrator-only cause.
 	Frozen       bool
 	FrozenSince  template.HTML
@@ -73,6 +75,7 @@ func (s *server) overview(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	if ov.LastCheck != nil {
 		d.CheckAt = c.when(ov.LastCheck.At)
+		d.HasCheck, d.HistoricalLimits = true, ov.LastCheck.HistoricalLimits
 	}
 	s.render(w, r, c, "admin_home", 200, &page{Title: messages.Text("overview.title"), D: d})
 }
@@ -114,6 +117,7 @@ type reverseForm struct {
 
 type reverseTrade struct {
 	ID, Payer, Payee, Amount, Reversed, Remaining string
+	AmountMinor, ReversedMinor, RemainingMinor    int64
 }
 
 type reverseReview struct {
@@ -129,40 +133,41 @@ type reverseReview struct {
 func (c *rc) reversibleTrade(id string) (*service.TxView, *reverseTrade, string) {
 	id = strings.TrimSpace(id)
 	if id == "" {
-		return nil, nil, "Trade reference: enter the reference of the completed trade to reverse. You can copy it from the trade page address."
+		return nil, nil, messages.Text("admin.reverse.reference_required")
 	}
 	v, err := c.s.svc.GetTransaction(c.ctx, c.actor, c.netID(), id)
 	if err != nil {
-		return nil, nil, "Trade reference: no trade with this reference was found in this network."
+		return nil, nil, messages.Text("admin.reverse.reference_missing")
 	}
 	t := v.Tx
 	n := c.memberNames()
 	dec := c.Net.Policy.Decimals
 	rt := &reverseTrade{ID: t.ID, Payer: n.of(t.PayerMemberID), Payee: n.of(t.PayeeMemberID), Amount: domain.FormatAmount(t.Amount, dec),
-		Reversed: domain.FormatAmount(t.ReversedTotal, dec), Remaining: domain.FormatAmount(t.Amount-t.ReversedTotal, dec)}
+		Reversed: domain.FormatAmount(t.ReversedTotal, dec), Remaining: domain.FormatAmount(t.Amount-t.ReversedTotal, dec),
+		AmountMinor: t.Amount, ReversedMinor: t.ReversedTotal, RemainingMinor: t.Amount - t.ReversedTotal}
 	switch {
 	case t.IsParty(c.Me.ID):
-		return v, rt, "Trade reference: you took part in this trade, so you cannot reverse it. Ask another administrator."
+		return v, rt, messages.Text("admin.reverse.reference_party")
 	case t.Kind == domain.KindReversal:
-		return v, rt, "Trade reference: this is itself a reversal, and a reversal cannot be reversed."
+		return v, rt, messages.Text("admin.reverse.reference_reversal")
 	case t.Status == domain.TxDisputed:
-		return v, rt, "Trade reference: this trade is under dispute. A reviewer decides disputed trades from the review queue."
+		return v, rt, messages.Text("admin.reverse.reference_disputed")
 	case t.ReversedTotal >= t.Amount:
-		return v, rt, "Trade reference: nothing is left to reverse on this trade."
+		return v, rt, messages.Text("admin.reverse.reference_empty")
 	case t.Status != domain.TxCompleted:
-		return v, rt, "Trade reference: only a completed trade can be reversed. This one is " + statusWord(t.Status) + "."
+		return v, rt, messages.Text("admin.reverse.reference_status", statusWord(t.Status))
 	}
 	return v, rt, ""
 }
 
 func (s *server) reverseForm(w http.ResponseWriter, r *http.Request, c *rc) {
 	id := r.URL.Query().Get("tx")
-	p := &page{Title: "Reverse a trade", V: map[string]string{"tx": id}, D: &reverseForm{}}
+	p := &page{Title: messages.Text("admin.reverse.title"), V: map[string]string{"tx": id}, D: &reverseForm{}}
 	if id != "" {
 		if _, rt, msg := c.reversibleTrade(id); rt != nil {
 			p.D = &reverseForm{Trade: rt}
 			if msg != "" {
-				p.Summary, p.Errors = "This trade cannot be reversed.", []fieldErr{{"tx", msg}}
+				p.Summary, p.Errors = messages.Text("admin.reverse.unavailable"), []fieldErr{{"tx", msg}}
 			}
 		}
 	}
@@ -171,7 +176,7 @@ func (s *server) reverseForm(w http.ResponseWriter, r *http.Request, c *rc) {
 
 func (s *server) reversePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	v := formValues(r)
-	p := &page{Title: "Reverse a trade", V: v, D: &reverseForm{}}
+	p := &page{Title: messages.Text("admin.reverse.title"), V: v, D: &reverseForm{}}
 	step := r.PostFormValue("step")
 	view, rt, msg := c.reversibleTrade(v["tx"])
 	if rt != nil {
@@ -194,9 +199,9 @@ func (s *server) reversePost(w http.ResponseWriter, r *http.Request, c *rc) {
 			a, err := domain.ParseAmount(v["amount"], dec)
 			switch {
 			case err != nil || a <= 0:
-				fe = append(fe, fieldErr{"amount", c.amountHelp() + " Leave it empty to reverse everything that is left."})
+				fe = append(fe, fieldErr{"amount", messages.Text("admin.reverse.amount_help", dec, domain.FormatAmount(1250, dec))})
 			case a > remaining:
-				fe = append(fe, fieldErr{"amount", "Amount: at most " + domain.FormatAmount(remaining, dec) + " is left to reverse on this trade."})
+				fe = append(fe, fieldErr{"amount", messages.Text("admin.reverse.amount_max", domain.FormatAmount(remaining, dec))})
 			default:
 				amt = a
 			}
@@ -205,12 +210,12 @@ func (s *server) reversePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	reason := strings.TrimSpace(v["reason"])
 	switch {
 	case reason == "":
-		fe = append(fe, fieldErr{"reason", "Reason: a reason is required for every reversal. Write why it is needed."})
+		fe = append(fe, fieldErr{"reason", messages.Text("admin.reverse.reason_required")})
 	case len([]rune(reason)) > 500:
-		fe = append(fe, fieldErr{"reason", "Reason: this is too long. Use 500 characters or fewer."})
+		fe = append(fe, fieldErr{"reason", messages.Text("admin.reverse.reason_long")})
 	}
 	if len(fe) > 0 {
-		p.Summary, p.Errors = "Not reversed. Fix the problems below. Nothing changed.", fe
+		p.Summary, p.Errors = messages.Text("admin.reverse.invalid"), fe
 		s.render(w, r, c, "admin_reverse", 422, p)
 		return
 	}
@@ -229,16 +234,16 @@ func (s *server) reversePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	rv.PayerBefore, rv.PayerAfter = makeBalance(pb.Balance, dec, unit), makeBalance(pb.Balance+amt, dec, unit)
 	rv.PayeeBefore, rv.PayeeAfter = makeBalance(yb.Balance, dec, unit), makeBalance(yb.Balance-amt, dec, unit)
 	if step != "confirm" {
-		p.Title, p.D = "Review reversal", &reverseForm{Trade: rt, Review: rv}
+		p.Title, p.D = messages.Text("admin.reverse.review_title"), &reverseForm{Trade: rt, Review: rv}
 		s.render(w, r, c, "admin_reverse_review", 200, p)
 		return
 	}
 	rev, err := s.svc.ReverseTransaction(r.Context(), c.actor, c.netID(), service.ReverseInput{TxID: t.ID, Amount: amt, Reason: reason,
 		IdempotencyKey: idemKey(r)})
 	if err != nil {
-		p.Title, p.D = "Review reversal", &reverseForm{Trade: rt, Review: rv}
+		p.Title, p.D = messages.Text("admin.reverse.review_title"), &reverseForm{Trade: rt, Review: rv}
 		if domain.CodeOf(err) == domain.CodeInsufficientCredit {
-			p.Summary = "Not reversed. " + rt.Payee + " does not have enough available credit to give this amount back. Nothing changed."
+			p.Summary = messages.Text("admin.reverse.insufficient_credit", rt.Payee)
 			s.render(w, r, c, "admin_reverse_review", 422, p)
 			return
 		}
@@ -250,7 +255,7 @@ func (s *server) reversePost(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "Reversal posted: "+rv.Reverse+" "+rv.Unit+" went back from "+rt.Payee+" to "+rt.Payer+".")
+	s.setFlash(w, r, messages.Text("admin.reverse.posted", rv.Reverse, rv.Unit, rt.Payee, rt.Payer))
 	http.Redirect(w, r, c.base()+"/trades/"+rev.ID, http.StatusSeeOther) //nolint:gosec // G710: fixed local prefix, id is a service-issued identifier
 }
 
@@ -291,7 +296,7 @@ func (s *server) renderAnnouncements(w http.ResponseWriter, r *http.Request, c *
 		d.Options = append(d.Options, option{Value: a.ID, Label: a.Title})
 		d.Rows = append(d.Rows, annAdminRow{annRow{ID: a.ID, Title: a.Title, Body: a.Body, At: c.when(a.EffectiveAt)}, a.EffectiveAt.After(now)})
 	}
-	p.Title, p.D = "Announcements", d
+	p.Title, p.D = messages.Text("admin.announcements.title"), d
 	s.render(w, r, c, "admin_announcements", status, p)
 }
 
@@ -302,8 +307,8 @@ func (s *server) announcementCreate(w http.ResponseWriter, r *http.Request, c *r
 	if d := strings.TrimSpace(v["days"]); d != "" {
 		n, ok := atoiRange(d, 0, 365)
 		if !ok {
-			p.Summary, p.Errors = "Not published. Fix the problems below. Nothing changed.",
-				[]fieldErr{{"days", "Start in (days): enter a whole number from 0 to 365, or leave it empty to publish now."}}
+			p.Summary, p.Errors = messages.Text("admin.announcements.invalid"),
+				[]fieldErr{{"days", messages.Text("admin.announcements.days_invalid")}}
 			s.renderAnnouncements(w, r, c, 422, p)
 			return
 		}
@@ -318,7 +323,7 @@ func (s *server) announcementCreate(w http.ResponseWriter, r *http.Request, c *r
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "Announcement published.")
+	s.setFlash(w, r, messages.Text("admin.announcements.published"))
 	http.Redirect(w, r, c.base()+"/admin/announcements", http.StatusSeeOther)
 }
 
@@ -327,7 +332,7 @@ func (s *server) announcementDelete(w http.ResponseWriter, r *http.Request, c *r
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "Announcement deleted. Members no longer see it; the audit log keeps the record.")
+	s.setFlash(w, r, messages.Text("admin.announcements.deleted"))
 	http.Redirect(w, r, c.base()+"/admin/announcements", http.StatusSeeOther)
 }
 

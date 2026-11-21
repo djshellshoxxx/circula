@@ -178,7 +178,11 @@ func TestAuditMirrorLines(t *testing.T) {
 		m.write(&domain.AuditEvent{ID: "id", NetworkID: "n", Seq: i, OccurredAt: time.Unix(i, 0), Action: "a.b",
 			SummaryAfter: "SECRET-BODY", Hash: "h", PrevHash: "p"})
 	}
-	_ = m.close()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	if err := m.close(ctx); err != nil {
+		t.Fatal(err)
+	}
 	b, _ := os.ReadFile(p)
 	lines := strings.Split(strings.TrimSpace(string(b)), "\n")
 	if len(lines) != 3 || strings.Contains(string(b), "SECRET-BODY") {

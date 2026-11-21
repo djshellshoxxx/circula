@@ -1,8 +1,60 @@
 # Branch consolidation matrix
 
+> Closing publication: [the final addendum](CONSOLIDATION_FINAL_REPORT.md#closing-publication-checkpoint-2026-11-19) records Core992, isolated follow-ups, the timestamped 125-ref snapshot and pending gates. The [combined core review](CORE_COMPOSITION_20261119.md), [frozen 123-ref snapshot](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) and earlier execution receipts retain their original scope. Current PR heads and checks govern subsequent qualification.
+
+## Closing branch and publication addendum
+
+A final bounded read observed **125 live refs at 2026-11-19 12:10:21.881995 UTC**.
+The two additions after the preserved 123-ref cutoff are:
+
+| Branch / PR | Exact observed head | Scope and disposition |
+|---|---|---|
+| `audit/federation-readme-20261119` / [#106](https://github.com/djshellshoxxx/circula/pull/106) | `d55554408ef591371768259905c70ca58d68facb` | README-only clarification of the isolated workflow; draft targeting #105's branch; runtime and HOLD unchanged |
+| `audit/gov021-final-core-refresh-20261119` / [#107](https://github.com/djshellshoxxx/circula/pull/107) | `b8cb63bfc6d2a969d972f55937cdc2070d5eba34` | Reviewed Core refresh and independent migration 0022 on the GOV-021 target; draft and policy-held |
+
+Comparison against the original 107-name inventory found no missing names,
+105 unchanged tips and two advances: GOV-021 `59cf6997` to `0d480a5b`, and
+notifications `3bdf8e92` to `797dddf2`. Native `merge-base --is-ancestor`
+confirmed both original tips remain ancestral. Main remains `ead63b5c`.
+
+At closing, #101 is included in Core #90 at `99247859`, and #98 is included
+in isolated feed #92 at `db80ed34`; these are integration-only closures.
+Notification transport #103 is composed into #100 at `98852afb` without a
+main merge or automatic adoption. #105 now has independent source review,
+a 30-case parent-source reproduction and passing exact-source race/vet
+evidence; its earlier pending row below remains a record of the 123-ref cutoff.
+All future modules remain on HOLD. There are nine coordinator-created PRs,
+two qualified original-topic merges (#91/#93), two integration-only inclusions
+(#101/#98), and zero main merges. The closing open-PR collection returned 23
+records. Later writes must be checked against live PR heads rather than this
+timestamped inventory.
+
+## Later branch additions
+
+The following ten branches extend the earlier 113-head matrix to the frozen
+123-head cutoff. All remain preserved. Source incorporated in a candidate is
+not counted as merged into main; source approval is not a CI pass.
+
+| Branch / PR | Purpose and unique work | Defects / readiness | Action |
+|---|---|---|---|
+| `codex/api036-cursor-hardening-20261119` / #96 | Bounded, canonical signed cursor decoding and regressions | Reviewed; closed unmerged as superseded by #101 | Preserve original commits through #99 ancestry and branch |
+| `master/fnet207-recurring-remote-20261119` / #97 | Isolated weekly/monthly recurrence and exact wall-time handling | Source reviewed; one native Windows module pass, other current gates pending | Retain disabled/HOLD; qualify its own target |
+| `feature/fnet-204-completion-parallel` / #98 | Bounded SQLite feed queries, private cursor frontiers and persistent pagination tests | Reviewed source plus later evidence update; current gates pending | Compose only with the isolated feed repair after qualification |
+| `integration/core-consolidation-20261119` / #99 | Transaction/token/UUID repairs and preserved concurrent history/evidence | Reviewed latest 0a73ee42; earlier source lacks newer #101/#102/#104 additions | Included in the PR90 composition; preserve branch |
+| `audit/future-notifications-bounded-core-20261119` / #100 | Refresh notification branch to bounded core; show dependency-scan advisory details | Exact tree/source preservation and traceability check pass; CI pending | Retain isolated; reconcile #103 on this target |
+| `codex/api036-completion-20261119` / #101 | Complete bounded session navigation, selective bulk revocation and cursor hardening | Reviewed f7ac6d22; focused SQL/service/template checks pass; full gates pending | Included in the PR90 composition; preserve branch |
+| `integration/core-recovery-20261119` / #102 | Export authority/abort, listing pagination, catalogue and traceability recovery | Reviewed f29ebb01; corrected duplicate catalogue/refusal overlap | Included in the PR90 composition with newer real-client regression |
+| `master/notification-transport-tests-20261119` / #103 | Web Push success/retry bounds and verified custom-dial SMTP TLS | Four-file source reviewed; current provider checks pending | Keep isolated; combine with #100 without changing feature HOLD |
+| `integration/circula-master-consolidation-20261119` / #104 | Go/Python export verifier ambiguity and boundary fixes | Five-file source reviewed; 22 Python tests pass; full gates pending | Included in the PR90 composition; preserve branch |
+| `master/fnet209-utf8-20261119` / #105 | Isolated malformed-UTF-8 signing-input repair | Ancestry/scope/HOLD checked at cutoff; source/runtime review pending there | Retain as pending future provenance, outside core |
+
+Exact heads, evidence and observation limits are recorded in the
+[concurrent snapshot](CONCURRENT_BRANCH_SNAPSHOT_20261119.md). The original
+branch-by-branch records below remain intact.
+
 ## Snapshot and interpretation
 
-This refreshed inventory contains **113 real remote branch heads**, **22 recovered local refs**, **95 pull requests** (including **36 closed without a merge**) and **0 tags**. Starting main is [`ead63b5ce24b`](https://github.com/djshellshoxxx/circula/commit/ead63b5ce24b2bcf8352d75fd0d1ff7be711f625). The reviewed integration foundation is PR [#90](https://github.com/djshellshoxxx/circula/pull/90), [`244e1356201e`](https://github.com/djshellshoxxx/circula/commit/244e1356201e6477eab4694d82947f2058f3b0d8). The inventory was regenerated from complete Git history on 2026-11-19; all SHA comparisons are pinned, not moving branch-name comparisons.
+The earlier pinned inventory contains **113 real remote branch heads**, **22 recovered local refs**, **95 pull requests** (including **36 closed without a merge**) and **0 tags**. Starting main is [`ead63b5ce24b`](https://github.com/djshellshoxxx/circula/commit/ead63b5ce24b2bcf8352d75fd0d1ff7be711f625). The reviewed integration foundation is PR [#90](https://github.com/djshellshoxxx/circula/pull/90), [`244e1356201e`](https://github.com/djshellshoxxx/circula/commit/244e1356201e6477eab4694d82947f2058f3b0d8). The inventory was regenerated from complete Git history on 2026-11-19; all SHA comparisons are pinned, not moving branch-name comparisons.
 
 The [machine-readable inventory](BRANCH_INVENTORY_2026-11-19.json) records each merge base, full unique-commit list, changed files, changed test files, patch-equivalence results, merge simulations, dependencies, exact-head CI observations and PR provenance. [Original remote refs](BRANCH_REFS_2026-11-19.tsv) preserve the advertised starting heads. The [dependency graph](BRANCH_DEPENDENCY_GRAPH_2026-11-19.md) includes all remote branches. The prior 107-head matrix remains readable at [its original commit](https://github.com/djshellshoxxx/circula/blob/244e1356201e6477eab4694d82947f2058f3b0d8/docs/audits/BRANCH_CONSOLIDATION_MATRIX.md).
 
@@ -36,7 +88,7 @@ The 24 conflicts belong to retained historical, policy-gated or future branches.
 
 PR #90 is an appropriate consolidation foundation, provided the bounded-session correction and full combined validation complete. Its changed-file and history review found preserved source ancestry for #82, #87, #78, #88 and #89; no future module runtime is added to core. The source review checked password-proof revalidation inside the write transaction, clearing obsolete proof locks after authorized recovery, exact integer ledger sums, immutable dispute-policy binding and migration guards, and setup precision validation before formatting.
 
-PR #90 is not ready unchanged: its session list, revocation lookup and HTML confirmation materialize all retained owner rows. Pagination of the response does not bound database work. Recover the already written correction instead of implementing a competing session subsystem:
+At the 244e135 snapshot PR #90 was not ready unchanged: its session list, revocation lookup and HTML confirmation materialized all retained owner rows. The current composition includes the reviewed bounded-query and complete session follow-ups; the following is their historical recovery record. Pagination of the response does not bound database work. Recover the already written correction instead of implementing a competing session subsystem:
 
 | Local source | Commit | Scope and disposition |
 |---|---|---|

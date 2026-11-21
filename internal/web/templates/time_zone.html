@@ -1,8 +1,8 @@
 {{define "content"}}
-<p>Pages show times in your time zone. The API and the audit log always use UTC. Now it is {{.D.Example}} in <strong>{{.D.Current}}</strong>.</p>
+{{$display := msgAroundTwo "time_zone.display"}}<p>{{$display.Before}}{{.D.Example}}{{$display.Between}}<strong>{{.D.Current}}</strong>{{$display.After}}</p>
 <form method="post" action="/account/time-zone" novalidate>
   {{template "csrf" .}}
-  {{template "field" dict "P" . "Name" "time_zone" "Label" "Time zone" "Hint" "An IANA name such as Europe/Berlin, Asia/Kolkata or America/Argentina/Buenos_Aires. Leave empty for UTC." "Max" 64}}
-  <div class="actions"><button type="submit">Save time zone</button></div>
+  {{template "field" dict "P" . "Name" "time_zone" "Label" (msg "account.time_zone") "Hint" (msg "time_zone.hint") "Max" 64}}
+  <div class="actions"><button type="submit">{{msg "time_zone.save"}}</button></div>
 </form>
 {{end}}

@@ -1,0 +1,54 @@
+=== RUN   TestA3_08_ListingTextRejectsInvisibleRunes
+--- PASS: TestA3_08_ListingTextRejectsInvisibleRunes (0.86s)
+=== RUN   TestA3_08_ActiveListingCap
+--- PASS: TestA3_08_ActiveListingCap (2.67s)
+=== RUN   TestListingConcurrentConditionalOwnerEdits
+--- PASS: TestListingConcurrentConditionalOwnerEdits (0.84s)
+=== RUN   TestListingConditionalUpdatePreservesOwnerAndArchiveRules
+=== RUN   TestListingConditionalUpdatePreservesOwnerAndArchiveRules/other-owner
+=== RUN   TestListingConditionalUpdatePreservesOwnerAndArchiveRules/stale-owner
+=== RUN   TestListingConditionalUpdatePreservesOwnerAndArchiveRules/stale-archived
+=== RUN   TestListingConditionalUpdatePreservesOwnerAndArchiveRules/fresh-archived
+=== RUN   TestListingConditionalUpdatePreservesOwnerAndArchiveRules/unconditional-archived
+--- PASS: TestListingConditionalUpdatePreservesOwnerAndArchiveRules (0.87s)
+    --- PASS: TestListingConditionalUpdatePreservesOwnerAndArchiveRules/other-owner (0.08s)
+    --- PASS: TestListingConditionalUpdatePreservesOwnerAndArchiveRules/stale-owner (0.02s)
+    --- PASS: TestListingConditionalUpdatePreservesOwnerAndArchiveRules/stale-archived (0.02s)
+    --- PASS: TestListingConditionalUpdatePreservesOwnerAndArchiveRules/fresh-archived (0.02s)
+    --- PASS: TestListingConditionalUpdatePreservesOwnerAndArchiveRules/unconditional-archived (0.02s)
+=== RUN   TestProposeListingValidation
+--- PASS: TestProposeListingValidation (1.09s)
+=== RUN   TestListingsDoNotTouchLedger
+--- PASS: TestListingsDoNotTouchLedger (0.84s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	8.250s
+=== RUN   TestListingETagRetainsSerializedRevision
+--- PASS: TestListingETagRetainsSerializedRevision (0.00s)
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit/title
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit/description
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit/price
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit/clear-price
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit/paused
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit/timestamp
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit/etag-list
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit/wildcard
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit/wildcard-list
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit/archived
+=== RUN   TestListingConditionalWriteRejectsInterveningOwnerEdit/archived-wildcard
+--- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit (9.18s)
+    --- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit/title (0.73s)
+    --- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit/description (0.83s)
+    --- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit/price (0.75s)
+    --- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit/clear-price (0.98s)
+    --- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit/paused (0.79s)
+    --- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit/timestamp (0.94s)
+    --- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit/etag-list (0.81s)
+    --- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit/wildcard (0.77s)
+    --- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit/wildcard-list (1.06s)
+    --- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit/archived (0.77s)
+    --- PASS: TestListingConditionalWriteRejectsInterveningOwnerEdit/archived-wildcard (0.75s)
+=== RUN   TestPolicyAndListingETags
+--- PASS: TestPolicyAndListingETags (1.22s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/api	11.460s

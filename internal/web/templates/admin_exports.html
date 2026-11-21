@@ -1,11 +1,11 @@
 {{define "content"}}
-<p>Exports are recorded in the audit log and download as one zip file.</p>
-<form method="post" action="/n/{{.Slug}}/admin/exports">
+<p>{{msg "admin.exports.explanation"}}</p>
+<form method="post" action="/n/{{.Slug}}/admin/exports" data-loading-ignore>
   {{template "csrf" .}}
-  <div class="field"><label for="f-scope">What to export</label>
-  <select id="f-scope" name="scope"><option value="ledger">Ledger: accounts, trades, entries</option><option value="members">Members and roles</option><option value="audit">Audit history</option><option value="full">Everything</option></select></div>
-  <div class="field"><label for="f-format">File format</label>
-  <select id="f-format" name="format"><option value="csv">CSV</option><option value="json">JSON</option></select></div>
-  <div class="actions"><button type="submit">Download export</button></div>
+  <div class="field"><label for="f-scope">{{msg "admin.exports.scope_label"}}</label>
+  <select id="f-scope" name="scope"><option value="ledger">{{msg "admin.exports.scope.ledger"}}</option><option value="members">{{msg "admin.exports.scope.members"}}</option><option value="audit">{{msg "admin.exports.scope.audit"}}</option><option value="full">{{msg "admin.exports.scope.full"}}</option></select></div>
+  <div class="field"><label for="f-format">{{msg "admin.exports.format_label"}}</label>
+  <select id="f-format" name="format"><option value="csv">{{msg "admin.exports.format.csv"}}</option><option value="json">{{msg "admin.exports.format.json"}}</option></select></div>
+  <div class="actions"><button type="submit">{{msg "admin.exports.download"}}</button></div>
 </form>
 {{end}}

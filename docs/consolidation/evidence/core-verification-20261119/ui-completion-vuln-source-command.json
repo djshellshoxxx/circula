@@ -1,0 +1,14 @@
+{
+  "head": "e0d27cc7cb73299219439919b260991b824d594a",
+  "command": [
+    "/tmp/circula-tools-93/bin/govulncheck",
+    "./..."
+  ],
+  "started_at": "2026-11-19T13:37:00.924931+00:00",
+  "environment": {
+    "GOMAXPROCS": "1",
+    "GOMEMLIMIT": "750MiB",
+    "GOGC": "40",
+    "CGO_ENABLED": "1"
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "source_commit": "db27af0bd48cc04b5f51bcf5793e52e4cf1e16d2",
+  "source_tree": "6dbfdfdec70fdcefc92be0a6d3251278a73fd0e5",
+  "core_dependency_source": "48bb4c69b43b392cdbaf3db81dbc186120d3a9ba",
+  "core_dependency_local": "cbcbaeb",
+  "qualification": "Focused race selection on exact clean source; not a full integrated suite or independent consumer review.",
+  "changed_file_sha256": [
+    {
+      "path": "cmd/circula/commands.go",
+      "sha256": "f5909242fc1f59054cb14a84e0af882639ecfdd7e1872ecd0c5071c3721c1d49"
+    },
+    {
+      "path": "cmd/circula/historical_coverage.go",
+      "sha256": "031bf863255ed6022a650543764c004758c813fab032f1c8cf429ae8873562b3"
+    },
+    {
+      "path": "cmd/circula/historical_coverage_test.go",
+      "sha256": "8b40854001e7d5fcba2f0564bc0c4d6268241cf9a6d1f0f283b0264d593cec86"
+    },
+    {
+      "path": "cmd/circula/snapshot.go",
+      "sha256": "197d36e10c1f8da646eb22002c23d0b33179a65bdabde154ff45857ac96af955"
+    },
+    {
+      "path": "docs/api/openapi.yaml",
+      "sha256": "b86a93e01f35b73da10e75aded7f367ef00e30f84cfaf7f900cfc0545310b45f"
+    },
+    {
+      "path": "docs/ops/backup-restore.md",
+      "sha256": "d046c29c1626b7e99411928c12ab02824f66952a4f0a68bb300ca9302fda411e"
+    },
+    {
+      "path": "internal/api/h_ops.go",
+      "sha256": "a0db5e4fb531254509689f56303cb0c512a6b8e33ebc9a60496dfc081d52b33c"
+    },
+    {
+      "path": "internal/api/historical_coverage_dto_test.go",
+      "sha256": "d335fdb1e198aa2fbb8fdaf84d9cbba4c5aa058956ad58822f551b051af0b937"
+    },
+    {
+      "path": "internal/api/historical_coverage_test.go",
+      "sha256": "ea77c7fffd6f3c859c5046d1d37179aeb0a3c0268a57d0e1d3292d5024bb7383"
+    },
+    {
+      "path": "internal/service/overview.go",
+      "sha256": "bf896043e0fc48a16646289c20e67bceff4ada37edd1f530a05efa177ea9707c"
+    },
+    {
+      "path": "internal/web/h_admin_f2.go",
+      "sha256": "ef870b918636924f46aef54c4cd6fce165ead822900696f956aa90c64f2d7fdf"
+    },
+    {
+      "path": "internal/web/historical_coverage_test.go",
+      "sha256": "263b25eb4dbe45e7084d757df4ad4715d5480b4a75b67209634e3c53a0aeb0c0"
+    },
+    {
+      "path": "internal/web/messages/en.json",
+      "sha256": "dac76559aa15f80074c879af6343d123288ba1fde449f778d0f4bdff0d9ae538"
+    },
+    {
+      "path": "internal/web/templates/admin_check.html",
+      "sha256": "817048a90df35587041069cd706d1750475eb860f4168b9c8126389732627bc7"
+    },
+    {
+      "path": "internal/web/templates/admin_home.html",
+      "sha256": "e6565e29f6c5ba0f36e3922222aee2a3bb49de024c00a44ef4b55727c7c3077f"
+    },
+    {
+      "path": "internal/web/templates/base.html",
+      "sha256": "94c329180939d93d83e0468de93a1471b0ec50ef1c571fa7f125ee13a3df4385"
+    }
+  ],
+  "receipt_path": "/workspace/scratch/4d30fa819181/analysis/historical-consumers-focused-receipt.json",
+  "receipt_sha256": "065710d842246cd620bd8fb35a16b241d381f4c6ba6773288ac9cf81eca535e4",
+  "raw_log_path": "/workspace/scratch/4d30fa819181/analysis/historical-consumers-focused.jsonl",
+  "raw_log_sha256": "ea43a1bc5c977b17179c419d60f4eb3baff739183f7ad6d30001d64726a7354c",
+  "go_version": "go version go1.26.11 linux/amd64",
+  "top_level_pass_count": 23,
+  "subcase_pass_count": 22,
+  "wall_seconds": 76.524,
+  "package_passes": [
+    {
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Elapsed": 13.735
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/api",
+      "Elapsed": 2.2560000000000002
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/web",
+      "Elapsed": 6.109
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Elapsed": 1.059
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/contract",
+      "Elapsed": 6.937
+    }
+  ],
+  "no_skips_or_failures": true,
+  "source_unchanged_during_run": true,
+  "completion_report_path": "/workspace/scratch/4d30fa819181/analysis/historical_limit_consumers_completion.md",
+  "completion_report_sha256": "b8ba6c387eca6b4bbb2ad9010a1bac8d98671a74356400fbdf94007f4348317c"
+}
