@@ -15,25 +15,34 @@ async function holdRequest(page, url) {
   return { release, request };
 }
 
-// Locator assertions wait for pending document navigation in Playwright 1.63.
-// That would wait for the response this test deliberately holds. Capture the
-// outgoing document's nodes first, then inspect them without a navigation wait.
-async function captureLoadingState(control) {
-  return control.evaluateHandle((node) => ({
-    control: node,
-    status: node.ownerDocument.getElementById('page-loading'),
-    main: node.ownerDocument.querySelector('main'),
-  }));
-}
-
-async function readLoadingState(state) {
-  return state.evaluate(({ control, status, main }) => ({
-    text: status.textContent,
-    role: status.getAttribute('role'),
-    busy: main.getAttribute('aria-busy'),
-    focused: control.ownerDocument.activeElement === control,
-    enabled: !control.matches(':disabled'),
-  }));
+// Read the state in the same document event task that initiates the native
+// navigation. A held document response can suspend page/handle.evaluate after
+// the request is sent; Playwright console events still deliver the snapshot.
+async function observeLoadingOnNextEvent(page, control, eventName) {
+  const marker = `circula-loading-${eventName}-${Math.random().toString(36).slice(2)}:`;
+  await control.evaluate((node, { eventName, marker }) => {
+    const doc = node.ownerDocument;
+    doc.addEventListener(eventName, (event) => {
+      const activated = eventName === 'click'
+        ? event.target.closest?.('a[href]')
+        : event.submitter;
+      if (activated !== node) return;
+      const status = doc.getElementById('page-loading');
+      const main = doc.querySelector('main');
+      console.info(marker + JSON.stringify({
+        text: status.textContent,
+        role: status.getAttribute('role'),
+        busy: main.getAttribute('aria-busy'),
+        focused: doc.activeElement === node,
+        enabled: !node.matches(':disabled'),
+      }));
+    }, { once: true });
+  }, { eventName, marker });
+  return {
+    value: page.waitForEvent('console', {
+      predicate: (message) => message.type() === 'info' && message.text().startsWith(marker),
+    }).then((message) => JSON.parse(message.text().slice(marker.length))),
+  };
 }
 
 test('keyboard navigation announces loading without moving focus', async ({ as, st }) => {
@@ -41,18 +50,17 @@ test('keyboard navigation announces loading without moving focus', async ({ as, 
   await page.goto(`/n/${st.slug}`);
   const history = page.getByRole('link', { name: 'History', exact: true });
   await history.focus();
-  const outgoing = await captureLoadingState(history);
+  const observed = await observeLoadingOnNextEvent(page, history, 'click');
   const held = await holdRequest(page, `${st.base}/n/${st.slug}/history`);
   const activation = page.keyboard.press('Enter');
   try {
     await held.request;
-    await expect.poll(() => readLoadingState(outgoing)).toEqual({
+    expect(await observed.value).toEqual({
       text: 'Loading the next page. Please wait.', role: 'status', busy: 'true', focused: true, enabled: true,
     });
   } finally {
     held.release();
     await activation;
-    await outgoing.dispose();
   }
   await expect(page).toHaveURL(`${st.base}/n/${st.slug}/history`);
   await expect(page.locator('#page-loading')).toBeEmpty();
@@ -68,7 +76,7 @@ test('submission feedback retains confirmation data and successful controls', as
   await page.getByRole('button', { name: 'Review trade', exact: true }).click();
   const confirm = page.getByRole('button', { name: 'Send trade', exact: true });
   await expect(confirm).toBeVisible();
-  const outgoing = await captureLoadingState(confirm);
+  const observed = await observeLoadingOnNextEvent(page, confirm, 'submit');
   const held = await holdRequest(page, st.base + proposal);
   const activation = confirm.click();
   try {
@@ -80,13 +88,12 @@ test('submission feedback retains confirmation data and successful controls', as
     expect(values.get('counterparty_id')).toBe(st.bobId);
     expect(values.get('csrf')).toBeTruthy();
     expect(values.get('idem')).toBeTruthy();
-    await expect.poll(() => readLoadingState(outgoing)).toEqual({
+    expect(await observed.value).toEqual({
       text: 'Sending your request. Please wait.', role: 'status', busy: 'true', focused: true, enabled: true,
     });
   } finally {
     held.release();
     await activation;
-    await outgoing.dispose();
   }
   await expect(page.locator('#flash')).toContainText('Trade sent to');
   await expect(page.locator('#page-loading')).toBeEmpty();
