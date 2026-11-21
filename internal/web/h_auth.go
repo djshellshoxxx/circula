@@ -200,7 +200,7 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	parse := func(field, labelKey string, dst *int64) {
 		n, err := domain.ParseAmount(v[field], dec)
 		if err != nil {
-			fe = append(fe, fieldErr{field, messages.Text("setup.amount.invalid", messages.Text(labelKey), dec, domain.FormatAmount(1250, dec))})
+			fe = append(fe, fieldErr{field, messages.Text("setup.amount.invalid", dec, messages.Text(labelKey), domain.FormatAmount(1250, dec))})
 			return
 		}
 		*dst = n

@@ -1,8 +1,10 @@
 # Circula current work
 
-Updated for the comprehensive audit begun 2026-11-18 Pacific, from `main@ead63b5`. The current [execution report](audits/CONSOLIDATION_FINAL_REPORT.md) records exact publication heads, provider gates and merge status. The [earlier execution archive](audit/consolidation-2026-11-17/README.md) remains historical evidence. Scope: core Circula; all 15 future modules remain isolated.
+Updated 2026-11-20 Pacific from qualified `main@87651d36558a8e421e41fbd76c514045d88c74ed`. Core consolidation and finalization are preserved in the [post-merge continuation record](https://github.com/djshellshoxxx/circula/blob/8f936b6eb4eefbe85250ee5cf44a839ad361e4ce/docs/consolidation/CORE_POSTMERGE_CONTINUATION_20261120.md). The active UX-047 setup wording correction has its own [local qualification note](qa/UX047-setup-precision-2026-11-20.md); its resulting PR and actual-main checks are separate integration gates. Scope: core Circula; all 15 future modules remain isolated.
 
-## Current integration evidence
+## 2026-11-18 integration checkpoint (historical)
+
+The following records preserve the comprehensive audit's original state. Their pending PR and qualification statements are superseded by the current continuation above. The [execution report](audits/CONSOLIDATION_FINAL_REPORT.md) and [earlier execution archive](audit/consolidation-2026-11-17/README.md) remain historical evidence.
 
 - [PR #90](https://github.com/djshellshoxxx/circula/pull/90) preserves source #82, #87, #88, #78 and #89, plus new reviewed repairs and completed source slices. Its final current-head gates are required; it is not a main-branch pass merely because those sources passed. PR #84 was already in the starting main.
 - Six requested reports and the 107-ref [branch matrix](audits/BRANCH_CONSOLIDATION_MATRIX.md) record every starting branch disposition. No original refs were deleted or force-pushed.
@@ -83,7 +85,7 @@ Updated for the comprehensive audit begun 2026-11-18 Pacific, from `main@ead63b5
 ## Remaining specification and qualification work
 
 - SEC-026 is implemented on an isolated repaired branch with no automatic trade blocking. It is default off and independent of GOV-021; current-head qualification, subject visibility, threshold authority and retention decisions remain. Existing login/join throttles are not this feature.
-- UX-047 catalogue migration is partial: administrator-overview counts/actions/checks and proposal-queue row/status/title text use the English catalogue with CLDR plural/number formatting. PR #61 additionally migrated balance/spoken and transaction-row/status/explanation text with passing CI. PR #62 migrated shell/dashboard labels, navigation, persistent network notices and badge counts; #79 added authentication/account-security text. This audit adds setup/invitation/open/approval joining. Shared refusal construction, administrator reset pages, remaining handlers/templates and JavaScript still need migration; translation/locale scope needs product confirmation. See `docs/dev/MESSAGES.md`.
+- UX-047 remains partial. The English catalogue contains 1,458 entries and covers the successive flows documented in [UI messages](dev/MESSAGES.md). This continuation corrects setup amount-validation singular/plural selection and adds message and real-handler regressions for both amount fields at precisions 0, 1, 2 and 4; see the [setup precision qualification note](qa/UX047-setup-precision-2026-11-20.md). Further work should start from the integrated source and a bounded gap investigation rather than the historical missing-flow lists. Whole-UI completion is not claimed; translation and locale scope require product confirmation.
 - GOV-021 administrator-unavailable recovery needs its specified dual approval, member-identity verification, network-wide notice and no-balance-change qualification, aligned with the unresolved break-glass scope. Do not count generic operator break-glass as this complete recovery flow.
 
 - Confirm QA-001 release budgets/thresholds (DEC-023) and reference-hardware performance criteria.
