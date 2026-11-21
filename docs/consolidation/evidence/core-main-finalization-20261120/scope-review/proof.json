@@ -1,0 +1,405 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-21T02:38:02Z",
+  "reviewer": "circula_security_review",
+  "source_of_record": "Preserved from independently executed read-only Git object, JSON, ancestry and remote-ref checks in this agent session. The original scope checks were not rerun to write this file.",
+  "repository": "djshellshoxxx/circula",
+  "main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+  "tree": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+  "ordered_parents": [
+    "aa01563fcc891da60fefebb8335eca27855678e8",
+    "3ef43ac1e05360d2a1641742dc056afe8871879b"
+  ],
+  "evidence_source": "c1a34476de017ab70acc99181ebbe16c337fc0e6",
+  "scope": {
+    "tracked_file_count": 2024,
+    "forbidden_path_prefixes": [
+      "future/",
+      "features/",
+      "modules/",
+      "internal/future/",
+      "cmd/future/"
+    ],
+    "current_paths_matching": [],
+    "changed_paths_matching": [],
+    "runtime_reference_query": "git grep -n -E 'future/|fnet-20|fux-10' <main> -- cmd internal go.mod go.sum",
+    "runtime_reference_matches": [],
+    "runtime_reference_exit": 1,
+    "absent_held_paths": [
+      "internal/service/admin_recovery.go",
+      "internal/service/aud4_f02_test.go",
+      "internal/service/signals.go",
+      "docs/future-cli-spec.md"
+    ],
+    "result": "PASS"
+  },
+  "future_modules": [
+    {
+      "id": "FNET-201",
+      "branch": "future/fnet-201-matching-20261116",
+      "sha": "12850290c6bca7720853c33689662d751aced160",
+      "path": "future/matching/feature.json",
+      "blob": "43bc991b59976c9f12a613fffbca106573f17eb0",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FNET-202",
+      "branch": "future/fnet-202-favorites-20261116",
+      "sha": "efc9d696eea2dd3260ecb6c5091802ef31e20572",
+      "path": "future/favorites/feature.json",
+      "blob": "4beec20056a98e995c5e6115b239aded2f15ea9e",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FNET-203",
+      "branch": "future/fnet-203-receipts-20261116",
+      "sha": "5200c5bf940f051a86d6e502787af06892200974",
+      "path": "future/receipts/feature.json",
+      "blob": "d8096428f13dac807f88c3b6ac5468176889f9ea",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FNET-204",
+      "branch": "future/fnet-204-feed-20261116",
+      "sha": "108107435645db687f8ac380e6571319f419fa32",
+      "path": "future/feed/feature.json",
+      "blob": "dea2c3e2ba2600f327cd961e03684843f55aa3ca",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FNET-205",
+      "branch": "future/fnet-205-analytics-20261116",
+      "sha": "64f1fef75d167ca322179e3e120214f9a56c6583",
+      "path": "future/analytics/feature.json",
+      "blob": "2507b08b687d64c875480af1b993cfa97f9cfa1a",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FNET-206",
+      "branch": "future/fnet-206-areas-20261116",
+      "sha": "6aac35e226135a53d69c1e6ce74e340dcfe1d85f",
+      "path": "future/areas/feature.json",
+      "blob": "a1fe86449b5e910833a130748e28536bb0512c85",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FNET-207",
+      "branch": "future/fnet-207-recurring-20261116",
+      "sha": "89c6aeb6b4f73292d38a4a0803146ff5b9386e6f",
+      "path": "future/recurring/feature.json",
+      "blob": "d345dbc3fa3b4146ba86020c12f8925930ee404f",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FNET-208",
+      "branch": "future/fnet-208-governance-20261116",
+      "sha": "5eac085005361e973ca8f358e01f039aea718bed",
+      "path": "future/governance/feature.json",
+      "blob": "44b76724eb5b0b5743e10f8565a1f3f3ca312d38",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FNET-209",
+      "branch": "future/fnet-209-federation-20261116",
+      "sha": "0aeb5a1446798019141a3f6f5bcb1e7a24b70c47",
+      "path": "future/federation/feature.json",
+      "blob": "547ebe612535c520a037fc3facb516159b863376",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FUX-101",
+      "branch": "future/fux-101-pwa-20261116",
+      "sha": "3415fe24df7b87a2803552b37ca31bf898f7aa8e",
+      "path": "future/pwa/feature.json",
+      "blob": "b9328faac33485ba3cc26650e28c6cdecd587012",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FUX-102",
+      "branch": "future/fux-102-qr-20261116",
+      "sha": "6028dae56723b8488db6e52e25c83da7888777c1",
+      "path": "future/qr/feature.json",
+      "blob": "4a4247d78aa8e0d0918a8e333eb2930ba77bf2f0",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FUX-103",
+      "branch": "future/fux-103-discovery-20261116",
+      "sha": "34d0f889631e2d133149a89a276cf9c71fd261a9",
+      "path": "future/discovery/feature.json",
+      "blob": "008d52d9d4d59bf5929181eb191091cb8daacab5",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FUX-104",
+      "branch": "future/fux-104-notifications-20261116",
+      "sha": "54a41b12a314e7652802b71d693e2594c37f172f",
+      "path": "future/notifications/feature.json",
+      "blob": "15827422569370ec231e6bfc11814c7c3991d274",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FUX-105",
+      "branch": "future/fux-105-messaging-20261116",
+      "sha": "54d3af51aa32c022562e8041d1baa149da071db3",
+      "path": "future/messaging/feature.json",
+      "blob": "f1f385d7de5516c094dad9d3a70ea3dc30174259",
+      "enabled": false,
+      "integration": "HOLD"
+    },
+    {
+      "id": "FUX-106",
+      "branch": "future/fux-106-onboarding-20261116",
+      "sha": "4c3ce1d7b7f2b4ed809669985d5e38981408494b",
+      "path": "future/onboarding/feature.json",
+      "blob": "81ac3e69d0ec10ddaf599fd8fb2b6bd4b2e70b43",
+      "enabled": false,
+      "integration": "HOLD"
+    }
+  ],
+  "held_branches": [
+    {
+      "branch": "audit/gov021-final-core-refresh-20261119",
+      "sha": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "pr": 107,
+      "source_only_commits": 11,
+      "matches_prior_proof": true,
+      "ancestor_of_main": false,
+      "live_pr_state": "open",
+      "live_pr_draft": true,
+      "live_pr_merged": false
+    },
+    {
+      "branch": "audit/gov021-fixture-20261119",
+      "sha": "d922d4f880059f939aeca40cbcb77c60201ff0c7",
+      "pr": null,
+      "source_only_commits": 9,
+      "matches_prior_proof": true,
+      "ancestor_of_main": false
+    },
+    {
+      "branch": "claude/gov-021-admin-recovery",
+      "sha": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "pr": 85,
+      "source_only_commits": 10,
+      "matches_prior_proof": true,
+      "ancestor_of_main": false,
+      "live_pr_state": "open",
+      "live_pr_draft": true,
+      "live_pr_merged": false
+    },
+    {
+      "branch": "claude/aud4-f02-reviewer-reset-policy",
+      "sha": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+      "pr": 83,
+      "source_only_commits": 2,
+      "matches_prior_proof": true,
+      "ancestor_of_main": false,
+      "live_pr_state": "open",
+      "live_pr_draft": true,
+      "live_pr_merged": false
+    },
+    {
+      "branch": "audit/sec026-independent-20261119",
+      "sha": "45b596f12876e3f91c30b996457f7096e1fffe24",
+      "pr": 94,
+      "source_only_commits": 3,
+      "matches_prior_proof": true,
+      "ancestor_of_main": false,
+      "live_pr_state": "open",
+      "live_pr_draft": true,
+      "live_pr_merged": false
+    },
+    {
+      "branch": "claude/sec-026-abuse-signals",
+      "sha": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "pr": 86,
+      "source_only_commits": 13,
+      "matches_prior_proof": true,
+      "ancestor_of_main": false,
+      "live_pr_state": "open",
+      "live_pr_draft": true,
+      "live_pr_merged": false
+    },
+    {
+      "branch": "planning/future-cli-specs-20261110",
+      "sha": "8e2372c064258fb8c53554ae8f6b81957932e885",
+      "pr": null,
+      "source_only_commits": 1,
+      "matches_prior_proof": true,
+      "ancestor_of_main": false
+    }
+  ],
+  "live_readback": {
+    "method": "git ls-remote --heads https://github.com/djshellshoxxx/circula.git with 23 explicitly selected refs",
+    "selected_count": 23,
+    "remote_count": 23,
+    "future_count": 15,
+    "missing": [],
+    "changed_since_clone": [],
+    "main": "87651d36558a8e421e41fbd76c514045d88c74ed"
+  },
+  "remaining_source_gaps": [
+    {
+      "id": "OPS-04",
+      "paths": [
+        "cmd/circula/verify_export.go",
+        "scripts/read-export.py"
+      ],
+      "observations": [
+        "Both readers retain a 1<<32 member cap and materialize member data.",
+        "Go also calls csv.Reader.ReadAll/json.Unmarshal; Python retains parsed CSV/JSON values."
+      ],
+      "boundary": "Resource-budget/default and large-export compatibility decisions remain separate; integrity validation is not a practical aggregate memory guarantee."
+    },
+    {
+      "id": "OPS-03",
+      "paths": [
+        "cmd/circula/fileident_other.go"
+      ],
+      "observations": [
+        "Non-Unix privateParent only checks IsDir; checkStagingParent returns nil; singleLink returns true."
+      ],
+      "boundary": "Supported identities/ACL/reparse behavior and native acceptance remain required; future messaging is separate."
+    },
+    {
+      "id": "LED-R02",
+      "paths": [
+        "internal/service/posting.go",
+        "internal/service/transactions.go"
+      ],
+      "observations": [
+        "Exact payer availability remains in some error strings."
+      ],
+      "boundary": "Existing disclosure requirements conflict; do not silently select a policy."
+    }
+  ],
+  "backlog_reconciliation": {
+    "historical_source": "docs/audits/REMAINING_BLOCKERS.md",
+    "principle": "The newer Core remaining-work/security tables do not erase ordinary acceptance-engineering gaps or convert them into policy decisions.",
+    "ux047": {
+      "current_english_catalogue_entries": 1458,
+      "historical_catalogue_entries": 525,
+      "already_implemented": [
+        "Broad English catalogue migration documented in CORE_UI_COMPLETION_20261119.md.",
+        "Complete auth link sentences via msgAround in login.html and mfa_enrol.html.",
+        "Complete recovery-code count sentence via msgAroundCount in recovery_codes.html.",
+        "Shared catalogue-backed progressive browser feedback and existing message tests."
+      ],
+      "superseded_examples": [
+        "Restarting shared refusals/admin reset/marketplace/session JavaScript migrations from the historical 525-key list.",
+        "Reimplementing the identified authentication sentence/count fixes."
+      ],
+      "unresolved": "UX-047 remains partial; full locale/date/number semantics and any genuinely remaining English literals require a scoped current-source review. Additional languages remain a product choice.",
+      "classification": "Existing completed English flows must not be rebuilt. Any confirmed remaining English externalization is ordinary accepted engineering; do not label it automatically blocked by language policy.",
+      "paths": [
+        "internal/web/messages/en.json",
+        "internal/web/templates/login.html",
+        "internal/web/templates/mfa_enrol.html",
+        "internal/web/templates/recovery_codes.html",
+        "docs/dev/MESSAGES.md",
+        "docs/consolidation/CORE_UI_COMPLETION_20261119.md",
+        "docs/consolidation/evidence/unique-core-20261119/accepted-core-completion-map.md"
+      ]
+    },
+    "storage_faults": {
+      "already_implemented": [
+        "Real SQLite FULL recovery.",
+        "Linux pre-commit-marker WAL write error recovery.",
+        "Linux checkpoint database-write error preserving committed WAL.",
+        "Late member Rows.Next error propagation, rollback, live recovery and reopen.",
+        "Successful COMMIT with lost driver acknowledgment, durable posting and idempotent replay."
+      ],
+      "still_open": [
+        "Real writable-VFS/OS read failures.",
+        "fsync failures and truncate failures.",
+        "Checkpoint sync/truncate errors.",
+        "Physical commit-marker uncertainty and device/power-loss acceptance.",
+        "Migration COMMIT acknowledgment loss remains outside the existing posting regression."
+      ],
+      "classification": "Accepted ordinary qualification/harness engineering plus environment/native evidence, not an unresolved governance/product-policy choice.",
+      "scope": "Choose one writable-VFS operation at a time, preserve original or fully committed state as appropriate, prove the fault boundary was reached, and check restart and same-key replay without weakening existing assertions.",
+      "paths": [
+        "docs/qa/sqlite-storage-failure-qualification.md",
+        "internal/service/sqlite_full_test.go",
+        "internal/service/sqlite_ioerr_linux_test.go",
+        "internal/service/sqlite_checkpoint_linux_test.go",
+        "internal/store/recovery_internal_test.go",
+        "internal/store/member_read_failure_test.go",
+        "internal/store/commit_ack_test.go",
+        "docs/consolidation/evidence/commit-acknowledgment-loss.md"
+      ],
+      "no_named_physical_fault_constant_matches": {
+        "query": "IOERR_FSYNC|IOERR_TRUNCATE|SQLITE_IOERR_READ|SQLITE_IOERR_SHORT_READ|xSync|xTruncate",
+        "paths": [
+          "internal",
+          "cmd"
+        ],
+        "matches": [],
+        "limitation": "Supporting search only; not a standalone proof of complete test absence."
+      }
+    },
+    "requirement_evidence": {
+      "historical_uncited_built_count": 15,
+      "current_uncited_built_count": 13,
+      "current_ids": [
+        "VIS-011",
+        "VIS-012",
+        "ARC-001",
+        "ARC-013",
+        "ARC-019",
+        "ARC-024",
+        "DAT-003",
+        "UX-007",
+        "UX-042",
+        "UX-043",
+        "UX-058",
+        "GOV-017",
+        "OPS-001"
+      ],
+      "newly_superseded_gaps": [
+        "DAT-001: TestDefaultIDGeneratorPersistsCanonicalUUIDv7",
+        "DAT-002: TestInjectedIDGeneratorReachesPersistedPerson"
+      ],
+      "ordinary_engineering_opportunities": [
+        "Representative pointer release/cancellation browser qualification for UX-043.",
+        "Reduced-motion computed-behavior browser evidence for UX-058.",
+        "Same packaged artifact under both supported operational configurations and native target smoke evidence where environments are available."
+      ],
+      "retained_external_or_inspection": [
+        "Negative-capability/source inspection requirements.",
+        "Product licensing, counsel, approved security contact, hosted launch, manual assistive technology and physical/native release acceptance."
+      ],
+      "boundary": "Missing test citations do not prove missing behavior. Existing tests inspect a persisted person; do not generalize to all ID classes or rebuild those tests merely to alter a count.",
+      "paths": [
+        "docs/TRACEABILITY.md",
+        "internal/service/id_generation_test.go",
+        "docs/audit/consolidation-2026-11-17/source-reviews/BUILT-REQUIREMENT-EVIDENCE.md",
+        "docs/consolidation/evidence/unique-core-20261119/uncited-built-acceptance.md"
+      ]
+    }
+  },
+  "limits": {
+    "product_code_changed": false,
+    "repo_files_changed": false,
+    "remote_writes": false,
+    "product_tests_executed": false,
+    "expensive_suites_executed": false,
+    "vulnerability_reproductions": false,
+    "postmerge_ci_verified_by_this_worker": false,
+    "scope_check_rerun_for_serialization": false
+  }
+}

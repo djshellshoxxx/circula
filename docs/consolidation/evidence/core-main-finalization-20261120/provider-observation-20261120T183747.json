@@ -1,0 +1,1761 @@
+{
+  "observed_at_utc": "2026-11-21 02:37:47 UTC",
+  "repository": "djshellshoxxx/circula",
+  "observations": [
+    {
+      "name": "main_ref",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/git/ref/heads/main",
+      "data": {
+        "ref": "refs/heads/main",
+        "node_id": "REF_kwDOVRni9q9yZWZzL2hlYWRzL21haW4",
+        "url": "https://api.github.com/repos/djshellshoxxx/circula/git/refs/heads/main",
+        "object": {
+          "sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+          "type": "commit",
+          "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/87651d36558a8e421e41fbd76c514045d88c74ed"
+        }
+      }
+    },
+    {
+      "name": "main_commit",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/87651d36558a8e421e41fbd76c514045d88c74ed",
+      "data": {
+        "sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+        "node_id": "C_kwDOVRni9toAKDg3NjUxZDM2NTU4YThlNDIxZTQxZmJkNzZjNTE0MDQ1ZDg4Yzc0ZWQ",
+        "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/87651d36558a8e421e41fbd76c514045d88c74ed",
+        "html_url": "https://github.com/djshellshoxxx/circula/commit/87651d36558a8e421e41fbd76c514045d88c74ed",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T02:28:42Z"
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "date": "2026-11-21T02:28:42Z"
+        },
+        "tree": {
+          "sha": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+          "url": "https://api.github.com/repos/djshellshoxxx/circula/git/trees/43e65ee91a90ff70b70cc69d0b517b8367a2585f"
+        },
+        "message": "Merge pull request #127 from djshellshoxxx/integration/unique-core-completion-20261120\n\nComplete unique Core consolidation and accepted features",
+        "parents": [
+          {
+            "sha": "aa01563fcc891da60fefebb8335eca27855678e8",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/aa01563fcc891da60fefebb8335eca27855678e8",
+            "html_url": "https://github.com/djshellshoxxx/circula/commit/aa01563fcc891da60fefebb8335eca27855678e8"
+          },
+          {
+            "sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "html_url": "https://github.com/djshellshoxxx/circula/commit/3ef43ac1e05360d2a1641742dc056afe8871879b"
+          }
+        ],
+        "verification": {
+          "verified": true,
+          "reason": "valid",
+          "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJrAQHaCRC1aQ7uu5UhlAAA4/0QACuybQMMPj3w40PF1HdmYuA/\nHkVX1ufS/xB+nkl2JbSEi8WpjYdKV8ILdMOkSrcOT1SH1nQXJ8qPLPzPJgELbjEa\nml8Tr3lmT8g709kPZkt/i6EPAys3hxF1QB4UqJ8EMV3lAuAXMOFOb5GXbu+ybtl5\nFsIHuARbsIN95Y3Ld5feSv8NTMD9ZQh4H0QQs84Nv42ECTrYnLDROjieg5KVRxwt\n2ChppBj0VdbF+W/5VuOFX4UFrCIvtWt9GBCugKVz0pH30zw+2GdCnf9xw00C20Fz\nsMeOaUFPmZQzP2Ff7aHlGAi2C9njW8Tgb21Tvl6JxxA6IP1Q076f71kixNoveZGy\nm03z41KsssP0SbMfPmA+gxMcP2qE9urTb9Ct/GrvdsSEPcS+r8Ew73hGIrKGDdzc\n0783KZhrQshHwfTZ6y8qOOJcVq4ruqJmWLaYisJbsAhrFPneAUuLduBBZFleTztd\ngekr+4JWNVZiY1sOZkUohejf98j23FijETBrIPNmXx3a5RRYeIU65I1S+pzPLywg\nQOTjGSWiRxl9i6zKppTpY/OssocbNSZWJ5pv0Yi0wxRj/AHc7ovU8t0GVG7ZiCOG\nobAp6t6DvdcnsPkN/k12B5mJPyS+jQTqRb8Bp8IRtAwqgZwEyBjgKXF1pr4kw6AW\ni+w2/yeenJEPx4p5ET5m\n=+U5Q\n-----END PGP SIGNATURE-----\n",
+          "payload": "tree 43e65ee91a90ff70b70cc69d0b517b8367a2585f\nparent aa01563fcc891da60fefebb8335eca27855678e8\nparent 3ef43ac1e05360d2a1641742dc056afe8871879b\nauthor sheldon <127660907+djshellshoxxx@users.noreply.github.com> 1795228122 -0700\ncommitter GitHub <noreply@github.com> 1795228122 -0700\n\nMerge pull request #127 from djshellshoxxx/integration/unique-core-completion-20261120\n\nComplete unique Core consolidation and accepted features",
+          "verified_at": "2026-11-21T02:28:43Z"
+        }
+      }
+    },
+    {
+      "name": "synthetic_commit",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/6eb49aa2b2c7859fd2a8ceda207ddbb01eaa9d65",
+      "data": {
+        "sha": "6eb49aa2b2c7859fd2a8ceda207ddbb01eaa9d65",
+        "node_id": "C_kwDOVRni9toAKDZlYjQ5YWEyYjJjNzg1OWZkMmE4Y2VkYTIwN2RkYmIwMWVhYTlkNjU",
+        "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/6eb49aa2b2c7859fd2a8ceda207ddbb01eaa9d65",
+        "html_url": "https://github.com/djshellshoxxx/circula/commit/6eb49aa2b2c7859fd2a8ceda207ddbb01eaa9d65",
+        "author": {
+          "name": "sheldon",
+          "email": "127660907+djshellshoxxx@users.noreply.github.com",
+          "date": "2026-11-21T00:24:53Z"
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "date": "2026-11-21T00:24:53Z"
+        },
+        "tree": {
+          "sha": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+          "url": "https://api.github.com/repos/djshellshoxxx/circula/git/trees/43e65ee91a90ff70b70cc69d0b517b8367a2585f"
+        },
+        "message": "Merge 3ef43ac1e05360d2a1641742dc056afe8871879b into aa01563fcc891da60fefebb8335eca27855678e8",
+        "parents": [
+          {
+            "sha": "aa01563fcc891da60fefebb8335eca27855678e8",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/aa01563fcc891da60fefebb8335eca27855678e8",
+            "html_url": "https://github.com/djshellshoxxx/circula/commit/aa01563fcc891da60fefebb8335eca27855678e8"
+          },
+          {
+            "sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "html_url": "https://github.com/djshellshoxxx/circula/commit/3ef43ac1e05360d2a1641742dc056afe8871879b"
+          }
+        ],
+        "verification": {
+          "verified": true,
+          "reason": "valid",
+          "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJrAOTVCRC1aQ7uu5UhlAAAsRgQAJwrGorfQOTKffu/2EYjFSxs\nsP02YVEmrrts9TNMhVURRNMbMDMlpEp0Tjy1k/7l4jYI1CULdQ7Rv9JCwi8j6vKJ\nzFOA13/4OcnuBGvWuKeOtHnUzYiwrpEzTyN00dvC3+/vRkfHcRqgHMYCHti8gG2D\nK6GnJvcVO1ZnlLVBBl/kO6eBsSyg41uADV+uedElV1iWfMQha1bM56pjC6U41DSM\nMj0UZdSnBihmgcq4gWQgMgL14kgfM2m5Onm4tyYWxjYNDfSzxVKxvhqFNdQ1bsfm\n+iGWVL7uOIOkGTqT5TyXSG4t/XyvOpgF/AQiAaCHEk+USD9iEnjNcN8gsVLwcQVh\ntYzgVs1+qtqgBGyKp53HoJl2Ljl0lcjGaCVuyvs1PAVSNt28ko98le/iJ4XVVFb/\nTPiIlQjYcCp223qgnNxIi7uN9YOCgFfxzodakMyzO2CZj+Jd8u33Vm0smALtcZ5P\nJESqB3S0VnRzZqXwxobyaXzllb9mxctvh5CqjPwJONaBvLlXVNWuxD/VH35Jcusl\nAVSpTftSlMFZrkHR28P7F/bdAHRI8hGTdHtfdfz9EB2ZPrVlZIj9GLvwJBj5X2fr\nF4KNDuVaP35c+pni4fRmuzXyV9UYBp68l7SvkIlSz88bW+aJ2j+i6hi3xCdHCo/M\nIVMfCRQCICl5Aw8wXh0y\n=kgfs\n-----END PGP SIGNATURE-----\n",
+          "payload": "tree 43e65ee91a90ff70b70cc69d0b517b8367a2585f\nparent aa01563fcc891da60fefebb8335eca27855678e8\nparent 3ef43ac1e05360d2a1641742dc056afe8871879b\nauthor sheldon <127660907+djshellshoxxx@users.noreply.github.com> 1795220693 +0000\ncommitter GitHub <noreply@github.com> 1795220693 +0000\n\nMerge 3ef43ac1e05360d2a1641742dc056afe8871879b into aa01563fcc891da60fefebb8335eca27855678e8\n",
+          "verified_at": "2026-11-21T00:24:54Z"
+        }
+      }
+    },
+    {
+      "name": "premerge_core_jobs",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655337/jobs?per_page=100",
+      "data": {
+        "total_count": 9,
+        "jobs": [
+          {
+            "id": 136657974544,
+            "run_id": 44843655337,
+            "workflow_name": "ci",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655337",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XM1EA",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657974544",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655337/job/136657974544",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T00:28:44Z",
+            "completed_at": "2026-11-21T00:30:28Z",
+            "name": "vet, gofmt, golangci-lint, govulncheck",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T00:28:45Z",
+                "completed_at": "2026-11-21T00:28:49Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T00:28:49Z",
+                "completed_at": "2026-11-21T00:28:55Z"
+              },
+              {
+                "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T00:28:55Z",
+                "completed_at": "2026-11-21T00:29:03Z"
+              },
+              {
+                "name": "Check workflow action pins",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T00:29:03Z",
+                "completed_at": "2026-11-21T00:29:03Z"
+              },
+              {
+                "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-21T00:29:03Z",
+                "completed_at": "2026-11-21T00:29:04Z"
+              },
+              {
+                "name": "Verify post-snapshot evidence SHA-256 manifest",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6,
+                "started_at": "2026-11-21T00:29:04Z",
+                "completed_at": "2026-11-21T00:29:04Z"
+              },
+              {
+                "name": "Dependency licences against the approved list (ARC-024)",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7,
+                "started_at": "2026-11-21T00:29:04Z",
+                "completed_at": "2026-11-21T00:29:06Z"
+              },
+              {
+                "name": "Secret scan (ARC-023, SEC-027)",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8,
+                "started_at": "2026-11-21T00:29:06Z",
+                "completed_at": "2026-11-21T00:29:37Z"
+              },
+              {
+                "name": "gofmt",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-21T00:29:37Z",
+                "completed_at": "2026-11-21T00:29:38Z"
+              },
+              {
+                "name": "go vet",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10,
+                "started_at": "2026-11-21T00:29:38Z",
+                "completed_at": "2026-11-21T00:29:48Z"
+              },
+              {
+                "name": "Requirement traceability is current",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-21T00:29:48Z",
+                "completed_at": "2026-11-21T00:29:49Z"
+              },
+              {
+                "name": "Export reader and property-runner tests",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12,
+                "started_at": "2026-11-21T00:29:49Z",
+                "completed_at": "2026-11-21T00:30:00Z"
+              },
+              {
+                "name": "Progressive browser message and keyboard helper tests",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13,
+                "started_at": "2026-11-21T00:30:00Z",
+                "completed_at": "2026-11-21T00:30:03Z"
+              },
+              {
+                "name": "golangci-lint",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 14,
+                "started_at": "2026-11-21T00:30:03Z",
+                "completed_at": "2026-11-21T00:30:17Z"
+              },
+              {
+                "name": "govulncheck",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 15,
+                "started_at": "2026-11-21T00:30:17Z",
+                "completed_at": "2026-11-21T00:30:25Z"
+              },
+              {
+                "name": "Post golangci-lint",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 28,
+                "started_at": "2026-11-21T00:30:25Z",
+                "completed_at": "2026-11-21T00:30:25Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 29,
+                "started_at": "2026-11-21T00:30:25Z",
+                "completed_at": "2026-11-21T00:30:25Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 30,
+                "started_at": "2026-11-21T00:30:25Z",
+                "completed_at": "2026-11-21T00:30:25Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 31,
+                "started_at": "2026-11-21T00:30:25Z",
+                "completed_at": "2026-11-21T00:30:25Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657974544",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 1000072197,
+            "runner_name": "GitHub Actions 1000072197",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          },
+          {
+            "id": 136657974775,
+            "run_id": 44843655337,
+            "workflow_name": "ci",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655337",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XM19w",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657974775",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655337/job/136657974775",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T01:36:54Z",
+            "completed_at": "2026-11-21T01:38:31Z",
+            "name": "reproducible build (two builds, same sha256)",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T01:36:55Z",
+                "completed_at": "2026-11-21T01:36:56Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T01:36:56Z",
+                "completed_at": "2026-11-21T01:36:58Z"
+              },
+              {
+                "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T01:36:58Z",
+                "completed_at": "2026-11-21T01:36:59Z"
+              },
+              {
+                "name": "build twice (different directory and cache) and compare",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T01:36:59Z",
+                "completed_at": "2026-11-21T01:37:59Z"
+              },
+              {
+                "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-21T01:37:59Z",
+                "completed_at": "2026-11-21T01:38:29Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-21T01:38:29Z",
+                "completed_at": "2026-11-21T01:38:29Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10,
+                "started_at": "2026-11-21T01:38:29Z",
+                "completed_at": "2026-11-21T01:38:29Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-21T01:38:29Z",
+                "completed_at": "2026-11-21T01:38:29Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657974775",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 1000072354,
+            "runner_name": "GitHub Actions 1000072354",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          },
+          {
+            "id": 136657974800,
+            "run_id": 44843655337,
+            "workflow_name": "ci",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655337",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XM2EA",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657974800",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655337/job/136657974800",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T01:24:19Z",
+            "completed_at": "2026-11-21T01:32:15Z",
+            "name": "e2e (Playwright, axe, keyboard)",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T01:24:20Z",
+                "completed_at": "2026-11-21T01:24:22Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T01:24:22Z",
+                "completed_at": "2026-11-21T01:24:27Z"
+              },
+              {
+                "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T01:24:27Z",
+                "completed_at": "2026-11-21T01:24:32Z"
+              },
+              {
+                "name": "install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T01:24:32Z",
+                "completed_at": "2026-11-21T01:25:07Z"
+              },
+              {
+                "name": "make e2e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-21T01:25:07Z",
+                "completed_at": "2026-11-21T01:32:11Z"
+              },
+              {
+                "name": "upload failure screenshots",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 6,
+                "started_at": "2026-11-21T01:32:11Z",
+                "completed_at": "2026-11-21T01:32:11Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-21T01:32:11Z",
+                "completed_at": "2026-11-21T01:32:11Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12,
+                "started_at": "2026-11-21T01:32:11Z",
+                "completed_at": "2026-11-21T01:32:11Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13,
+                "started_at": "2026-11-21T01:32:11Z",
+                "completed_at": "2026-11-21T01:32:11Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657974800",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 1000072317,
+            "runner_name": "GitHub Actions 1000072317",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          },
+          {
+            "id": 136657974828,
+            "run_id": 44843655337,
+            "workflow_name": "ci",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655337",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XM2LA",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657974828",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655337/job/136657974828",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T01:25:59Z",
+            "completed_at": "2026-11-21T01:46:22Z",
+            "name": "test (ubuntu-24.04)",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T01:26:00Z",
+                "completed_at": "2026-11-21T01:26:02Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T01:26:02Z",
+                "completed_at": "2026-11-21T01:26:07Z"
+              },
+              {
+                "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T01:26:07Z",
+                "completed_at": "2026-11-21T01:26:10Z"
+              },
+              {
+                "name": "test with race detector",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T01:26:10Z",
+                "completed_at": "2026-11-21T01:46:18Z"
+              },
+              {
+                "name": "Match requirement citations to recorded test results",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-21T01:46:18Z",
+                "completed_at": "2026-11-21T01:46:19Z"
+              },
+              {
+                "name": "Upload test evidence and property failure fixtures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6,
+                "started_at": "2026-11-21T01:46:19Z",
+                "completed_at": "2026-11-21T01:46:20Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-21T01:46:20Z",
+                "completed_at": "2026-11-21T01:46:20Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12,
+                "started_at": "2026-11-21T01:46:20Z",
+                "completed_at": "2026-11-21T01:46:20Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13,
+                "started_at": "2026-11-21T01:46:20Z",
+                "completed_at": "2026-11-21T01:46:20Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657974828",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 1000072323,
+            "runner_name": "GitHub Actions 1000072323",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          },
+          {
+            "id": 136657974835,
+            "run_id": 44843655337,
+            "workflow_name": "ci",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655337",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XM2Mw",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657974835",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655337/job/136657974835",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T01:46:32Z",
+            "completed_at": "2026-11-21T01:49:29Z",
+            "name": "fuzz smoke (RB-017)",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T01:46:33Z",
+                "completed_at": "2026-11-21T01:46:34Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T01:46:34Z",
+                "completed_at": "2026-11-21T01:46:36Z"
+              },
+              {
+                "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T01:46:36Z",
+                "completed_at": "2026-11-21T01:46:41Z"
+              },
+              {
+                "name": "seed corpora of every fuzz target (also part of go test ./...)",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T01:46:41Z",
+                "completed_at": "2026-11-21T01:47:01Z"
+              },
+              {
+                "name": "fuzz amount parser for 1000000 executions",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-21T01:47:01Z",
+                "completed_at": "2026-11-21T01:47:30Z"
+              },
+              {
+                "name": "fuzz strict JSON decoder for 100000 executions",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6,
+                "started_at": "2026-11-21T01:47:30Z",
+                "completed_at": "2026-11-21T01:48:39Z"
+              },
+              {
+                "name": "fuzz signed pagination cursors for 100000 executions",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7,
+                "started_at": "2026-11-21T01:48:39Z",
+                "completed_at": "2026-11-21T01:48:54Z"
+              },
+              {
+                "name": "fuzz session keyset positions for 100000 executions",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8,
+                "started_at": "2026-11-21T01:48:54Z",
+                "completed_at": "2026-11-21T01:49:15Z"
+              },
+              {
+                "name": "fuzz noncredential session selectors for 100000 executions",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-21T01:49:15Z",
+                "completed_at": "2026-11-21T01:49:26Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 17,
+                "started_at": "2026-11-21T01:49:26Z",
+                "completed_at": "2026-11-21T01:49:26Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 18,
+                "started_at": "2026-11-21T01:49:26Z",
+                "completed_at": "2026-11-21T01:49:27Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 19,
+                "started_at": "2026-11-21T01:49:27Z",
+                "completed_at": "2026-11-21T01:49:27Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657974835",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 1000072378,
+            "runner_name": "GitHub Actions 1000072378",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          },
+          {
+            "id": 136657974836,
+            "run_id": 44843655337,
+            "workflow_name": "ci",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655337",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XM2NA",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657974836",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655337/job/136657974836",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T01:27:33Z",
+            "completed_at": "2026-11-21T01:29:27Z",
+            "name": "build release targets",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T01:27:34Z",
+                "completed_at": "2026-11-21T01:27:36Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T01:27:36Z",
+                "completed_at": "2026-11-21T01:27:41Z"
+              },
+              {
+                "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T01:27:41Z",
+                "completed_at": "2026-11-21T01:27:43Z"
+              },
+              {
+                "name": "cross-build all OPS-003 targets from this commit",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T01:27:43Z",
+                "completed_at": "2026-11-21T01:29:23Z"
+              },
+              {
+                "name": "upload packaged artifacts for inspection",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-21T01:29:23Z",
+                "completed_at": "2026-11-21T01:29:25Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-21T01:29:25Z",
+                "completed_at": "2026-11-21T01:29:25Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10,
+                "started_at": "2026-11-21T01:29:25Z",
+                "completed_at": "2026-11-21T01:29:25Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-21T01:29:25Z",
+                "completed_at": "2026-11-21T01:29:25Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657974836",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 1000072326,
+            "runner_name": "GitHub Actions 1000072326",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          },
+          {
+            "id": 136657974909,
+            "run_id": 44843655337,
+            "workflow_name": "ci",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655337",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XM2fQ",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657974909",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655337/job/136657974909",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T01:53:19Z",
+            "completed_at": "2026-11-21T02:27:08Z",
+            "name": "test (macos-15-intel)",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T01:53:20Z",
+                "completed_at": "2026-11-21T01:53:22Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T01:53:22Z",
+                "completed_at": "2026-11-21T01:53:26Z"
+              },
+              {
+                "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T01:53:26Z",
+                "completed_at": "2026-11-21T01:54:24Z"
+              },
+              {
+                "name": "test with race detector (macOS Intel, bounded parallelism)",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T01:54:24Z",
+                "completed_at": "2026-11-21T02:26:58Z"
+              },
+              {
+                "name": "test",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 5,
+                "started_at": "2026-11-21T02:26:58Z",
+                "completed_at": "2026-11-21T02:26:58Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-21T02:26:59Z",
+                "completed_at": "2026-11-21T02:26:59Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10,
+                "started_at": "2026-11-21T02:26:59Z",
+                "completed_at": "2026-11-21T02:26:59Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-21T02:26:59Z",
+                "completed_at": "2026-11-21T02:27:00Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657974909",
+            "labels": [
+              "macos-15-intel"
+            ],
+            "runner_id": 1000072396,
+            "runner_name": "GitHub Actions 1000072396",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          },
+          {
+            "id": 136657974914,
+            "run_id": 44843655337,
+            "workflow_name": "ci",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655337",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XM2gg",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657974914",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655337/job/136657974914",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T01:52:42Z",
+            "completed_at": "2026-11-21T01:53:09Z",
+            "name": "API contract and load smoke",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T01:52:43Z",
+                "completed_at": "2026-11-21T01:52:45Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T01:52:45Z",
+                "completed_at": "2026-11-21T01:52:52Z"
+              },
+              {
+                "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T01:52:52Z",
+                "completed_at": "2026-11-21T01:52:55Z"
+              },
+              {
+                "name": "contract (JSON API against docs/api/openapi.yaml)",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T01:52:55Z",
+                "completed_at": "2026-11-21T01:53:02Z"
+              },
+              {
+                "name": "load smoke (small, QA-008 and QA-040 evidence)",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-21T01:53:02Z",
+                "completed_at": "2026-11-21T01:53:07Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-21T01:53:07Z",
+                "completed_at": "2026-11-21T01:53:08Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10,
+                "started_at": "2026-11-21T01:53:08Z",
+                "completed_at": "2026-11-21T01:53:08Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-21T01:53:08Z",
+                "completed_at": "2026-11-21T01:53:08Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657974914",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 1000072393,
+            "runner_name": "GitHub Actions 1000072393",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          },
+          {
+            "id": 136657974946,
+            "run_id": 44843655337,
+            "workflow_name": "ci",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655337",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XM2og",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657974946",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655337/job/136657974946",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T01:37:14Z",
+            "completed_at": "2026-11-21T01:44:45Z",
+            "name": "test (windows-2022)",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T01:37:15Z",
+                "completed_at": "2026-11-21T01:37:16Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T01:37:16Z",
+                "completed_at": "2026-11-21T01:37:24Z"
+              },
+              {
+                "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T01:37:24Z",
+                "completed_at": "2026-11-21T01:37:47Z"
+              },
+              {
+                "name": "test with race detector (macOS Intel, bounded parallelism)",
+                "status": "completed",
+                "conclusion": "skipped",
+                "number": 4,
+                "started_at": "2026-11-21T01:37:47Z",
+                "completed_at": "2026-11-21T01:37:47Z"
+              },
+              {
+                "name": "test",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-21T01:37:47Z",
+                "completed_at": "2026-11-21T01:44:41Z"
+              },
+              {
+                "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-21T01:44:41Z",
+                "completed_at": "2026-11-21T01:44:41Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10,
+                "started_at": "2026-11-21T01:44:41Z",
+                "completed_at": "2026-11-21T01:44:43Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-21T01:44:43Z",
+                "completed_at": "2026-11-21T01:44:43Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657974946",
+            "labels": [
+              "windows-2022"
+            ],
+            "runner_id": 1000072355,
+            "runner_name": "GitHub Actions 1000072355",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          }
+        ]
+      }
+    },
+    {
+      "name": "premerge_reader_jobs",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655247/jobs?per_page=100",
+      "data": {
+        "total_count": 3,
+        "jobs": [
+          {
+            "id": 136657973980,
+            "run_id": 44843655247,
+            "workflow_name": "Native export reader",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655247",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XMy3A",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657973980",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655247/job/136657973980",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T01:31:15Z",
+            "completed_at": "2026-11-21T01:31:43Z",
+            "name": "Python export reader (windows-2022)",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T01:31:15Z",
+                "completed_at": "2026-11-21T01:31:16Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T01:31:16Z",
+                "completed_at": "2026-11-21T01:31:24Z"
+              },
+              {
+                "name": "Record exact source and runtime",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T01:31:24Z",
+                "completed_at": "2026-11-21T01:31:24Z"
+              },
+              {
+                "name": "Verify export reader boundaries",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T01:31:24Z",
+                "completed_at": "2026-11-21T01:31:40Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8,
+                "started_at": "2026-11-21T01:31:40Z",
+                "completed_at": "2026-11-21T01:31:42Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-21T01:31:42Z",
+                "completed_at": "2026-11-21T01:31:42Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657973980",
+            "labels": [
+              "windows-2022"
+            ],
+            "runner_id": 1000072336,
+            "runner_name": "GitHub Actions 1000072336",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          },
+          {
+            "id": 136657974192,
+            "run_id": 44843655247,
+            "workflow_name": "Native export reader",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655247",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XMzsA",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657974192",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655247/job/136657974192",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T01:42:12Z",
+            "completed_at": "2026-11-21T01:42:57Z",
+            "name": "Python export reader (macos-15-intel)",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T01:42:13Z",
+                "completed_at": "2026-11-21T01:42:14Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T01:42:14Z",
+                "completed_at": "2026-11-21T01:42:20Z"
+              },
+              {
+                "name": "Record exact source and runtime",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T01:42:20Z",
+                "completed_at": "2026-11-21T01:42:20Z"
+              },
+              {
+                "name": "Verify export reader boundaries",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T01:42:20Z",
+                "completed_at": "2026-11-21T01:42:55Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8,
+                "started_at": "2026-11-21T01:42:55Z",
+                "completed_at": "2026-11-21T01:42:56Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-21T01:42:56Z",
+                "completed_at": "2026-11-21T01:42:56Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657974192",
+            "labels": [
+              "macos-15-intel"
+            ],
+            "runner_id": 1000072365,
+            "runner_name": "GitHub Actions 1000072365",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          },
+          {
+            "id": 136657974338,
+            "run_id": 44843655247,
+            "workflow_name": "Native export reader",
+            "head_branch": "integration/unique-core-completion-20261120",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44843655247",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf0XM0Qg",
+            "head_sha": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136657974338",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44843655247/job/136657974338",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T00:24:56Z",
+            "started_at": "2026-11-21T01:45:10Z",
+            "completed_at": "2026-11-21T01:45:26Z",
+            "name": "Python export reader (ubuntu-24.04)",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T01:45:11Z",
+                "completed_at": "2026-11-21T01:45:11Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T01:45:11Z",
+                "completed_at": "2026-11-21T01:45:13Z"
+              },
+              {
+                "name": "Record exact source and runtime",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T01:45:13Z",
+                "completed_at": "2026-11-21T01:45:13Z"
+              },
+              {
+                "name": "Verify export reader boundaries",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T01:45:13Z",
+                "completed_at": "2026-11-21T01:45:24Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8,
+                "started_at": "2026-11-21T01:45:24Z",
+                "completed_at": "2026-11-21T01:45:24Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-21T01:45:24Z",
+                "completed_at": "2026-11-21T01:45:24Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136657974338",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 1000072374,
+            "runner_name": "GitHub Actions 1000072374",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          }
+        ]
+      }
+    },
+    {
+      "name": "postmerge_core_jobs",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110228/jobs?per_page=100",
+      "data": {
+        "total_count": 9,
+        "jobs": [
+          {
+            "id": 136698603681,
+            "run_id": 44856110228,
+            "workflow_name": "ci",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110228",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098ooQ",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698603681",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603681",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:48Z",
+            "started_at": "2026-11-21T02:28:48Z",
+            "completed_at": null,
+            "name": "build release targets",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698603681",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          },
+          {
+            "id": 136698603787,
+            "run_id": 44856110228,
+            "workflow_name": "ci",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110228",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098pCw",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698603787",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603787",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:48Z",
+            "started_at": "2026-11-21T02:28:48Z",
+            "completed_at": null,
+            "name": "test (windows-2022)",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698603787",
+            "labels": [
+              "windows-2022"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          },
+          {
+            "id": 136698603858,
+            "run_id": 44856110228,
+            "workflow_name": "ci",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110228",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098pUg",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698603858",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603858",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:48Z",
+            "started_at": "2026-11-21T02:28:48Z",
+            "completed_at": null,
+            "name": "reproducible build (two builds, same sha256)",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698603858",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          },
+          {
+            "id": 136698603892,
+            "run_id": 44856110228,
+            "workflow_name": "ci",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110228",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098pdA",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698603892",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603892",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:48Z",
+            "started_at": "2026-11-21T02:28:48Z",
+            "completed_at": null,
+            "name": "test (ubuntu-24.04)",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698603892",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          },
+          {
+            "id": 136698603901,
+            "run_id": 44856110228,
+            "workflow_name": "ci",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110228",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098pfQ",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698603901",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603901",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:48Z",
+            "started_at": "2026-11-21T02:28:48Z",
+            "completed_at": null,
+            "name": "fuzz smoke (RB-017)",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698603901",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          },
+          {
+            "id": 136698603910,
+            "run_id": 44856110228,
+            "workflow_name": "ci",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110228",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098phg",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698603910",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603910",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:48Z",
+            "started_at": "2026-11-21T02:28:48Z",
+            "completed_at": null,
+            "name": "vet, gofmt, golangci-lint, govulncheck",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698603910",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          },
+          {
+            "id": 136698603986,
+            "run_id": 44856110228,
+            "workflow_name": "ci",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110228",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098p0g",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698603986",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603986",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:48Z",
+            "started_at": "2026-11-21T02:28:48Z",
+            "completed_at": null,
+            "name": "test (macos-15-intel)",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698603986",
+            "labels": [
+              "macos-15-intel"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          },
+          {
+            "id": 136698604023,
+            "run_id": 44856110228,
+            "workflow_name": "ci",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110228",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098p9w",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698604023",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698604023",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:48Z",
+            "started_at": "2026-11-21T02:28:48Z",
+            "completed_at": null,
+            "name": "e2e (Playwright, axe, keyboard)",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698604023",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          },
+          {
+            "id": 136698604084,
+            "run_id": 44856110228,
+            "workflow_name": "ci",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110228",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098qNA",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698604084",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698604084",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:48Z",
+            "started_at": "2026-11-21T02:28:48Z",
+            "completed_at": null,
+            "name": "API contract and load smoke",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698604084",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "postmerge_reader_jobs",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110230/jobs?per_page=100",
+      "data": {
+        "total_count": 3,
+        "jobs": [
+          {
+            "id": 136698603597,
+            "run_id": 44856110230,
+            "workflow_name": "Native export reader",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110230",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098oTQ",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698603597",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110230/job/136698603597",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:47Z",
+            "started_at": "2026-11-21T02:28:47Z",
+            "completed_at": null,
+            "name": "Python export reader (macos-15-intel)",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698603597",
+            "labels": [
+              "macos-15-intel"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          },
+          {
+            "id": 136698603854,
+            "run_id": 44856110230,
+            "workflow_name": "Native export reader",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110230",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098pTg",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698603854",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110230/job/136698603854",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:48Z",
+            "started_at": "2026-11-21T02:28:48Z",
+            "completed_at": null,
+            "name": "Python export reader (ubuntu-24.04)",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698603854",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          },
+          {
+            "id": 136698603942,
+            "run_id": 44856110230,
+            "workflow_name": "Native export reader",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110230",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098ppg",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698603942",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110230/job/136698603942",
+            "status": "queued",
+            "conclusion": null,
+            "created_at": "2026-11-21T02:28:48Z",
+            "started_at": "2026-11-21T02:28:48Z",
+            "completed_at": null,
+            "name": "Python export reader (windows-2022)",
+            "steps": [],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698603942",
+            "labels": [
+              "windows-2022"
+            ],
+            "runner_id": 0,
+            "runner_name": "",
+            "runner_group_id": 0,
+            "runner_group_name": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "postmerge_scorecard_jobs",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110197/jobs?per_page=100",
+      "data": {
+        "total_count": 1,
+        "jobs": [
+          {
+            "id": 136698602978,
+            "run_id": 44856110197,
+            "workflow_name": "scorecard",
+            "head_branch": "main",
+            "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44856110197",
+            "run_attempt": 1,
+            "node_id": "CR_kwDOVRni9s8AAAAf098l4g",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+            "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/136698602978",
+            "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110197/job/136698602978",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-11-21T02:28:47Z",
+            "started_at": "2026-11-21T02:35:54Z",
+            "completed_at": "2026-11-21T02:36:28Z",
+            "name": "scorecard analysis",
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1,
+                "started_at": "2026-11-21T02:35:55Z",
+                "completed_at": "2026-11-21T02:35:57Z"
+              },
+              {
+                "name": "Pull ghcr.io/ossf/scorecard-action:v2.5.0",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2,
+                "started_at": "2026-11-21T02:35:57Z",
+                "completed_at": "2026-11-21T02:36:01Z"
+              },
+              {
+                "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3,
+                "started_at": "2026-11-21T02:36:01Z",
+                "completed_at": "2026-11-21T02:36:07Z"
+              },
+              {
+                "name": "run Scorecard",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4,
+                "started_at": "2026-11-21T02:36:07Z",
+                "completed_at": "2026-11-21T02:36:19Z"
+              },
+              {
+                "name": "upload SARIF to code scanning",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5,
+                "started_at": "2026-11-21T02:36:19Z",
+                "completed_at": "2026-11-21T02:36:26Z"
+              },
+              {
+                "name": "Post upload SARIF to code scanning",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9,
+                "started_at": "2026-11-21T02:36:26Z",
+                "completed_at": "2026-11-21T02:36:26Z"
+              },
+              {
+                "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10,
+                "started_at": "2026-11-21T02:36:26Z",
+                "completed_at": "2026-11-21T02:36:27Z"
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11,
+                "started_at": "2026-11-21T02:36:27Z",
+                "completed_at": "2026-11-21T02:36:27Z"
+              }
+            ],
+            "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/136698602978",
+            "labels": [
+              "ubuntu-24.04"
+            ],
+            "runner_id": 1000072584,
+            "runner_name": "GitHub Actions 1000072584",
+            "runner_group_id": 0,
+            "runner_group_name": "GitHub Actions"
+          }
+        ]
+      }
+    }
+  ]
+}

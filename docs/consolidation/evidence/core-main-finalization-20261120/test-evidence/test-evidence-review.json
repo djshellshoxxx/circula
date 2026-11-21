@@ -1,0 +1,311 @@
+{
+  "review": "Independent source-artifact and traceability review; no product executions or repository changes",
+  "actual_main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+  "actual_tree": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+  "artifact": {
+    "id": 14685119490,
+    "run_id": 44843655337,
+    "job_id": 136657974828,
+    "bytes": 137945,
+    "sha256": "d4368bca6e6d52bd22ac3e8a1acef798ac501322652aaa500a80315197ed8476",
+    "members": [
+      {
+        "name": "traceability-results.json",
+        "bytes": 709413,
+        "sha256": "842a805d8ea51c6c2df9d4f10d8eab22cae6ca8df62c50d0c927aa895d46dc14"
+      },
+      {
+        "name": "TRACEABILITY-results.md",
+        "bytes": 319377,
+        "sha256": "376cf166ccf1236266eae9bd013d0ce0e4c9d393d1e4152d6365df3ec357fbea"
+      }
+    ]
+  },
+  "execution_provenance": {
+    "version": 1,
+    "head": "6eb49aa2b2c7859fd2a8ceda207ddbb01eaa9d65",
+    "dirty": false,
+    "source_digest": "9de685071744f0b9e260d53fc7d934cb4289c3b10f84a020db8e319227b77100",
+    "command": [
+      "go",
+      "test",
+      "-json",
+      "-count=1",
+      "-race",
+      "-timeout",
+      "30m",
+      "./..."
+    ],
+    "exit_code": 0
+  },
+  "independent_source_digest": {
+    "files": 2023,
+    "excluded": "docs/TRACEABILITY.md",
+    "sha256": "9de685071744f0b9e260d53fc7d934cb4289c3b10f84a020db8e319227b77100",
+    "matches": true,
+    "dirty_checkout": false
+  },
+  "counts": {
+    "all_terminal_events": {
+      "pass": 3274,
+      "fail": 0,
+      "skip": 8
+    },
+    "named_tests": {
+      "pass": 3258,
+      "fail": 0,
+      "skip": 6
+    },
+    "top_level_named_tests": {
+      "pass": 1293,
+      "fail": 0,
+      "skip": 6
+    },
+    "top_level_Test_functions": {
+      "pass": 1270,
+      "fail": 0,
+      "skip": 6
+    },
+    "top_level_Fuzz_entries": {
+      "pass": 23,
+      "fail": 0,
+      "skip": 0
+    },
+    "subtests": {
+      "pass": 1965,
+      "fail": 0,
+      "skip": 0
+    },
+    "packages": {
+      "pass": 16,
+      "fail": 0,
+      "skip": 2
+    }
+  },
+  "skips": [
+    {
+      "Time": "2026-11-21T01:27:31.458624922Z",
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": "TestBackupStagingRefusesForeignOwnedParent",
+      "classification": {
+        "kind": "privilege/environment-dependent",
+        "source": "cmd/circula/backup_path_hardening_test.go",
+        "reason": "requires root on Unix to create a foreign-owned directory; source also permits skip if chown is unavailable; terminal-only artifact does not record the executed reason"
+      }
+    },
+    {
+      "Time": "2026-11-21T01:27:55.65036867Z",
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": "TestBackupWorkLeaseChild",
+      "classification": {
+        "kind": "subprocess helper",
+        "source": "cmd/circula/backup_work_lease_test.go",
+        "reason": "helper skips without CIRCULA_BACKUP_LEASE_TEST_ROOT; parent TestBackupWorkLeaseProtectsOtherProcessAndReclaimsCrash passed"
+      }
+    },
+    {
+      "Time": "2026-11-21T01:32:03.233931842Z",
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": "TestRestoreSwapCrashChild",
+      "classification": {
+        "kind": "subprocess helper",
+        "source": "cmd/circula/restore_swap_crash_test.go",
+        "reason": "helper skips without CIRCULA_RESTORE_CRASH_DIR; parent TestRestoreSwapCrashRefusesStartupAndPreservesFiles passed"
+      }
+    },
+    {
+      "Time": "2026-11-21T01:39:12.021686415Z",
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Test": "TestLoadConcurrentTrades",
+      "classification": {
+        "kind": "opt-in load test",
+        "source": "internal/service/loadtest_test.go",
+        "reason": "requires CIRCULA_LOAD=1; separate API/load job supplies distinct load evidence"
+      }
+    },
+    {
+      "Time": "2026-11-21T01:35:43.331443654Z",
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Test": "TestLoginTimingStatistical",
+      "classification": {
+        "kind": "opt-in timing qualification",
+        "source": "internal/service/enum_timing_test.go",
+        "reason": "requires CIRCULA_TIMING_TEST=1; machine-sensitive threshold remains subject to DEC-023/QA-040"
+      }
+    },
+    {
+      "Time": "2026-11-21T01:42:27.726866892Z",
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Test": "TestQA010CrashChild",
+      "classification": {
+        "kind": "subprocess helper",
+        "source": "internal/service/qa010_crash_test.go",
+        "reason": "helper skips without crash environment; parent TestQA010CrashDuringPosting passed"
+      }
+    },
+    {
+      "Time": "2026-11-21T01:32:49.505207092Z",
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/internal/storetest",
+      "Test": "",
+      "classification": {
+        "kind": "helper package without tests",
+        "reason": "package has no named tests; two helper packages"
+      }
+    },
+    {
+      "Time": "2026-11-21T01:32:49.505247031Z",
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/internal/testutil",
+      "Test": "",
+      "classification": {
+        "kind": "helper package without tests",
+        "reason": "package has no named tests; two helper packages"
+      }
+    }
+  ],
+  "passing_identifier_regressions": [
+    {
+      "Time": "2026-11-21T01:38:26.82540356Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Test": "TestDefaultIDGeneratorPersistsCanonicalUUIDv7"
+    },
+    {
+      "Time": "2026-11-21T01:38:28.146898385Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Test": "TestInjectedIDGeneratorReachesPersistedPerson"
+    }
+  ],
+  "built_without_test_citation": [
+    "VIS-011",
+    "VIS-012",
+    "ARC-001",
+    "ARC-013",
+    "ARC-019",
+    "ARC-024",
+    "DAT-003",
+    "UX-007",
+    "UX-042",
+    "UX-043",
+    "UX-058",
+    "GOV-017",
+    "OPS-001"
+  ],
+  "legacy_citations": {
+    "main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+    "total": 906,
+    "resolved": 895,
+    "unresolved": [
+      {
+        "id": "DEC-001",
+        "kind": "code",
+        "path": "internal/store/migrate.go",
+        "symbol": "migrate",
+        "line": 30,
+        "reason": "symbol missing"
+      },
+      {
+        "id": "FR-014",
+        "kind": "code",
+        "path": "internal/service/departure.go",
+        "symbol": "DepartMember, PreviewDeparture",
+        "line": 206,
+        "reason": "symbol missing"
+      },
+      {
+        "id": "FR-014",
+        "kind": "code",
+        "path": "internal/web/h_gov.go",
+        "symbol": "leaveForm, leavePost",
+        "line": 207,
+        "reason": "symbol missing"
+      },
+      {
+        "id": "DAT-042",
+        "kind": "code",
+        "path": "internal/store/migrate.go",
+        "symbol": "migrate",
+        "line": 450,
+        "reason": "symbol missing"
+      },
+      {
+        "id": "DAT-044",
+        "kind": "code",
+        "path": "cmd/circula/serve.go",
+        "symbol": "checkPragmas",
+        "line": 453,
+        "reason": "symbol missing"
+      },
+      {
+        "id": "API-010",
+        "kind": "code",
+        "path": "internal/api/h_core.go",
+        "symbol": "notImpl",
+        "line": 474,
+        "reason": "symbol missing"
+      },
+      {
+        "id": "API-064",
+        "kind": "code",
+        "path": "internal/api/h_core.go",
+        "symbol": "notImpl",
+        "line": 560,
+        "reason": "symbol missing"
+      },
+      {
+        "id": "GOV-003",
+        "kind": "code",
+        "path": "internal/service/networks.go",
+        "symbol": "UpdatePolicy, noticeDays",
+        "line": 726,
+        "reason": "symbol missing"
+      },
+      {
+        "id": "GOV-009",
+        "kind": "code",
+        "path": "internal/service/join.go",
+        "symbol": "RedeemInvitationTerms, JoinNetworkTerms",
+        "line": 740,
+        "reason": "symbol missing"
+      },
+      {
+        "id": "OPS-011",
+        "kind": "code",
+        "path": "cmd/circula/serve.go",
+        "symbol": "checkPragmas",
+        "line": 796,
+        "reason": "symbol missing"
+      },
+      {
+        "id": "OPS-022",
+        "kind": "code",
+        "path": "cmd/circula/schema.go",
+        "symbol": "checkSchemaNotNewer",
+        "line": 824,
+        "reason": "symbol missing"
+      }
+    ]
+  },
+  "historical_comparison": {
+    "previous_main": "aa01563fcc891da60fefebb8335eca27855678e8",
+    "earlier_audit_source": "244e1356201e6477eab4694d82947f2058f3b0d8",
+    "all_11_unresolved_rows_identical_at_both_sources": true,
+    "previous_built_uncited_count": 19,
+    "current_built_uncited_count": 13
+  },
+  "limitations": [
+    "The artifact is the premerge synthetic-checkout run, not a completed actual-main push run.",
+    "Exact checksum and current source digest match do not constitute independent rerunning of product tests.",
+    "The terminal-only JSON does not record skip text; classifications come from pinned source conditions.",
+    "No all-requirement acceptance, deployment, native release smoke, manual accessibility, policy approval or timing qualification is claimed.",
+    "Frozen legacy citations are historical inputs; their unresolved rows should not be rewritten to manufacture coverage."
+  ]
+}

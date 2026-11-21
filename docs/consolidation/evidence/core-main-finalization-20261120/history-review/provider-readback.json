@@ -1,0 +1,52 @@
+{
+  "observed_at_utc": "2026-11-21T02:35:03Z",
+  "main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+  "evidence": "c1a34476de017ab70acc99181ebbe16c337fc0e6",
+  "pull_requests": [
+    {
+      "number": 109,
+      "url": "https://github.com/djshellshoxxx/circula/pull/109",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+      "branch": "feature/core-catalogue-continuation-20261119",
+      "base": "integration/comprehensive-audit-20261119",
+      "provider_updated_at": "2026-11-19T12:52:34Z"
+    },
+    {
+      "number": 112,
+      "url": "https://github.com/djshellshoxxx/circula/pull/112",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head": "7462138fb4f7110ea4f705c6f09742a2b5a253e4",
+      "branch": "integration/core-ui-completion-20261119",
+      "base": "feature/core-catalogue-continuation-20261119",
+      "provider_updated_at": "2026-11-19T15:16:26Z"
+    },
+    {
+      "number": 111,
+      "url": "https://github.com/djshellshoxxx/circula/pull/111",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+      "branch": "codex/api036-qualification-20261119",
+      "base": "integration/comprehensive-audit-20261119",
+      "provider_updated_at": "2026-11-19T12:54:53Z"
+    },
+    {
+      "number": 104,
+      "url": "https://github.com/djshellshoxxx/circula/pull/104",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+      "branch": "integration/circula-master-consolidation-20261119",
+      "base": "main",
+      "provider_updated_at": "2026-11-20T23:59:19Z"
+    }
+  ],
+  "scope": "GitHub API live PR and branch reads. Source branches independently returned the same heads; actual main and evidence branch were read directly."
+}

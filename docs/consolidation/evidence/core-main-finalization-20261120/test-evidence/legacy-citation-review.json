@@ -1,0 +1,95 @@
+{
+  "main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+  "total": 906,
+  "resolved": 895,
+  "unresolved": [
+    {
+      "id": "DEC-001",
+      "kind": "code",
+      "path": "internal/store/migrate.go",
+      "symbol": "migrate",
+      "line": 30,
+      "reason": "symbol missing"
+    },
+    {
+      "id": "FR-014",
+      "kind": "code",
+      "path": "internal/service/departure.go",
+      "symbol": "DepartMember, PreviewDeparture",
+      "line": 206,
+      "reason": "symbol missing"
+    },
+    {
+      "id": "FR-014",
+      "kind": "code",
+      "path": "internal/web/h_gov.go",
+      "symbol": "leaveForm, leavePost",
+      "line": 207,
+      "reason": "symbol missing"
+    },
+    {
+      "id": "DAT-042",
+      "kind": "code",
+      "path": "internal/store/migrate.go",
+      "symbol": "migrate",
+      "line": 450,
+      "reason": "symbol missing"
+    },
+    {
+      "id": "DAT-044",
+      "kind": "code",
+      "path": "cmd/circula/serve.go",
+      "symbol": "checkPragmas",
+      "line": 453,
+      "reason": "symbol missing"
+    },
+    {
+      "id": "API-010",
+      "kind": "code",
+      "path": "internal/api/h_core.go",
+      "symbol": "notImpl",
+      "line": 474,
+      "reason": "symbol missing"
+    },
+    {
+      "id": "API-064",
+      "kind": "code",
+      "path": "internal/api/h_core.go",
+      "symbol": "notImpl",
+      "line": 560,
+      "reason": "symbol missing"
+    },
+    {
+      "id": "GOV-003",
+      "kind": "code",
+      "path": "internal/service/networks.go",
+      "symbol": "UpdatePolicy, noticeDays",
+      "line": 726,
+      "reason": "symbol missing"
+    },
+    {
+      "id": "GOV-009",
+      "kind": "code",
+      "path": "internal/service/join.go",
+      "symbol": "RedeemInvitationTerms, JoinNetworkTerms",
+      "line": 740,
+      "reason": "symbol missing"
+    },
+    {
+      "id": "OPS-011",
+      "kind": "code",
+      "path": "cmd/circula/serve.go",
+      "symbol": "checkPragmas",
+      "line": 796,
+      "reason": "symbol missing"
+    },
+    {
+      "id": "OPS-022",
+      "kind": "code",
+      "path": "cmd/circula/schema.go",
+      "symbol": "checkSchemaNotNewer",
+      "line": 824,
+      "reason": "symbol missing"
+    }
+  ]
+}

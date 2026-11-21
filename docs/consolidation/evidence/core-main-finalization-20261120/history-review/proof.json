@@ -1,0 +1,2800 @@
+{
+  "schema_version": 1,
+  "main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+  "tree": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+  "parents": [
+    "aa01563fcc891da60fefebb8335eca27855678e8",
+    "3ef43ac1e05360d2a1641742dc056afe8871879b"
+  ],
+  "evidence_commit": "c1a34476de017ab70acc99181ebbe16c337fc0e6",
+  "scope": "Read-only local Git object, AST, and archive identity inspection; no product test or archived program executed. Intermediate proof/report files are the only writes.",
+  "post_merge_qualification": "Not established by this reviewer. Historical PR closure remains conditional on current actual-main provider checks.",
+  "ancestry": [
+    {
+      "pr": 109,
+      "head": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+      "ancestor_exit": 0,
+      "source_only_commits": 0
+    },
+    {
+      "pr": 112,
+      "head": "7462138fb4f7110ea4f705c6f09742a2b5a253e4",
+      "ancestor_exit": 0,
+      "source_only_commits": 0
+    }
+  ],
+  "pr111": {
+    "head": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+    "original_changed_paths": 7,
+    "identical_documents": [
+      {
+        "path": "docs/audits/API036_COMPLETION.md",
+        "blob": "4143d83ff7cf23d7480fa3057406b435e3635af3"
+      },
+      {
+        "path": "docs/audits/API036_QUALIFICATION.json",
+        "blob": "3fff5f030f6643346a84e5e0da6b6480eb63217f"
+      },
+      {
+        "path": "docs/audits/CONSOLIDATION_FINAL_REPORT.md",
+        "blob": "ab82e6914207da31281aece6afd74202925d5a35"
+      },
+      {
+        "path": "docs/audits/FEATURE_COMPLETION_STATUS.md",
+        "blob": "e6df43048ae75843f65825716f9b89a5e21aed81"
+      },
+      {
+        "path": "docs/audits/REMAINING_BLOCKERS.md",
+        "blob": "70a7a42a6b966b1257f0a19f31f039c3fdf6564b"
+      },
+      {
+        "path": "docs/audits/SECURITY_REVIEW.md",
+        "blob": "70410473218bb43d992787696f5f4ec00b5d430c"
+      }
+    ],
+    "fixture_path": "internal/service/sqlite_ioerr_linux_test.go",
+    "fixture_source_blob": "d1d19fb96357b5eabab43d926e89dffbbcca23e9",
+    "fixture_main_blob": "fd0aa8d98fca3539c5a010bc22afc7ff5549d09d",
+    "diff_operations": [
+      {
+        "operation": "insert",
+        "source_lines": [
+          8,
+          7
+        ],
+        "main_lines": [
+          8,
+          8
+        ]
+      },
+      {
+        "operation": "replace",
+        "source_lines": [
+          218,
+          228
+        ],
+        "main_lines": [
+          219,
+          228
+        ]
+      }
+    ],
+    "unchanged_suffix_bytes": 1877,
+    "source_is_ancestor": false,
+    "verdict": "Six documents identical; explicit test-fixture supersession required.",
+    "retained_fixture_semantics": "Separate one-connection pool with explicit read-only transaction and sqlite_master snapshot held through failed writer closure. All later assertions and production code retained."
+  },
+  "pr104": {
+    "head": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+    "reported_original_base": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+    "original_changed_paths": 118,
+    "path_counts": {
+      "identical": 14,
+      "absent": 102,
+      "different": 2
+    },
+    "identical_paths": [
+      {
+        "path": ".github/workflows/export-reader.yml",
+        "blob": "7c251a76694d4f6670ed2442f5a54cef0007d198"
+      },
+      {
+        "path": "cmd/circula/verify_export.go",
+        "blob": "bb00a63f67b0c2beee23db030643e7d0f55f26ae"
+      },
+      {
+        "path": "cmd/circula/verify_export_ambiguity_test.go",
+        "blob": "8d3e9d71e108035c693f04588db99291fbc61dc4"
+      },
+      {
+        "path": "cmd/circula/verify_export_boundary_test.go",
+        "blob": "9ce07c566ab4130f22b05f53100eb749ff763955"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/CORE_PROVIDER_CHECKPOINT.json",
+        "blob": "e1500e082f5ff23fbebfd92190ad2e69123a102a"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/CORE_QUALIFICATION.json",
+        "blob": "03344d7725d359b870459b6045e4d44d7a857367"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/EXECUTION_CHECKPOINT.md",
+        "blob": "8931fb5bb16fe1834c3cb08dee541ca05b466137"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/MANIFEST_PARITY_EVIDENCE.json",
+        "blob": "1d7ef915d6f3ff47022b44598b06a5d25ceb5bc6"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/MANIFEST_PARITY_QUALIFICATION.md",
+        "blob": "34aebf4b77c273c530fc07cb118791dc53a3b503"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/pending-traceability.patch",
+        "blob": "71cdc5fa189be5f25ac8c6c1ded21d8b9c2d410c"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-native-local.json",
+        "blob": "e2664dcb3ab2a5b08234878a9dc43b4bc1db7d6f"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-native-local.log",
+        "blob": "7de0176f22e06a4f0413d7d2e5d454d263918ee1"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-native-workflow-review.json",
+        "blob": "35947b9d9cc87ae28704c19a54608a44c60520e0"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-native-workflow-review.md",
+        "blob": "7bb1418d7c5deb2920ac7d2606c47b0990d28563"
+      }
+    ],
+    "different_paths": [
+      {
+        "path": "scripts/read-export.py",
+        "source_blob": "bde02445e22e837370fe5911cdee29d2fae3a234",
+        "main_blob": "60e6d81d990c0a0e6078f93543e2a2eb051411f3"
+      },
+      {
+        "path": "scripts/test_read_export.py",
+        "source_blob": "af5d950d72b4e8f2d209bb31e393b98f619cac5d",
+        "main_blob": "e3a87bad71ba1725995da5333086bd33876c64b3"
+      }
+    ],
+    "absent_main_paths": [
+      {
+        "path": "docs/audits/master-consolidation-20261119/ANALYTICS_QUALIFICATION.json",
+        "source_blob": "e0e0243d0161491cec54cd7dc4af1bb34f7e2d82",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/ARCHIVE_FEATURE_STATUS.md",
+        "source_blob": "de8b4bc8d6ee49fa9bac2320d6d3ec2e91a410aa",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/ARCHIVE_MODULE_QUALIFICATION.json",
+        "source_blob": "05c5cdee19687dd4cb2ec24c4bd76b4a996d0286",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.json",
+        "source_blob": "aa41e57c41dc751f15c6d2106ef492b23890e9f9",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.md",
+        "source_blob": "0b8fca45c9a81060a85ac15b04648d1d0534b3eb",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/AREAS_RECOVERY_QUALIFICATION.json",
+        "source_blob": "5f0d231a982ae6a268fc92bff47b89eb05804a3c",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/BRANCH_DELTA.json",
+        "source_blob": "7d75b1aab59fcd86d29b1c1b5d8943a95ad711c5",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/BRANCH_DELTA.md",
+        "source_blob": "975a2e0795b17e3d58420ae8697809b1037d2c60",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.json",
+        "source_blob": "739d7fe495ca6d09335221882587d91ffafa0d63",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.md",
+        "source_blob": "f14b5612b080f1e001ca20fecadb773fb8e30113",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/CONTINUATION.md",
+        "source_blob": "a7378dc1dc620140d5198df94addc20cb8377dd1",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FEDERATION_PROVIDER_CURRENT.json",
+        "source_blob": "6edece2e8f5b53ab4842517fd7de3a75e8ff68bb",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.json",
+        "source_blob": "709cb5e401cb369fe4a27e6c7f048278cf9b7abb",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.md",
+        "source_blob": "ef5348f3e79dd700bb589f49fbe0cade8aa87f76",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.json",
+        "source_blob": "447236d99b0931c9ef269c3d8a1405baf15d92d6",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.md",
+        "source_blob": "2609ba3aaf9fe0bd46c6d2d849919a8214ba20b9",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FOUR_MODULE_RECONCILIATION.md",
+        "source_blob": "da502eab24bab53aae255edc31c0a39e6146ec49",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FUTURE_MODULE_STATUS.md",
+        "source_blob": "6c6a8c33cde2aeb1800f5daa57fd821ac0393a78",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/GOVERNANCE_RECOVERY_QUALIFICATION.json",
+        "source_blob": "cde0889c5a5a45b9f38ca3c6fc790cf26ed7bff8",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/MASTER_REPORT.md",
+        "source_blob": "652891ae1feffd69d9a3f99ea1286330848ac05f",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/MESSAGING_RECOVERY_QUALIFICATION.json",
+        "source_blob": "ff9e6e7b9197ec9a2e1298cd0dd85a3f9dc161df",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/MODULE_QUALIFICATION.json",
+        "source_blob": "8ca4880a3ce78d694cff94087682d4d8454cca73",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_NATIVE_PUBLICATION.json",
+        "source_blob": "4c1eba9124fd8438485d3a569c9c0a85f28dd7f8",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_PROVIDER_CHECKPOINT.json",
+        "source_blob": "4264378a10521421f2044e09f8d57b165b5cd23e",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.json",
+        "source_blob": "4ad741aa8e20ed8a1ecbc6e088a1fea229712e57",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.md",
+        "source_blob": "ad509ac7a8a4da4909f98296fa6513a48e55ee12",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/OWNERSHIP.md",
+        "source_blob": "0507ede75d61fd1b15a34223207ea4cc02d38cf2",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/PROVIDER_STATUS_20261119T1353Z.json",
+        "source_blob": "c86a53b3eeea727acd780134f5edb576598398fe",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/PUBLICATIONS.json",
+        "source_blob": "f17f38e8071e316098f01e34d1c113d3f5459b84",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/QR_CAMERA_QUALIFICATION.json",
+        "source_blob": "dec30188f4000126c7684dfe7fc1a42bbdbba462",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECEIPTS_CURRENT_QUALIFICATION.json",
+        "source_blob": "127520201bf9e7ef07d64be80705f702ef270a26",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECEIPTS_PUBLICATION.json",
+        "source_blob": "a7b5f536fb69b9ca624e8c9b2f1cefa6e1d92a74",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_CI.json",
+        "source_blob": "ccc179d4e02103a222c1c779847368bae5228bd5",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_FINAL_REVIEW.json",
+        "source_blob": "a13b758dbd9de0e09e41ac9442be16dde2d28806",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_VCS_REVIEW.json",
+        "source_blob": "905769ad3815f14cb8db8bd14c34382eb6302aa4",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_PROVIDER_CURRENT.json",
+        "source_blob": "087bc04d4f327ce65a2cb002560ed1c4d1cff639",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.json",
+        "source_blob": "e960bcea746ec9b24c9c0c7dc7a8818f9bc4af6d",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.md",
+        "source_blob": "c5d7ee67c438078d6e0f5c398c0439531fdf9622",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/REPORT_PUBLICATION_QUALIFICATION.json",
+        "source_blob": "6057d7ed8befc08a6837a4e855beea2678580a0d",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/REVIEW.json",
+        "source_blob": "628f6e9f5d3ea0e3523d61589a9b583906057700",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/REVIEW.md",
+        "source_blob": "376c4964c8be7cf8324da1f0660e9b8cc9e82c5d",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/THREE_RECOVERY_FINAL_REVIEW.json",
+        "source_blob": "1b286a37d9bd130ba23e1aaa6e0304b032956bfe",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/VERIFICATION_FILES.json",
+        "source_blob": "33fe16b1445c607bfa7044ea0904eb1fdb9f812b",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.json",
+        "source_blob": "dbf1520d126bd4788b3ffe1948230e9b6f51455d",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.md",
+        "source_blob": "2716cfe60b44782b7105a5624a04fd285dcb1980",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.json",
+        "source_blob": "5122e5773eb02f95d9bea8a183563ea2b1e9fb79",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.md",
+        "source_blob": "71db0c6dd3ff7b76df901256cd512a3766c56e7c",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.json",
+        "source_blob": "4b1f665dfe51000dc7f81ffd7b2dca1d81a87ab9",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.md",
+        "source_blob": "a7fb628ba1e17057b3b03cfd5840b571b1bc3163",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/0001-notifications-archive-identity-utf8.patch",
+        "source_blob": "de9ba9c17a34cc02e915a465a997fab92239796d",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.json",
+        "source_blob": "027c3d37c35f3d9013ffc41b7abaa9fa41993326",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.txt",
+        "source_blob": "130724c8c256a8e475adc227a4c0324a8928f01a",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.json",
+        "source_blob": "a55c6dd4d90f8e197907d41f40da43370940b437",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.txt",
+        "source_blob": "290cd149b9bc8055aca0437f1045ee012861d4ec",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.json",
+        "source_blob": "ca660ecbdadc3a5b1cc58764e907fe9ebf3b6bc4",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.txt",
+        "source_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.json",
+        "source_blob": "0827bca8dafed3ec0b931c5bfd80c854ea9fa678",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.txt",
+        "source_blob": "db578740794419cd72ba17996f6ef4ceb485e839",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.json",
+        "source_blob": "50979e27444b1889f9de1d3287f090b1164b0f9b",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.md",
+        "source_blob": "4a5424c4fa50e155ac86a64e4a17df5ce7714d4d",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/0001-notifications-archive-json-simplefold.patch",
+        "source_blob": "2b5f7ff0e64a17ac0aae6356fe405381b3bc7d6a",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.json",
+        "source_blob": "3f68c3abb49beb40803f69e6abd2b69c5efc569d",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.txt",
+        "source_blob": "a47eab34d9ec795d4060b7d2a76f863b15d6497a",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.json",
+        "source_blob": "14cf77f6284204321cff26fcaa8405b3d9e71c74",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.txt",
+        "source_blob": "f5936d492e88a6c7849328d579885c2fee5becbe",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.json",
+        "source_blob": "e19b8401a216ca67726189e62bd82f0488f7b682",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.txt",
+        "source_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.json",
+        "source_blob": "cfc033148fb5aca564b68a2776107441dcba9f94",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.md",
+        "source_blob": "adc8721ab8dece3aa2254140e0cb12c19aec3d9c",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.json",
+        "source_blob": "70aa759803fab025f341c6b0465747a20211927c",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.md",
+        "source_blob": "7caf4bc6bacc97cab7a13b17cfc5c1b311720150",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/RECONCILIATION.md",
+        "source_blob": "3f29d19a9742b87eb446190d11cfc604c6253d39",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/module-name-status.txt",
+        "source_blob": "f13afa12d565c9d29ed60c40e8cd6f94b7a763ba",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/reconciliation.json",
+        "source_blob": "c0893637f6461933cc1e5892c7b9fb419f443750",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/source-provenance.json",
+        "source_blob": "869c6d400d0d9295a320f77c68774e6f834487f3",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-green.json",
+        "source_blob": "02492d056bf59ea1e45209ffd47026ef8620e441",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-handoff.json",
+        "source_blob": "3c7caf02b580674db23d6048eae1dba681b90934",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-red.json",
+        "source_blob": "550f56f50d1de1d1a1c036d4be49026481924b85",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.json",
+        "source_blob": "0d6beb54452adc74ec7437e5fa249fe53609c49d",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.md",
+        "source_blob": "11ffb3005514059f2c095c37f8e0afc98b0ca9e1",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/root-final-review.json",
+        "source_blob": "63f2c62e2caefab9bf89e2f53dabfab635dd8c0d",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.json",
+        "source_blob": "46da07166006abe349ba8f287c198615b52a430d",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.md",
+        "source_blob": "5c71f9214c6d707332006e8aebcd7a4fe9138a13",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/provenance-and-static-review.json",
+        "source_blob": "2f998fd5ea4ca7718380b112129d636d8beda2c1",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.json",
+        "source_blob": "75ea8874f05000b2f36ff90ae14b51a972f05680",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.md",
+        "source_blob": "60553731443793899c265eca97ed3f7435013181",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/ARCHIVE_MODULE_QUALIFICATION-previous14of15.json",
+        "source_blob": "62df10bb4529a2b29cd67fcf67773a0c05d31045",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/race.log",
+        "source_blob": "fbf15362b3f9ede1f6d52860043fbebe053c2423",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/receipt.json",
+        "source_blob": "8bf61b0a7cfc7bc9371f96df6f38e53bb4742221",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/core-final-full-test.log",
+        "source_blob": "60c9f44a03cd4532b4f54879187227dbcb2d2b22",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/core-integration-first-test.log",
+        "source_blob": "e21dcb6d1f442b5da12357d15d5c3075246e94a6",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/federation-core-tests-failure.log",
+        "source_blob": "f80aea222a533d13c7cb53bdc55b94dca18c7822",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/federation-core-vet-failure.log",
+        "source_blob": "5d164fa62d250e5dfc7d8955fa7f90da9f69061a",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-before.log",
+        "source_blob": "3faca67f98beb1971737add71d605265d3c80514",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-complete-size.log",
+        "source_blob": "00efb4f8b3fdbeef72e868b35f2a91a642cf6d11",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-final-current.log",
+        "source_blob": "abd8bec63e5eea0dd58ae18a586c88704302420e",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.json",
+        "source_blob": "09dec5552e033b1e5953f0466eba97c71c03dbed",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.log",
+        "source_blob": "583918329556d61c1e9c6f5049af37f9b9259329",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-reviewed.log",
+        "source_blob": "6cbd5add347fcc2e10c4b5a719ebfef8d858a227",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-zip-size-before.log",
+        "source_blob": "07c81a08b5c7af4d8c93ff942402a35404cfd1b1",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.manifest.json",
+        "source_blob": "a1dd16eb7832527b89f5eea2f7dd767eb66382c8",
+        "mode": "100644"
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.zip",
+        "source_blob": "55c4e9817609abb9269923f86814911703165639",
+        "mode": "100644"
+      }
+    ],
+    "source_test_methods": 38,
+    "main_test_methods": 49,
+    "all_original_test_ASTs_identical": true,
+    "original_test_methods": [
+      "test_dos_zip_file_types",
+      "test_empty_ledger_and_zero_balance_accounts",
+      "test_integrity_checks_remain_enforced",
+      "test_json_constants_rejected_in_manifest",
+      "test_json_constants_rejected_in_members",
+      "test_malformed_csv_reports_failure_without_traceback",
+      "test_malformed_manifest_is_reported_without_traceback",
+      "test_manifest_boolean_size_does_not_match_one_byte",
+      "test_manifest_case_aliases_accept_valid_names",
+      "test_manifest_case_aliases_apply_later_values",
+      "test_manifest_case_aliases_do_not_fold_ligatures",
+      "test_manifest_case_aliases_preserve_null_rules",
+      "test_manifest_case_aliases_reject_shadowed_type_errors",
+      "test_manifest_file_counts_require_integer_tokens",
+      "test_manifest_metadata_preserves_supported_values",
+      "test_manifest_metadata_rejects_wrong_types",
+      "test_manifest_preserves_existing_missing_and_null_behavior",
+      "test_manifest_rejects_shadowed_type_errors",
+      "test_manifest_timestamps_reject_malformed_values",
+      "test_manifest_unknown_fields_remain_ignored",
+      "test_manifest_valid_duplicates_keep_final_values",
+      "test_member_budget_rejects_unchecked_suffixes",
+      "test_mine_summary_rules",
+      "test_old_packages_without_optional_summary",
+      "test_rejects_duplicate_manifest_declarations",
+      "test_rejects_duplicate_zip_members",
+      "test_rejects_inconsistent_summary_fields",
+      "test_rejects_ledger_rows_with_valid_file_checksums",
+      "test_rejects_malformed_summary",
+      "test_rejects_nonregular_zip_members",
+      "test_rejects_raw_nul_zip_names_before_zipfile_normalization",
+      "test_rejects_unlisted_package_members",
+      "test_rejects_unsafe_manifest_names",
+      "test_rejects_zip_path_aliases",
+      "test_schema_version_requires_an_integer",
+      "test_unrelated_scopes_reject_summary",
+      "test_valid_scopes_formats_and_package_types",
+      "test_zip_sizes_match_the_complete_member"
+    ],
+    "added_test_methods": [
+      "test_manifest_file_array_rejects_type_errors_and_applies_overrides",
+      "test_manifest_file_array_reset_clears_retained_fields",
+      "test_manifest_file_array_shrink_and_regrow_retains_fields",
+      "test_manifest_file_arrays_merge_existing_structs",
+      "test_manifest_nested_object_merge_applies_later_values",
+      "test_manifest_nested_object_merge_retains_scalar_nulls",
+      "test_manifest_nested_object_null_resets_prior_fields",
+      "test_manifest_nested_objects_merge_in_member_order",
+      "test_zip_compression_completion_state_must_be_available",
+      "test_zip_compression_requires_complete_streams",
+      "test_zip_compression_valid_streams"
+    ],
+    "python_files_identical_to_reviewed_eef0": true,
+    "source_is_ancestor": false,
+    "verdict": "Runtime superseded by accepted main; 102 unique documentary paths are preserved separately, not present at their original paths in main."
+  },
+  "pr104_recovery": {
+    "archive_sha256": "6d7ad0e06ef2bb9a4cd1a70626ae328a8384828dd439e07c4bf07246ff37d385",
+    "archive_bytes": 1205996,
+    "verified_original_files": 102,
+    "verified_original_bytes": 5206983,
+    "original_git_blob_and_byte_identity": true,
+    "all_102_missing_paths_covered": true,
+    "nested_zip_entries": 206,
+    "nested_zip_payloads_verified": 205,
+    "internal_external_manifest_identical": true,
+    "original_json_parsed": 56,
+    "nested_json_parsed": 44,
+    "package_checksum_entries_verified": 9,
+    "no_archive_extraction_or_execution": true,
+    "payload_checks": [
+      {
+        "path": "docs/audits/master-consolidation-20261119/ANALYTICS_QUALIFICATION.json",
+        "git_blob": "e0e0243d0161491cec54cd7dc4af1bb34f7e2d82",
+        "sha256": "2b35b7d2b359d935db038dc9d18f8ab1f05abc49d787a1ebc04067d8c78deb01",
+        "bytes": 31241,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/ARCHIVE_FEATURE_STATUS.md",
+        "git_blob": "de8b4bc8d6ee49fa9bac2320d6d3ec2e91a410aa",
+        "sha256": "73de2146e8f2673237f4628ec16136e15ae4cb0d6c18dd4a2ba0ba047ba4d326",
+        "bytes": 19795,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/ARCHIVE_MODULE_QUALIFICATION.json",
+        "git_blob": "05c5cdee19687dd4cb2ec24c4bd76b4a996d0286",
+        "sha256": "bd61aa1480b29e6dff2653268b184dea82f2f54855aed73db98d6ecbabfd345b",
+        "bytes": 484656,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.json",
+        "git_blob": "aa41e57c41dc751f15c6d2106ef492b23890e9f9",
+        "sha256": "8df5dc93c55d678bec493dbc55682eb58cea951107a7e42cc6b89f7bb3bd41e2",
+        "bytes": 399417,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.md",
+        "git_blob": "0b8fca45c9a81060a85ac15b04648d1d0534b3eb",
+        "sha256": "03ecffc870e7e89004a2df01f1da239296d6df851dd1d222d3fb742654c5a21c",
+        "bytes": 12505,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/AREAS_RECOVERY_QUALIFICATION.json",
+        "git_blob": "5f0d231a982ae6a268fc92bff47b89eb05804a3c",
+        "sha256": "9b85df56b1ce489282fcb137e79cb9a671acc7397ce52ae94c13bc3b75482e5f",
+        "bytes": 14788,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/BRANCH_DELTA.json",
+        "git_blob": "7d75b1aab59fcd86d29b1c1b5d8943a95ad711c5",
+        "sha256": "2d54c71ec2a926845c6afc49ee07460a3e62b3d9fa77673f8a73b28a2ee1f3ad",
+        "bytes": 547367,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/BRANCH_DELTA.md",
+        "git_blob": "975a2e0795b17e3d58420ae8697809b1037d2c60",
+        "sha256": "3fb726aaf27ba3a5d485fc64f18c98193d7f0d92ee18316a5de7b67530141c8a",
+        "bytes": 20137,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.json",
+        "git_blob": "739d7fe495ca6d09335221882587d91ffafa0d63",
+        "sha256": "71ed72a180b406c7b610f66abbba52494f68112ecf7a52705c995c331083ada6",
+        "bytes": 1442176,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.md",
+        "git_blob": "f14b5612b080f1e001ca20fecadb773fb8e30113",
+        "sha256": "79cf998a42f7ec690a89a2a8e92c6e9e21db625f56962294d105d35bb96f2078",
+        "bytes": 26322,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/CONTINUATION.md",
+        "git_blob": "a7378dc1dc620140d5198df94addc20cb8377dd1",
+        "sha256": "41b1af40109ff81ff10b0ca16a2d9e324585722f2070602b3cbb2cd99dad9df1",
+        "bytes": 12739,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FEDERATION_PROVIDER_CURRENT.json",
+        "git_blob": "6edece2e8f5b53ab4842517fd7de3a75e8ff68bb",
+        "sha256": "455f96763a7ec82a1d0b619f9062ad38e8d58186d35adcb97b8522549e33b881",
+        "bytes": 21450,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.json",
+        "git_blob": "709cb5e401cb369fe4a27e6c7f048278cf9b7abb",
+        "sha256": "e4495556a3826860459a45a609f2a65cca880b8e80901e7bb1fdf17623154f32",
+        "bytes": 6588,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.md",
+        "git_blob": "ef5348f3e79dd700bb589f49fbe0cade8aa87f76",
+        "sha256": "964bf9b8c42ea77cd38959ee3a8ddb0b33f6c6a91f18ce581a0d9456591d74f7",
+        "bytes": 3385,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.json",
+        "git_blob": "447236d99b0931c9ef269c3d8a1405baf15d92d6",
+        "sha256": "c723950f599d84c133c98beed5a285df934023c4ee6f644f88cf73b76deb4fb6",
+        "bytes": 16543,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.md",
+        "git_blob": "2609ba3aaf9fe0bd46c6d2d849919a8214ba20b9",
+        "sha256": "ea8c27540aa0f75bb267a6d559184b77338c712635918b32f8b3907fef1986ba",
+        "bytes": 5917,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FOUR_MODULE_RECONCILIATION.md",
+        "git_blob": "da502eab24bab53aae255edc31c0a39e6146ec49",
+        "sha256": "69a169129939b6f0010abd5b8c7d4f7783b228b9913da60a4929d1775e64a52b",
+        "bytes": 18392,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/FUTURE_MODULE_STATUS.md",
+        "git_blob": "6c6a8c33cde2aeb1800f5daa57fd821ac0393a78",
+        "sha256": "7538582325e46253a3e75453f8344a6bdcccbf2616723c0932342ac532fe8259",
+        "bytes": 38325,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/GOVERNANCE_RECOVERY_QUALIFICATION.json",
+        "git_blob": "cde0889c5a5a45b9f38ca3c6fc790cf26ed7bff8",
+        "sha256": "ed2ca63e5852d603419ee1f38542427f025bb07df79eb974e494fed284f1c481",
+        "bytes": 13904,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/MASTER_REPORT.md",
+        "git_blob": "652891ae1feffd69d9a3f99ea1286330848ac05f",
+        "sha256": "51a94c17533da703dcaeb55b153ea53fa2e666e4065ac40f95e9a4aeb79f3172",
+        "bytes": 42227,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/MESSAGING_RECOVERY_QUALIFICATION.json",
+        "git_blob": "ff9e6e7b9197ec9a2e1298cd0dd85a3f9dc161df",
+        "sha256": "b97a9ae4545996934dd68a04596be67fa46275c7e227b9662759d6752948a97d",
+        "bytes": 13757,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/MODULE_QUALIFICATION.json",
+        "git_blob": "8ca4880a3ce78d694cff94087682d4d8454cca73",
+        "sha256": "3fd6b768b57403b4e2d580c0717779abc4a59f0ccb1bae5a2fa7f43fe06ea851",
+        "bytes": 44967,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_NATIVE_PUBLICATION.json",
+        "git_blob": "4c1eba9124fd8438485d3a569c9c0a85f28dd7f8",
+        "sha256": "19f4bee567aaa5c3276ce4be87c5164b69a2ec25e2152b131f1412eca1e3487a",
+        "bytes": 2220,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_PROVIDER_CHECKPOINT.json",
+        "git_blob": "4264378a10521421f2044e09f8d57b165b5cd23e",
+        "sha256": "83d2540ed4ed2b3be40703f71d83e89a747b7e4811b4fade8f1f5d0b29509737",
+        "bytes": 36609,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.json",
+        "git_blob": "4ad741aa8e20ed8a1ecbc6e088a1fea229712e57",
+        "sha256": "f8fe433a6cfdc571e3f6daf00aff19bc3a5560f57537d8b164c93522799a5c07",
+        "bytes": 19228,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.md",
+        "git_blob": "ad509ac7a8a4da4909f98296fa6513a48e55ee12",
+        "sha256": "a10efca724d01793b79fb89809bb130766d9cd84454bf9599713152d6bd7d944",
+        "bytes": 7017,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/OWNERSHIP.md",
+        "git_blob": "0507ede75d61fd1b15a34223207ea4cc02d38cf2",
+        "sha256": "577624d4f01e528e406231b12dbad3dd42ec7a3bdede8e1c4e20e1c7ba6067d6",
+        "bytes": 10676,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/PROVIDER_STATUS_20261119T1353Z.json",
+        "git_blob": "c86a53b3eeea727acd780134f5edb576598398fe",
+        "sha256": "584d7829cf3e23aaedbb9d042bae8c87d8585f3c45ceefc8ed8c89dfebff23b6",
+        "bytes": 49109,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/PUBLICATIONS.json",
+        "git_blob": "f17f38e8071e316098f01e34d1c113d3f5459b84",
+        "sha256": "b614caceb740bd704387127c6bbdf2d00c3afb73ea2a6483ea21b52889b849af",
+        "bytes": 8985,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/QR_CAMERA_QUALIFICATION.json",
+        "git_blob": "dec30188f4000126c7684dfe7fc1a42bbdbba462",
+        "sha256": "8c10688a446ba3a21211e9743d7dbfd01135f1c0563af3de8be61b84ad9ad8d1",
+        "bytes": 2147,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECEIPTS_CURRENT_QUALIFICATION.json",
+        "git_blob": "127520201bf9e7ef07d64be80705f702ef270a26",
+        "sha256": "3a6159e0f2f9f1256d41fe12f618744c6aa2ef47e2370198e136451f21716a17",
+        "bytes": 7531,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECEIPTS_PUBLICATION.json",
+        "git_blob": "a7b5f536fb69b9ca624e8c9b2f1cefa6e1d92a74",
+        "sha256": "ea37d5c6a06991cc44384bd1bb49032a72d96ff0e827be6551516f681be0644e",
+        "bytes": 10670,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_CI.json",
+        "git_blob": "ccc179d4e02103a222c1c779847368bae5228bd5",
+        "sha256": "0d8c1e2903ed640ba0a4f16d190400b9393a54137f7d14fde1a9fd581407b1d1",
+        "bytes": 3824,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_FINAL_REVIEW.json",
+        "git_blob": "a13b758dbd9de0e09e41ac9442be16dde2d28806",
+        "sha256": "c03009fc0fed739865716bbcf36926bdf41226b94256b2e0bc78b629330fa5a6",
+        "bytes": 1971,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_VCS_REVIEW.json",
+        "git_blob": "905769ad3815f14cb8db8bd14c34382eb6302aa4",
+        "sha256": "cbb6c76406082403fd3cf3bc44915457e554ce9c7b777335b1ac45f59c0b9713",
+        "bytes": 1488,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_PROVIDER_CURRENT.json",
+        "git_blob": "087bc04d4f327ce65a2cb002560ed1c4d1cff639",
+        "sha256": "76377c4a955a58ba8464201e42586532afea00d9e326f66261bc462de3aab6fa",
+        "bytes": 21191,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.json",
+        "git_blob": "e960bcea746ec9b24c9c0c7dc7a8818f9bc4af6d",
+        "sha256": "e5b9f4da9ddc7efacdaeb0fd20f80dc47509f5c9fcaa1b0166d0b895e15a9ea5",
+        "bytes": 16459,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.md",
+        "git_blob": "c5d7ee67c438078d6e0f5c398c0439531fdf9622",
+        "sha256": "636ba06987f96c2f1a6e2e9994ecc37fff6a409b570b019acd10180b57d0137b",
+        "bytes": 5781,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/REPORT_PUBLICATION_QUALIFICATION.json",
+        "git_blob": "6057d7ed8befc08a6837a4e855beea2678580a0d",
+        "sha256": "b7871c02def508afd8c23021315d4615aa288d140ac5ebef231ce96785e2181f",
+        "bytes": 3174,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/REVIEW.json",
+        "git_blob": "628f6e9f5d3ea0e3523d61589a9b583906057700",
+        "sha256": "cb7d3b97c94b1d1afee29605f0a078458c139ed86a21297cd22a873154c773a3",
+        "bytes": 125713,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/REVIEW.md",
+        "git_blob": "376c4964c8be7cf8324da1f0660e9b8cc9e82c5d",
+        "sha256": "a13ccef5e57b4424a2f292408ffb476b906f34cf7e649c0f29fa56f3ca74980b",
+        "bytes": 35138,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/THREE_RECOVERY_FINAL_REVIEW.json",
+        "git_blob": "1b286a37d9bd130ba23e1aaa6e0304b032956bfe",
+        "sha256": "c9fd55b5c1f92b44a0782bb80774d198cca63fca65e03ea435fb763b3ece7984",
+        "bytes": 5359,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/VERIFICATION_FILES.json",
+        "git_blob": "33fe16b1445c607bfa7044ea0904eb1fdb9f812b",
+        "sha256": "8797b0898764ac3450ff147f665376c4984a9fc115ce6fca478f2de831d8b45d",
+        "bytes": 3425,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.json",
+        "git_blob": "dbf1520d126bd4788b3ffe1948230e9b6f51455d",
+        "sha256": "ca425d8df38132c69114c25a8bd2ee613430ab2a825882897f4f3dfbaa78a4ac",
+        "bytes": 2597,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.md",
+        "git_blob": "2716cfe60b44782b7105a5624a04fd285dcb1980",
+        "sha256": "c230446cf9dbdd46370b1592a07f2a49d12355ee2a4ab15c441ba8918d0d7817",
+        "bytes": 1281,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.json",
+        "git_blob": "5122e5773eb02f95d9bea8a183563ea2b1e9fb79",
+        "sha256": "f45e43925cfea2ac69aa62931743f72c0c9b6d3a833ee57a04611b4fa8429224",
+        "bytes": 11817,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.md",
+        "git_blob": "71db0c6dd3ff7b76df901256cd512a3766c56e7c",
+        "sha256": "a3d9e0c8b917a87d589eb928bd1715e2f896d7460c8a248607818e7e94d8e072",
+        "bytes": 9309,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.json",
+        "git_blob": "4b1f665dfe51000dc7f81ffd7b2dca1d81a87ab9",
+        "sha256": "392c89270498141071a25777e19bd7761cfcb58a393583445829ef1b022d5fc1",
+        "bytes": 9845,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.md",
+        "git_blob": "a7fb628ba1e17057b3b03cfd5840b571b1bc3163",
+        "sha256": "6ba1036d1689529694f22e5327d6ee7b059d310e1d348e933a95986a7ea29519",
+        "bytes": 7465,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/0001-notifications-archive-identity-utf8.patch",
+        "git_blob": "de9ba9c17a34cc02e915a465a997fab92239796d",
+        "sha256": "275427a6ed56cbbeb84820aa02e3bfd83a91b0f6523915dd2c8862e6b30d617b",
+        "bytes": 11129,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.json",
+        "git_blob": "027c3d37c35f3d9013ffc41b7abaa9fa41993326",
+        "sha256": "c5af497765fa21c8f3594912c075f89f811795b0896ca2f554ce5386176ba144",
+        "bytes": 1707,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.txt",
+        "git_blob": "130724c8c256a8e475adc227a4c0324a8928f01a",
+        "sha256": "54508d8bbbd788ef7bcaa8fccef0af102dd8aa77625c9e50263d9a6b2becce09",
+        "bytes": 3289,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.json",
+        "git_blob": "a55c6dd4d90f8e197907d41f40da43370940b437",
+        "sha256": "a3de565dc564a027ee6fbad55552507e440c03fd334ee7ffd168a70269a597ed",
+        "bytes": 1791,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.txt",
+        "git_blob": "290cd149b9bc8055aca0437f1045ee012861d4ec",
+        "sha256": "d8092b06184f9b7dd8f4ceb3623c0339b9eff6d7b9b843b742d80807eee6f6f8",
+        "bytes": 157,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.json",
+        "git_blob": "ca660ecbdadc3a5b1cc58764e907fe9ebf3b6bc4",
+        "sha256": "59955055e4289899aa89a73699968b1c31a181b53519d4c7d7d9a40436a133c4",
+        "bytes": 1702,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.txt",
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.json",
+        "git_blob": "0827bca8dafed3ec0b931c5bfd80c854ea9fa678",
+        "sha256": "f652ffe4bc184a954c11ae0b01a6049f9dd3d60a4aa714b8b5fd492c71bf7f27",
+        "bytes": 1640,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.txt",
+        "git_blob": "db578740794419cd72ba17996f6ef4ceb485e839",
+        "sha256": "baab46023ce88544d61a94a4dfa0b65d6ebde956018743716f15cdc52056b4ca",
+        "bytes": 226,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.json",
+        "git_blob": "50979e27444b1889f9de1d3287f090b1164b0f9b",
+        "sha256": "3ef43c2cc6fe57f8e68007078a4424a693a5aaf51c17d0be161be7e03a47b4e3",
+        "bytes": 4249,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.md",
+        "git_blob": "4a5424c4fa50e155ac86a64e4a17df5ce7714d4d",
+        "sha256": "093a75ee92d8be7b057894c39353fb4d183935699a926f734587e7dd34e02e98",
+        "bytes": 4133,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/0001-notifications-archive-json-simplefold.patch",
+        "git_blob": "2b5f7ff0e64a17ac0aae6356fe405381b3bc7d6a",
+        "sha256": "aa359ad53b71fd7d78a78578302bc5d1387299bc5513990f120d59d19c1d62a3",
+        "bytes": 4525,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.json",
+        "git_blob": "3f68c3abb49beb40803f69e6abd2b69c5efc569d",
+        "sha256": "e266adf5f4b7a96688e9763d3381d12fc0b311237e619c0122641efe8bf46cd3",
+        "bytes": 1633,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.txt",
+        "git_blob": "a47eab34d9ec795d4060b7d2a76f863b15d6497a",
+        "sha256": "388b01ddb398c7b2a53c60771db1a4018d624951e4b906145a887414632864fc",
+        "bytes": 1245,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.json",
+        "git_blob": "14cf77f6284204321cff26fcaa8405b3d9e71c74",
+        "sha256": "30d6f4fa88ba2c6555e5c903c5e318389586c68c254ff30c6040f869a9758a44",
+        "bytes": 1688,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.txt",
+        "git_blob": "f5936d492e88a6c7849328d579885c2fee5becbe",
+        "sha256": "f75772dd65d26a28388a816c26753e918be8274bf28295f0a029d3e5da6216f4",
+        "bytes": 35,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.json",
+        "git_blob": "e19b8401a216ca67726189e62bd82f0488f7b682",
+        "sha256": "66b95fffb289767baabfca3edc39e489b8a9bb3da2d2b9e3dabc0d75a66f5e0f",
+        "bytes": 1636,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.txt",
+        "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.json",
+        "git_blob": "cfc033148fb5aca564b68a2776107441dcba9f94",
+        "sha256": "e121b01e39e178e76e3c2eb1b791c6fadbfed5ab84145c0ee7605e057c13a183",
+        "bytes": 3237,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.md",
+        "git_blob": "adc8721ab8dece3aa2254140e0cb12c19aec3d9c",
+        "sha256": "ba1d13e34529cc424046b2ee2ac79a33c0927da91dbacdb3e72384adafbc68b8",
+        "bytes": 3523,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.json",
+        "git_blob": "70aa759803fab025f341c6b0465747a20211927c",
+        "sha256": "69afdfae36fa5f6feb6d317e966d9af8e2db74c89b31c10a6cac0722d9256cb3",
+        "bytes": 20969,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.md",
+        "git_blob": "7caf4bc6bacc97cab7a13b17cfc5c1b311720150",
+        "sha256": "1ec83e487e73bba0ca5f995457c403764412f191d70b9561b84ea5a35e13fe34",
+        "bytes": 1818,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/RECONCILIATION.md",
+        "git_blob": "3f29d19a9742b87eb446190d11cfc604c6253d39",
+        "sha256": "e4518266cea7a65b44b46a53e26f4d50a4aed4edb1e6895f2be3689f580a48a2",
+        "bytes": 19782,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/module-name-status.txt",
+        "git_blob": "f13afa12d565c9d29ed60c40e8cd6f94b7a763ba",
+        "sha256": "b66ed18af3060aacd8e278f86450e002babc20e8296dba25e040190cddcee282",
+        "bytes": 6626,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/reconciliation.json",
+        "git_blob": "c0893637f6461933cc1e5892c7b9fb419f443750",
+        "sha256": "5f650a3e56e7dd85e835c4ea4186acd481e7f285afa0b64ddfa4f60a213a7868",
+        "bytes": 3794,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/source-provenance.json",
+        "git_blob": "869c6d400d0d9295a320f77c68774e6f834487f3",
+        "sha256": "5a452dfff1af296acfc83d932c37a1fcba4d559675b7a86f487b866c91afa2ff",
+        "bytes": 55977,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-green.json",
+        "git_blob": "02492d056bf59ea1e45209ffd47026ef8620e441",
+        "sha256": "22e7ef9c6418106177c95eca8c3e55ae041a307b584417c26e9bf13e771d4be0",
+        "bytes": 1403,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-handoff.json",
+        "git_blob": "3c7caf02b580674db23d6048eae1dba681b90934",
+        "sha256": "3f981dca444b4d1ef32381387169cc91059392e5a646bc2dfee4575d6185bcaf",
+        "bytes": 1990,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-red.json",
+        "git_blob": "550f56f50d1de1d1a1c036d4be49026481924b85",
+        "sha256": "98d963606ebed24d3cf3854d39d6b3ab62bcf59c5ea506514e572c1fa1724837",
+        "bytes": 705,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.json",
+        "git_blob": "0d6beb54452adc74ec7437e5fa249fe53609c49d",
+        "sha256": "ed8efaf63406a85d00d864ff74ebd6fd91e2e520d4f26b760b634a1f80151c42",
+        "bytes": 3134,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.md",
+        "git_blob": "11ffb3005514059f2c095c37f8e0afc98b0ca9e1",
+        "sha256": "ac740402ed7c0fdead23a749943ae286bdf8deb6da8cdb2fb618757299a237b7",
+        "bytes": 2472,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/root-final-review.json",
+        "git_blob": "63f2c62e2caefab9bf89e2f53dabfab635dd8c0d",
+        "sha256": "f0b73b5ab98460d57529db314fbc505b13476ec73d0ec86b9cf5d3dc87cd472e",
+        "bytes": 2005,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.json",
+        "git_blob": "46da07166006abe349ba8f287c198615b52a430d",
+        "sha256": "7f97f65f67390a81459f8a3688594fd5d187472bcc93071b54d8715e6b8448ac",
+        "bytes": 17930,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.md",
+        "git_blob": "5c71f9214c6d707332006e8aebcd7a4fe9138a13",
+        "sha256": "396e822eae849f09e5c8be9d91f9f867103491e63dbb21526d1a759007dcca01",
+        "bytes": 4164,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/provenance-and-static-review.json",
+        "git_blob": "2f998fd5ea4ca7718380b112129d636d8beda2c1",
+        "sha256": "6730ff80c886fa718ecb12bc301b4fb5a1935441d2c9cd8156bd8678cb0b8a14",
+        "bytes": 71011,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.json",
+        "git_blob": "75ea8874f05000b2f36ff90ae14b51a972f05680",
+        "sha256": "9fcc5f545f5023cee65f5f24eb39ef3eedbf5d750ba7ae0f31d4ed2007faecd3",
+        "bytes": 75457,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.md",
+        "git_blob": "60553731443793899c265eca97ed3f7435013181",
+        "sha256": "29076391a565b7664881d7748f96de408674a9f8d0195c3ecbf71101ece64f57",
+        "bytes": 7869,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/ARCHIVE_MODULE_QUALIFICATION-previous14of15.json",
+        "git_blob": "62df10bb4529a2b29cd67fcf67773a0c05d31045",
+        "sha256": "d52ea13975c26520236e551edc4326cb09fa1ea7c0a0f8c45ceda26ae62408b7",
+        "bytes": 478767,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/race.log",
+        "git_blob": "fbf15362b3f9ede1f6d52860043fbebe053c2423",
+        "sha256": "d91472bb47c0d7d9dc9f6717ccf2a39d4ac3a6405a10578e54df1c8d480bcf61",
+        "bytes": 52746,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/receipt.json",
+        "git_blob": "8bf61b0a7cfc7bc9371f96df6f38e53bb4742221",
+        "sha256": "7c7f39dff0f620fba0074740d70e403c1d846db22667908ab11ca17faf6ef35a",
+        "bytes": 37748,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/core-final-full-test.log",
+        "git_blob": "60c9f44a03cd4532b4f54879187227dbcb2d2b22",
+        "sha256": "872395d0c5fe29ea09fd95f5b3106758bc3de35294da3b1cbeae4ea3c27d00d7",
+        "bytes": 1648,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/core-integration-first-test.log",
+        "git_blob": "e21dcb6d1f442b5da12357d15d5c3075246e94a6",
+        "sha256": "787ff0a0bee9495668df2fba54c13eb84fde818a50571a4dd435fd36e2a688f0",
+        "bytes": 2379,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/federation-core-tests-failure.log",
+        "git_blob": "f80aea222a533d13c7cb53bdc55b94dca18c7822",
+        "sha256": "2a227c4ecf8e7e1d2942fad69ecd01b5722cf8865670f20dbbc91f7e56c187dc",
+        "bytes": 20221,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/federation-core-vet-failure.log",
+        "git_blob": "5d164fa62d250e5dfc7d8955fa7f90da9f69061a",
+        "sha256": "05791c9fbbfd5332436135f776949707c014206937533791ed2aac8ddf1a8178",
+        "bytes": 24628,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-before.log",
+        "git_blob": "3faca67f98beb1971737add71d605265d3c80514",
+        "sha256": "dd6e13e76c1191bc1b1ace4feee48d755c8e3aad8611e80e53c2ad7192c95785",
+        "bytes": 18229,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-complete-size.log",
+        "git_blob": "00efb4f8b3fdbeef72e868b35f2a91a642cf6d11",
+        "sha256": "d93dfe0310559cae7e5e827dc356ee3d92077ad87ca254e70489712bb6879174",
+        "bytes": 122,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-final-current.log",
+        "git_blob": "abd8bec63e5eea0dd58ae18a586c88704302420e",
+        "sha256": "b6f599fe7944fb71d1339f8ffef05120bf446c2b47e96db168d8700a51f96bb0",
+        "bytes": 121,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.json",
+        "git_blob": "09dec5552e033b1e5953f0466eba97c71c03dbed",
+        "sha256": "9fc974243caad494c51eafa10339c17a4f8452c7f119e1c0ec42be15cbfc42fb",
+        "bytes": 656,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.log",
+        "git_blob": "583918329556d61c1e9c6f5049af37f9b9259329",
+        "sha256": "7aa7f486108fb06a775544c02ca1b807a03a5cb64be85cafba729a97cdcbe1e8",
+        "bytes": 138,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-export-reviewed.log",
+        "git_blob": "6cbd5add347fcc2e10c4b5a719ebfef8d858a227",
+        "sha256": "d192da07ae6cda1ebbb68673b2d1079cd25ba32ef9b0efe84789facb3932fce9",
+        "bytes": 121,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-zip-size-before.log",
+        "git_blob": "07c81a08b5c7af4d8c93ff942402a35404cfd1b1",
+        "sha256": "4a7b13ea5334054a54982384e71808a870288ead58f5620fce99c08f319f75b7",
+        "bytes": 4034,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.manifest.json",
+        "git_blob": "a1dd16eb7832527b89f5eea2f7dd767eb66382c8",
+        "sha256": "3592091bfac5373e843121ee1a478ddb37dc4793f5936075a7ce94ee0efa805a",
+        "bytes": 41803,
+        "byte_equal_original": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.zip",
+        "git_blob": "55c4e9817609abb9269923f86814911703165639",
+        "sha256": "ba01ee9653a3bfbc07734348594f878b45cbd5ca87ad797bff64fb09930f5d3f",
+        "bytes": 522344,
+        "byte_equal_original": true
+      }
+    ],
+    "zip_checks": [
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/divergent-four-current-heads.json",
+        "bytes": 1720,
+        "sha256": "b4bc2eaee5620ecafafe8e447fecfa5cbb77cb72615ea1f0fee5ac5e5e8c202c",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/divergent-four-reconciliation-update.json",
+        "bytes": 3451,
+        "sha256": "7b2b6c3eb2921cea9f7659b1aabe7383a3f75f41e0580f1c9551fcbe562ed28e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/checksums.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/dependencies.log",
+        "bytes": 868,
+        "sha256": "85e0295cdf2342247cb5185745a463d75f3c6a803bc4e9c4c8d690f28e8aced7",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/format.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-legacy.log",
+        "bytes": 427,
+        "sha256": "cb79ae41bca0cb70322496590197af73e92272a13c0765f9373ed950d2271741",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-v2-strings.log",
+        "bytes": 427,
+        "sha256": "dc7e3e71245e6f4dec0a57d3d0838a0a1a4a60eb5685a5ff323855b95b4e049c",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-wire.log",
+        "bytes": 347,
+        "sha256": "b2af24416f3403b2ab4acf2395513e4ed574856a6b75eb175c7e58bb7a5622ed",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/isolation.log",
+        "bytes": 85,
+        "sha256": "cec8f74ef20c5a3195f6a673cbce7b31e5f8ed6ffeab933c1b34676b668a83ef",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/race.log",
+        "bytes": 246978,
+        "sha256": "be71d4b842446e5524d75962e2d9da39a677e1c39d7a76f7350e3875efec06b6",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/receipt.json",
+        "bytes": 13958,
+        "sha256": "ee9a61947ead62d9c1531a81a697345cfb30e221f9fe47e844c8f1bde35e29d6",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/toolchain.log",
+        "bytes": 33,
+        "sha256": "3008ffc50874cac169bf0446997798346d244c5c1ff94af771a02191f465a4b1",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/vet.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/action-pins.log",
+        "bytes": 32,
+        "sha256": "9353c7b345cda410e4d8d1110ace2932403381722b51df6065fea429ad158cd2",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-green.json",
+        "bytes": 1403,
+        "sha256": "22e7ef9c6418106177c95eca8c3e55ae041a307b584417c26e9bf13e771d4be0",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-green.log",
+        "bytes": 2466,
+        "sha256": "4f86d7cf2ee99ef8f4218174209e35cbfa622c2daa4c439e8550ee5a7124fdd0",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-handoff.json",
+        "bytes": 1990,
+        "sha256": "3f981dca444b4d1ef32381387169cc91059392e5a646bc2dfee4575d6185bcaf",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-red.json",
+        "bytes": 705,
+        "sha256": "98d963606ebed24d3cf3854d39d6b3ab62bcf59c5ea506514e572c1fa1724837",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-red.log",
+        "bytes": 4627,
+        "sha256": "f4c50c7ac06f9ea20695d40765b6b38e1b40542a86ae61dbc66df5abb3ee97c7",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-syntax-script.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-syntax-test.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/green-initial.json",
+        "bytes": 412,
+        "sha256": "815997f587940d4fb8fea9643798e61ff196445df03ee6e3f3bb5505cad99f5a",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/green-initial.log",
+        "bytes": 4833,
+        "sha256": "0e33e7ae69ed34a1d4c9a6e812033cf3cb3225d125ae07e46dbeb45cf464a800",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/green.json",
+        "bytes": 1878,
+        "sha256": "63a865616b95c9fdb5e72a971e72b5a11a106b44e3ccaf354bb09c4679f0bff7",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/handoff.json",
+        "bytes": 4252,
+        "sha256": "a71987913d37921bc4304617e3ebe223d454b5028f293b0500de96d4ca8ebc35",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/lifecycle.log",
+        "bytes": 4840,
+        "sha256": "8a77d3863ad18ac9be15d622598f543a857f14097bd90c9ee165e4e130df1d5e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/red.json",
+        "bytes": 708,
+        "sha256": "667e18f9111d72395ce470f6ef7262a349d000ca201c42258cc0701598885849",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/red.log",
+        "bytes": 17528,
+        "sha256": "a9ac1b74f7057ed2d8142fd7ced490197917320a9f5ba8e9d7307f8cb3de70e2",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-final-0.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-final-1.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-final-2.log",
+        "bytes": 2467,
+        "sha256": "0a4cf38c4843877a4735c97181b7f246146f5d089ef69ac46f9ac934c0ebd1c5",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-final-review.json",
+        "bytes": 2005,
+        "sha256": "f0b73b5ab98460d57529db314fbc505b13476ec73d0ec86b9cf5d3dc87cd472e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-green.json",
+        "bytes": 580,
+        "sha256": "0422cc633d24af9443e463e41f263f9e2801afdf20fdf3943d88b5cf15b5189a",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-green.log",
+        "bytes": 2145,
+        "sha256": "c88148b916c98257e202edbf888631a4e2ae34db906c3fe17106ad75d822802d",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/syntax-script.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/syntax-tests.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/whitespace.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/checksums.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/dependencies.log",
+        "bytes": 863,
+        "sha256": "2b06e2bc7aa40856205c73b16ff73aa53ed72838fcc7e889ea296a7fa52076a6",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/format.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/fuzz-calendar.log",
+        "bytes": 347,
+        "sha256": "e9609793068ce67975c7b84f7aafe7614e93f7c45c171afc1304d8a1c4a668da",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/fuzz-schedule.log",
+        "bytes": 346,
+        "sha256": "1456ce37d780a5a4b42d6ecdffd3403e3d153da88bd3aca225e55b73e2cbfd10",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/isolation.log",
+        "bytes": 85,
+        "sha256": "cec8f74ef20c5a3195f6a673cbce7b31e5f8ed6ffeab933c1b34676b668a83ef",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/race.log",
+        "bytes": 143781,
+        "sha256": "6eb74366ff78949717202e6b1686b9335104676194eae3574627c7996843017a",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/receipt.json",
+        "bytes": 14186,
+        "sha256": "9801da323e983e23c346cb7cd19f744fcb3cc2ec35d0013e1fdc0f9921f86f90",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/toolchain.log",
+        "bytes": 33,
+        "sha256": "3008ffc50874cac169bf0446997798346d244c5c1ff94af771a02191f465a4b1",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/vet.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/isolation.log",
+        "bytes": 840,
+        "sha256": "49952ae225ba384f26fa399f1ff4da784233e9ccba3b6258fe5573c5faa36777",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/receipt.json",
+        "bytes": 6515,
+        "sha256": "7e5ce0a83b4a31c0e59fc2480ae577e73e01af260744d03bcc7a3ae42abb44eb",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/toolchain.log",
+        "bytes": 33,
+        "sha256": "3008ffc50874cac169bf0446997798346d244c5c1ff94af771a02191f465a4b1",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/notification-native-review/TRANSPORT-QUALIFICATION-initial.md",
+        "bytes": 3998,
+        "sha256": "9ca56d88ab0b8fa944a95e2849b57a6fa35c5894b1483bd535733259fb284c0c",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/notification-native-review/TRANSPORT-QUALIFICATION-reviewed.md",
+        "bytes": 4122,
+        "sha256": "3a503ac2bf4bd5f835eb98504168e1ef3a752dae8a70af7681c0b05bd5272cce",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/notification-native-review/module-provider.log",
+        "bytes": 23789,
+        "sha256": "3105e4bdfdfd209f725e21efef4afa1b81cf6f7d84d0346b99367c50ed16f9a7",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/notification-native-review/notification-transport-native.yml",
+        "bytes": 3780,
+        "sha256": "67ec88309f4f769815debb6b50c25f98076f31e3c79af4a5747fb69ffaea50f6",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/notification-native-review/review-initial.json",
+        "bytes": 20011,
+        "sha256": "5efe5443c915e07ec6123f1be05af3385485a5fa9059d473270260e4f3c65da4",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/notification-native-review/review.json",
+        "bytes": 20969,
+        "sha256": "69afdfae36fa5f6feb6d317e966d9af8e2db74c89b31c10a6cac0722d9256cb3",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/notification-native-review/review.md",
+        "bytes": 1818,
+        "sha256": "1ec83e487e73bba0ca5f995457c403764412f191d70b9561b84ea5a35e13fe34",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/final-focused-replay.log",
+        "bytes": 663,
+        "sha256": "f7a8b5770586b08f2878673e4b8f794da2a91984cf290350049188df056f11bc",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/invalid-replacement-final-probe.mjs",
+        "bytes": 16566,
+        "sha256": "792d37b334802e305dc4595086003f70086cbedbb842810942be73eccf77973b",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/invalid-replacement-probe.mjs",
+        "bytes": 16525,
+        "sha256": "7097f121447dfb03420670e2fc62dc62c45a1f3cb2130de513dee72ca8b26af3",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/invalid-replacement-red.json",
+        "bytes": 784,
+        "sha256": "04c08daa9c4e74ba4ea582c7845951feb20edc401833809bf44c4e7b62ebd04c",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/invalid-replacement-red.log",
+        "bytes": 1350,
+        "sha256": "941e4c14a3134d8de0fe79378c32ad478a7eda2283ff1465e53d90c57fdefc20",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/manual-submission-final-probe.mjs",
+        "bytes": 16281,
+        "sha256": "d11246037fe3cb8a71710c7e7127fc5980761786ac4bce0c4cf1dec54a388b4d",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/manual-submission-probe.mjs",
+        "bytes": 16281,
+        "sha256": "0c8c21e51709454278f78fb704ee3b5aff2a8185cacab7573234a7b47c51fd74",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/manual-submission-red.json",
+        "bytes": 820,
+        "sha256": "c3b56672d9678df40afbb01c6ae340cce3b960ac894f0d548cd18a1787ecc4f5",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/manual-submission-red.log",
+        "bytes": 1049,
+        "sha256": "3ddb75dd001d8bbf1137ac1867838051c7819c05674a2d7c6bd539c5780d7615",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/review.json",
+        "bytes": 3134,
+        "sha256": "ed8efaf63406a85d00d864ff74ebd6fd91e2e520d4f26b760b634a1f80151c42",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/review.md",
+        "bytes": 2472,
+        "sha256": "ac740402ed7c0fdead23a749943ae286bdf8deb6da8cdb2fb618757299a237b7",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/scan-frozen-2ee089e.js",
+        "bytes": 6373,
+        "sha256": "0a46e29a281fdb52c0413900855e524141f43c1a7c484f0f282f015b1d541e73",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/qr-camera-independent-review/scan-frozen-7a33e6e.js",
+        "bytes": 6499,
+        "sha256": "85577866e38f6c31a5c7bbb46b3792864ac1a1ffff8f0468001278b13871d0d7",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/receipts-current-qualification/fuzz-certificate.log",
+        "bytes": 497,
+        "sha256": "26f8323f2e56533ac2634f911129bb76cbb8d14d9e68464b9d325c4d982d2e6d",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/receipts-current-qualification/fuzz-create.log",
+        "bytes": 679,
+        "sha256": "af0f814da7b699359dd1c27abf694692e5bf6eaf735045ad0d58eb203d37c8ea",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/receipts-current-qualification/fuzz-decode.log",
+        "bytes": 497,
+        "sha256": "1600940c9e46f65f39602db504fc227bc1944001ba691558be9df7f1c94d3101",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/receipts-current-qualification/race.log",
+        "bytes": 105680,
+        "sha256": "bccf94f4eea8a63f57a5ae4c09a84c3a35720c1eb366a070d8325b5ca0eede25",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/receipts-current-qualification/receipt.json",
+        "bytes": 7531,
+        "sha256": "3a6159e0f2f9f1256d41fe12f618744c6aa2ef47e2370198e136451f21716a17",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/ARCHIVE_MODULE_QUALIFICATION-attempt1.json",
+        "bytes": 165002,
+        "sha256": "19436906de9c43ac112476871b0deed33841d756a7f33c8fb30883f817ab3afb",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/ARCHIVE_MODULE_QUALIFICATION-attempt2.json",
+        "bytes": 417187,
+        "sha256": "995251008482473f309df73ead0d5ed8efae82e7b5c91e5a8de9ea989f8e4952",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/ARCHIVE_MODULE_QUALIFICATION-attempt3.json",
+        "bytes": 478767,
+        "sha256": "d52ea13975c26520236e551edc4326cb09fa1ea7c0a0f8c45ceda26ae62408b7",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/ARCHIVE_MODULE_QUALIFICATION.json",
+        "bytes": 484656,
+        "sha256": "bd61aa1480b29e6dff2653268b184dea82f2f54855aed73db98d6ecbabfd345b",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/analytics-receipt.json",
+        "bytes": 24302,
+        "sha256": "226b47620fb5ef6b2251742952cd95aed738587ceb26ea118f7da3c83dccc637",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/areas-receipt.json",
+        "bytes": 30460,
+        "sha256": "14d9afc26a562445e386f88203b5dfef7e96dbd728bac2d55fb4620c0d506ac4",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/discovery-receipt.json",
+        "bytes": 29377,
+        "sha256": "0ca9e84ae6f3a14b59652acf9bf87758149e8d02a02dc859f2a1bc8f0fe826d1",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/favorites-receipt.json",
+        "bytes": 30891,
+        "sha256": "6bb8a71826af8afd11e9fe0bfbfdbfd9550b2f7b3fdbc00b0b6c742bc8be33f1",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/federation-receipt.json",
+        "bytes": 29982,
+        "sha256": "f285e36f53fdd99cb5b9b538e16d0c3d8550b428d9e01bd4fe38b0dde71188e9",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/feed-receipt.json",
+        "bytes": 30748,
+        "sha256": "2f64bad9d093d82339895295f1b17357e554070287b58275cd5968e41caa4ff2",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/governance-receipt.json",
+        "bytes": 29673,
+        "sha256": "fa2820631713cddd03c8846d85f86601246eb610c74fdc554eabdcc80155276d",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/analytics/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/analytics/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/analytics/race.log",
+        "bytes": 16583,
+        "sha256": "04b8b96483e6fb12c0dcdc50c71f60076530fe4a8513092efa9f68b20dcdb312",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/analytics/vet.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/areas/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/areas/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/areas/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/areas/race-attempt2.log",
+        "bytes": 51620,
+        "sha256": "d252f55dab1c986f3d1dfe033b66087c322df12e87238fd4e117fc680fcaf724",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/areas/race.log",
+        "bytes": 500,
+        "sha256": "e7dccae017c45fae692ee772cfc869c518c487a8d53ec0f302a6110ca68e9c33",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/areas/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/areas/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/discovery/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/discovery/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/discovery/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/discovery/race-attempt2.log",
+        "bytes": 49762,
+        "sha256": "c6af362e0868ead12c2ffef6b1418049c227389cd767ea3aeef400fd7fc15638",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/discovery/race.log",
+        "bytes": 190,
+        "sha256": "dae7568b05fd32b0d8951a4c577c9b293da86b398989d2650b1eab850e0dcba2",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/discovery/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/discovery/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/favorites/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/favorites/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/favorites/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/favorites/race-attempt3.log",
+        "bytes": 72461,
+        "sha256": "b36f3302243499c03cc18990f6c168b54c018b42898567fe6d13192cabab5cc2",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/favorites/race.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/favorites/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/favorites/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/federation/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/federation/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/federation/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/federation/race-attempt2.log",
+        "bytes": 41320,
+        "sha256": "9d2d8f0e1d03e90b06fb799df161165a4e604a8077f3afd1bb591120c2113c16",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/federation/race.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/federation/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/federation/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/feed/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/feed/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/feed/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/feed/race-attempt3.log",
+        "bytes": 52214,
+        "sha256": "c2a59559b0c23d838e0994c1f245d6ed2899ddb068a26a3107100f3c46bfafe7",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/feed/race.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/feed/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/feed/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/governance/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/governance/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/governance/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/governance/race-attempt2.log",
+        "bytes": 43876,
+        "sha256": "8f796bb5cafb395387ce7c20897d461de4847d6a5e6c2429088adff476a039c5",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/governance/race.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/governance/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/governance/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/matching/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/matching/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/matching/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/matching/race-attempt2.log",
+        "bytes": 44679,
+        "sha256": "d32ccbd8c75a5dfe780bd89e37377817658bbf369412fe96bcac97c56128b897",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/matching/race.log",
+        "bytes": 1202,
+        "sha256": "a63176ee9b43d28b569b97787634dcd34a34c7b3c51738cc57639e12ef4070ae",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/matching/vet-attempt2.log",
+        "bytes": 104,
+        "sha256": "6bd981467006ad4fd29ae3b8a1559fe08a457b57fd0b096e51927b47c9b6bdb4",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/matching/vet-attempt3.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/matching/vet.log",
+        "bytes": 12755,
+        "sha256": "8b2e60e1c967c32421156b751630d2f59d6eb214b9f79ab8e5b099ac675e0f02",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/messaging/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/messaging/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/messaging/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/messaging/race-attempt2.log",
+        "bytes": 65344,
+        "sha256": "c2cbf4ee14bcb5fd30220aba1b01d04d647b19deea1f8ec4b2436561fad648c3",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/messaging/race.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/messaging/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/messaging/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/notifications/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/notifications/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/notifications/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/notifications/race-attempt2.log",
+        "bytes": 1641,
+        "sha256": "856d6f93c06b1cf0dd7db14b1f6c1ee815213f73455526e054755287a5bab747",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/notifications/race.log",
+        "bytes": 456,
+        "sha256": "787129f15143bad2e190bf1244753bca8d721cddf5ffd229d56fdd222f27bf8a",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/notifications/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/notifications/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/onboarding/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/onboarding/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/onboarding/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/onboarding/race-attempt2.log",
+        "bytes": 38459,
+        "sha256": "09232643b9d518f85752d73639aaefdf1e0d8ea5557ea30f527540b2c9b14a1d",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/onboarding/race.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/onboarding/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/onboarding/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/pwa/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/pwa/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/pwa/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/pwa/node_unit.log",
+        "bytes": 2718,
+        "sha256": "f85cb4a6e50d9364c543be5ab3974c386d81d3514cd4fa728ec1375f5af284e0",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/pwa/race-attempt2.log",
+        "bytes": 31445,
+        "sha256": "492967fbf0a30bac63ab218e15f8039008f48e60780ff3412e24d2e3e1094f03",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/pwa/race.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/pwa/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/pwa/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/qr/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/qr/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/qr/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/qr/node_camera_unit.log",
+        "bytes": 1672,
+        "sha256": "37f10c04d1dcb3ca41ff60d8050378771b47d98d2a88a93810f18846ad91ccf4",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/qr/race-attempt2.log",
+        "bytes": 51768,
+        "sha256": "3cf84a6c87d4169c665be1cf81458efc5add065574f8ca61b1f1af7582e182da",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/qr/race.log",
+        "bytes": 350,
+        "sha256": "8bda979dc9d3ef3e5103c670e097e693c38d3e873558197ae10076dd36dc05d4",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/qr/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/qr/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/receipts/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/receipts/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/receipts/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/receipts/race-attempt2.log",
+        "bytes": 73775,
+        "sha256": "a5fae7b22dcf40e50184a5da3863bbcfcf7d91e40e89e6a4bdbcc8bc55952ae7",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/receipts/race.log",
+        "bytes": 235,
+        "sha256": "5a5a6f2dc86fdd5a4f3e158ad98ce617123fd9cf2de770008849a15a7d8fab3a",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/receipts/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/receipts/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/recurring/gofmt.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/recurring/mod_verify-attempt2.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/recurring/mod_verify.log",
+        "bytes": 21,
+        "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/recurring/race-attempt3.log",
+        "bytes": 37123,
+        "sha256": "f98ee7bf0e036d90a89267fc698dafcd3a5965ec0dd140243add649467aa90d0",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/recurring/race.log",
+        "bytes": 154,
+        "sha256": "2974bb925b2e26bf538325a8780ce8276b0b188b336ea48f28bb95f23ae3f348",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/recurring/vet-attempt2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/logs/recurring/vet.log",
+        "bytes": 105,
+        "sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/matching-receipt.json",
+        "bytes": 45220,
+        "sha256": "b37052516258d0427ddf36c5f3e1daf8d3e7f79efb4bcdfc205e63a70833d8b8",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/messaging-receipt.json",
+        "bytes": 30613,
+        "sha256": "e7a777acab6d70f850559ace4821b4db3abd082aee020cb635f8fa57eed4901d",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/notifications-race-retry-20261119T132815Z/race.log",
+        "bytes": 52746,
+        "sha256": "d91472bb47c0d7d9dc9f6717ccf2a39d4ac3a6405a10578e54df1c8d480bcf61",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/notifications-race-retry-20261119T132815Z/receipt.json",
+        "bytes": 37748,
+        "sha256": "7c7f39dff0f620fba0074740d70e403c1d846db22667908ab11ca17faf6ef35a",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/notifications-receipt.json",
+        "bytes": 18521,
+        "sha256": "7110e8d24a5e53078de2fea6c9385ab42b1238ebb18091227ca6a0d70e7221a7",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/onboarding-receipt.json",
+        "bytes": 29669,
+        "sha256": "4a8b835ec866171bea33c8d4917b4b8c199ab05853961b62467cecac95245d20",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/pwa-receipt.json",
+        "bytes": 33356,
+        "sha256": "aa68c3f1891773d70261c89007f4871f8916402223297e3d0e544d3b28032107",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/qr-receipt.json",
+        "bytes": 33453,
+        "sha256": "7459952c3df8282870b5170b2bd55e49ac7cf83fa917dc977f8f7ec78e3dfb28",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/qualification-summary-14-of-15.json",
+        "bytes": 20420,
+        "sha256": "ea853179153f7afc3aaf2751801f6bb833c67648e9647a8b482ffdbb85160764",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/qualification-summary.json",
+        "bytes": 22162,
+        "sha256": "17b40b5efeb572806b6af68fa66e1a6873bfb2d8867ec307509bda30ecd46c75",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/qualification-summary.md",
+        "bytes": 3833,
+        "sha256": "5f7702d8c8e1a405c646af04f9178474f420602fcab18bbab28edfad37e932f8",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/receipts-receipt.json",
+        "bytes": 29560,
+        "sha256": "35210c91783b4cb2e18734449c6e0a43e84e1400b220b293f970b5eb9eacea80",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/recurring-receipt.json",
+        "bytes": 31295,
+        "sha256": "268474c6263d6f9651ba2350f76154a7f7d6cc214b0b7fd0eb94472418ebf997",
+        "CRC_read_passed": true
+      },
+      {
+        "path": "evidence/recovered-qualification/source-manifests.json",
+        "bytes": 134392,
+        "sha256": "ff6ae5b4da6abd14b7c4fccf87d5ec8343d58be313cfa0d207a05bad6c254cf1",
+        "CRC_read_passed": true
+      }
+    ],
+    "package_checksum_checks": [
+      {
+        "path": "README.md",
+        "sha256": "50b744119a916309b0a4b4edb965de4864fd8c68e4b5f7dc3afa2c92f27c911a",
+        "pass": true
+      },
+      {
+        "path": "archive-verification.json",
+        "sha256": "1798ea28bdc0175519ae31c1193728937cb508296329cff921bbb4e0c9be8289",
+        "pass": true
+      },
+      {
+        "path": "federation-independent-review.json",
+        "sha256": "05674c555c8f0060c0c0659cab337bb5121ca35851c3904aa14d4488bfeae27e",
+        "pass": true
+      },
+      {
+        "path": "historical-evidence.tar.gz",
+        "sha256": "6d7ad0e06ef2bb9a4cd1a70626ae328a8384828dd439e07c4bf07246ff37d385",
+        "pass": true
+      },
+      {
+        "path": "historical-object-remote-check.json",
+        "sha256": "468322e40b694d7dca9cce868eea577058eb564acddd6fee371464a10d2c79db",
+        "pass": true
+      },
+      {
+        "path": "payload-manifest.json",
+        "sha256": "88cd6496d42b9a4df2cb8e6d379d696f7d0940695ce1aa47c8bd58e022aa7b7d",
+        "pass": true
+      },
+      {
+        "path": "secret-scan-review.json",
+        "sha256": "bb9f4d57972db3fc295ff1200713d3f6b330fc16520686e6415bb44a5064f473",
+        "pass": true
+      },
+      {
+        "path": "verification-result.json",
+        "sha256": "c21c559af5c6c4df21ce9d113da3252bcda97c60939878ed75546c133a59bbe6",
+        "pass": true
+      },
+      {
+        "path": "verify_recovery.py",
+        "sha256": "5a332c3e6ebb8925547238cb6cf0e6bf9ae2b40b8169dfb650d74975110e71aa",
+        "pass": true
+      }
+    ]
+  },
+  "provider_readback": {
+    "observed_at_utc": "2026-11-21T02:35:03Z",
+    "main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+    "evidence": "c1a34476de017ab70acc99181ebbe16c337fc0e6",
+    "pull_requests": [
+      {
+        "number": 109,
+        "url": "https://github.com/djshellshoxxx/circula/pull/109",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "head": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+        "branch": "feature/core-catalogue-continuation-20261119",
+        "base": "integration/comprehensive-audit-20261119",
+        "provider_updated_at": "2026-11-19T12:52:34Z"
+      },
+      {
+        "number": 112,
+        "url": "https://github.com/djshellshoxxx/circula/pull/112",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "head": "7462138fb4f7110ea4f705c6f09742a2b5a253e4",
+        "branch": "integration/core-ui-completion-20261119",
+        "base": "feature/core-catalogue-continuation-20261119",
+        "provider_updated_at": "2026-11-19T15:16:26Z"
+      },
+      {
+        "number": 111,
+        "url": "https://github.com/djshellshoxxx/circula/pull/111",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "head": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+        "branch": "codex/api036-qualification-20261119",
+        "base": "integration/comprehensive-audit-20261119",
+        "provider_updated_at": "2026-11-19T12:54:53Z"
+      },
+      {
+        "number": 104,
+        "url": "https://github.com/djshellshoxxx/circula/pull/104",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "head": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+        "branch": "integration/circula-master-consolidation-20261119",
+        "base": "main",
+        "provider_updated_at": "2026-11-20T23:59:19Z"
+      }
+    ],
+    "scope": "GitHub API live PR and branch reads. Source branches independently returned the same heads; actual main and evidence branch were read directly."
+  }
+}

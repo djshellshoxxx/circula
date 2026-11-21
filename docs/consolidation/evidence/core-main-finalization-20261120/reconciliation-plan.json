@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "repository": "djshellshoxxx/circula",
+  "main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+  "tree": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+  "status": "preservation_review_complete_postmerge_checks_pending",
+  "required_workflows": [
+    {
+      "id": 44856110228,
+      "expected_jobs": 9,
+      "scope": "Core",
+      "observed_successes": 0
+    },
+    {
+      "id": 44856110230,
+      "expected_jobs": 3,
+      "scope": "native readers",
+      "observed_successes": 0
+    },
+    {
+      "id": 44856110197,
+      "expected_jobs": 1,
+      "scope": "scorecard execution",
+      "observed_successes": 1
+    }
+  ],
+  "gates": [
+    "Refresh actual main and every original PR head immediately before a mutation.",
+    "Require complete successful applicable postmerge jobs for the actual main composition; missing, queued, skipped, failed, cancelled and timed-out required jobs are not passes.",
+    "If refs changed, inspect the unique delta and requalify rather than applying stale classifications.",
+    "Observe automatic PR state transitions before closing already-reconciled work.",
+    "Preserve original PR bodies, source refs, independent review records and historical qualification limits.",
+    "Make only the ordinary administrative close; no new runtime merge, branch deletion or shared-history rewrite."
+  ],
+  "pull_requests": [
+    {
+      "number": 109,
+      "expected_head": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+      "branch": "feature/core-catalogue-continuation-20261119",
+      "classification": "ancestor",
+      "source_only_commits": 0,
+      "action_after_gates": "close as already incorporated through PR127; preserve source branch"
+    },
+    {
+      "number": 112,
+      "expected_head": "7462138fb4f7110ea4f705c6f09742a2b5a253e4",
+      "branch": "integration/core-ui-completion-20261119",
+      "classification": "ancestor",
+      "source_only_commits": 0,
+      "action_after_gates": "close as already incorporated through PR127; preserve source branch"
+    },
+    {
+      "number": 111,
+      "expected_head": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+      "branch": "codex/api036-qualification-20261119",
+      "classification": "superseded alternative fixture, not ancestor",
+      "identical_documents": 6,
+      "identical_fixture_suffix_bytes": 1877,
+      "action_after_gates": "close with explicit document inclusion and fixture supersession; preserve source branch"
+    },
+    {
+      "number": 104,
+      "expected_head": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+      "branch": "integration/circula-master-consolidation-20261119",
+      "classification": "runtime supersession and separate documentary recovery, not whole-tree inclusion",
+      "original_paths": 118,
+      "identical_paths": 14,
+      "superseded_python_paths": 2,
+      "recovered_documentary_paths": 102,
+      "original_python_test_method_asts_retained": 38,
+      "current_python_test_methods": 49,
+      "archive_sha256": "6d7ad0e06ef2bb9a4cd1a70626ae328a8384828dd439e07c4bf07246ff37d385",
+      "action_after_gates": "close with explicit runtime supersession and durable documentary recovery; preserve source branch"
+    }
+  ],
+  "preserved_policy_prs": [
+    83,
+    85,
+    86,
+    94,
+    107
+  ],
+  "future_modules": {
+    "count": 15,
+    "enabled": false,
+    "integration": "HOLD"
+  },
+  "scope_limit": "This is a non-executable reconciliation plan. It does not authorize deployment, release, policy selection or future-module activation.",
+  "observed_at_utc": "2026-11-21 02:37:47 UTC"
+}

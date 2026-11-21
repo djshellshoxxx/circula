@@ -1,0 +1,290 @@
+{
+  "manifest": {
+    "entries": 14,
+    "all_match": true,
+    "missing_entries": [],
+    "extra_entries": [],
+    "duplicates": false
+  },
+  "json_files": [
+    "history-review/proof.json",
+    "history-review/provider-readback.json",
+    "provider-observation-20261120T183747.json",
+    "reconciliation-plan.json",
+    "scope-review/proof.json",
+    "scorecard-result.json",
+    "test-evidence/legacy-citation-review.json",
+    "test-evidence/test-evidence-review.json"
+  ],
+  "artifact": {
+    "bytes": 137945,
+    "sha256": "d4368bca6e6d52bd22ac3e8a1acef798ac501322652aaa500a80315197ed8476",
+    "head": "6eb49aa2b2c7859fd2a8ceda207ddbb01eaa9d65",
+    "dirty": false,
+    "source_digest": "9de685071744f0b9e260d53fc7d934cb4289c3b10f84a020db8e319227b77100",
+    "exit_code": 0,
+    "total_events": {
+      "pass": 3274,
+      "skip": 8
+    },
+    "named_results": {
+      "pass": 3258,
+      "skip": 6
+    },
+    "top_level_results": {
+      "pass": 1293,
+      "skip": 6
+    },
+    "subtest_results": {
+      "pass": 1965
+    },
+    "package_results": {
+      "pass": 16,
+      "skip": 2
+    },
+    "member_paths_safe": true
+  },
+  "observed_at_utc": "2026-11-21 02:37:47 UTC",
+  "observed_local": "2026-11-20T18:37:47-08:00",
+  "provider_checks": {
+    "main_ref": "87651d36558a8e421e41fbd76c514045d88c74ed",
+    "main_commit": {
+      "sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "tree": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+      "parents": [
+        "aa01563fcc891da60fefebb8335eca27855678e8",
+        "3ef43ac1e05360d2a1641742dc056afe8871879b"
+      ]
+    },
+    "synthetic_commit": {
+      "sha": "6eb49aa2b2c7859fd2a8ceda207ddbb01eaa9d65",
+      "tree": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+      "parents": [
+        "aa01563fcc891da60fefebb8335eca27855678e8",
+        "3ef43ac1e05360d2a1641742dc056afe8871879b"
+      ]
+    },
+    "premerge_core_jobs": {
+      "total": 9,
+      "jobs": 9,
+      "statuses": {
+        "('completed', 'success')": 9
+      },
+      "heads": [
+        "3ef43ac1e05360d2a1641742dc056afe8871879b"
+      ]
+    },
+    "premerge_reader_jobs": {
+      "total": 3,
+      "jobs": 3,
+      "statuses": {
+        "('completed', 'success')": 3
+      },
+      "heads": [
+        "3ef43ac1e05360d2a1641742dc056afe8871879b"
+      ]
+    },
+    "postmerge_core_jobs": {
+      "total": 9,
+      "jobs": 9,
+      "statuses": {
+        "('queued', None)": 9
+      },
+      "heads": [
+        "87651d36558a8e421e41fbd76c514045d88c74ed"
+      ]
+    },
+    "postmerge_reader_jobs": {
+      "total": 3,
+      "jobs": 3,
+      "statuses": {
+        "('queued', None)": 3
+      },
+      "heads": [
+        "87651d36558a8e421e41fbd76c514045d88c74ed"
+      ]
+    },
+    "postmerge_scorecard_jobs": {
+      "total": 1,
+      "jobs": 1,
+      "statuses": {
+        "('completed', 'success')": 1
+      },
+      "heads": [
+        "87651d36558a8e421e41fbd76c514045d88c74ed"
+      ]
+    }
+  },
+  "relative_links": {
+    "checked": 13,
+    "missing": []
+  },
+  "tracked_diffs": [],
+  "status": [
+    "?? docs/consolidation/CORE_POSTMERGE_CONTINUATION_20261120.md",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/README.md",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/SHA256SUMS",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/history-review/REVIEW.md",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/history-review/SHA256SUMS",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/history-review/proof.json",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/history-review/provider-readback.json",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/provider-observation-20261120T183747.json",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/reconciliation-plan.json",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/scope-review/proof.json",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/scope-review/report.md",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/scorecard-result.json",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/test-evidence/legacy-citation-review.json",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/test-evidence/linux-source-test-evidence.zip",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/test-evidence/test-evidence-review.json",
+    "?? docs/consolidation/evidence/core-main-finalization-20261120/test-evidence/test-evidence-review.md"
+  ],
+  "reviewed_file_digests": [
+    {
+      "path": "docs/consolidation/CORE_POSTMERGE_CONTINUATION_20261120.md",
+      "sha256": "9da9fb0888688906a8400a86d110deed62fbe39f3b4ac8f8802f53b964b83304",
+      "bytes": 7849
+    },
+    {
+      "path": "docs/consolidation/evidence/core-main-finalization-20261120/README.md",
+      "sha256": "bc750e792d2493d1f84485a5e221c7e62c9a6367ff495c57a8ccdb868fcae72f",
+      "bytes": 9202
+    },
+    {
+      "path": "docs/consolidation/evidence/core-main-finalization-20261120/SHA256SUMS",
+      "sha256": "da7ba916d135c0e5994791e8f2c9f15a5f5f24b86311ae85230505a2b3829b5b",
+      "bytes": 1350
+    },
+    {
+      "path": "docs/consolidation/evidence/core-main-finalization-20261120/history-review/REVIEW.md",
+      "sha256": "49e2e10495bf77e10792965a1520acbb8b03268d4766f43c8cb3ee4c0316b18d",
+      "bytes": 6605
+    },
+    {
+      "path": "docs/consolidation/evidence/core-main-finalization-20261120/scope-review/report.md",
+      "sha256": "853c9e556c37aebd6e796ed291d5343f478c665df28590d0a1b0ac81a5e6e2ea",
+      "bytes": 10678
+    },
+    {
+      "path": "docs/consolidation/evidence/core-main-finalization-20261120/test-evidence/linux-source-test-evidence.zip",
+      "sha256": "d4368bca6e6d52bd22ac3e8a1acef798ac501322652aaa500a80315197ed8476",
+      "bytes": 137945
+    },
+    {
+      "path": "docs/consolidation/evidence/core-main-finalization-20261120/test-evidence/test-evidence-review.md",
+      "sha256": "3bac72845f8243338b24c7a6eb846956218579d125ddf0846b51117723b6bffd",
+      "bytes": 8023
+    }
+  ],
+  "byte_original_copies": [
+    {
+      "path": "history-review/REVIEW.md",
+      "matches_original": true
+    },
+    {
+      "path": "history-review/proof.json",
+      "matches_original": true
+    },
+    {
+      "path": "history-review/provider-readback.json",
+      "matches_original": true
+    },
+    {
+      "path": "history-review/SHA256SUMS",
+      "matches_original": true
+    },
+    {
+      "path": "scope-review/report.md",
+      "matches_original": true
+    },
+    {
+      "path": "scope-review/proof.json",
+      "matches_original": true
+    },
+    {
+      "path": "test-evidence/test-evidence-review.md",
+      "matches_original": true
+    },
+    {
+      "path": "test-evidence/test-evidence-review.json",
+      "matches_original": true
+    },
+    {
+      "path": "test-evidence/legacy-citation-review.json",
+      "matches_original": true
+    },
+    {
+      "path": "test-evidence/linux-source-test-evidence.zip",
+      "matches_original": true
+    }
+  ],
+  "nested_history_manifest_matches": [
+    true,
+    true,
+    true
+  ],
+  "review_scope": "Independent publication review of documentation/evidence only; no product executions or remote mutations.",
+  "base_evidence_commit": "c1a34476de017ab70acc99181ebbe16c337fc0e6",
+  "decision": "APPROVE_documentary_publication_after_final_manifest_refresh",
+  "blocking_findings": [],
+  "resolved_minor_findings": [
+    {
+      "id": "PUB-01",
+      "file": "docs/consolidation/evidence/core-main-finalization-20261120/README.md",
+      "change": "Combined 13+11 traceability claim now links the full test-evidence review.",
+      "independently_verified": true
+    },
+    {
+      "id": "PUB-02",
+      "file": "docs/consolidation/CORE_POSTMERGE_CONTINUATION_20261120.md",
+      "change": "Uncited built rows now described as inherited citation gaps with mixed inspection/shell/manual/deployment evidence; a missing test citation alone does not establish missing implementation or unmet acceptance.",
+      "independently_verified": true
+    }
+  ],
+  "later_checkpoint_review": {
+    "observed_at_utc": "2026-11-21 02:43:25 UTC",
+    "expected_head": "87651d36558a8e421e41fbd76c514045d88c74ed",
+    "job_count": 13,
+    "success": 3,
+    "in_progress": 5,
+    "queued": 5,
+    "failed": 0,
+    "all_heads_match": true,
+    "old_observation_preserved": true,
+    "plan_observation_time_explicit": true,
+    "relative_links_checked_after_update": 15,
+    "all_relative_links_exist": true
+  },
+  "coordinator_final_steps": [
+    "Regenerate and verify complete SHA256SUMS after adding this review and any later receipts.",
+    "Refresh evidence branch, use expected-head update and compare the published tree with the final documentary composition.",
+    "Keep actual-main qualification and historical PR closure pending until applicable jobs succeed and source refs are refreshed."
+  ],
+  "limits": [
+    "No newer provider state was fetched by this reviewer; the two preserved root snapshots were inspected independently.",
+    "Source/artifact/provider counts and scope match the copied raw records and independent proofs.",
+    "No product suite, archived program, migration, workflow, PR mutation or remote write was executed.",
+    "This approval concerns documentary publication, not policy selection, deployment, actual-main qualification or historical PR closure."
+  ],
+  "final_reviewed_document_digests": [
+    {
+      "path": "docs/consolidation/CORE_POSTMERGE_CONTINUATION_20261120.md",
+      "bytes": 8283,
+      "sha256": "3ab16d983184aec6705a94565150a690897d90f9635892aecfd5aaac5788ec0f"
+    },
+    {
+      "path": "docs/consolidation/evidence/core-main-finalization-20261120/README.md",
+      "bytes": 9518,
+      "sha256": "1b9e72027f5d06518bb14ac3f5f7cb90bd0e42b7151768cc78731bfade645139"
+    },
+    {
+      "path": "docs/consolidation/evidence/core-main-finalization-20261120/reconciliation-plan.json",
+      "bytes": 3561,
+      "sha256": "edc54d8cc154d33d10c970ed801c1767b3ce818a8d0fdaaa16f54a502f7c5fc5"
+    },
+    {
+      "path": "docs/consolidation/evidence/core-main-finalization-20261120/provider-observation-20261120T184325.json",
+      "bytes": 34193,
+      "sha256": "a5e3d682c3dc1b00ed7cf2f3160228cdba9de3cf5b4777221e344369a3483ac8"
+    }
+  ]
+}

@@ -1,0 +1,265 @@
+{
+  "source_job": 136698602978,
+  "source_run": 44856110197,
+  "source_url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110197/job/136698602978",
+  "kind": "JSON result extracted without modifying check results from the successful provider job log",
+  "results": [
+    {
+      "date": "2026-11-21T02:36:08Z",
+      "repo": {
+        "name": "github.com/djshellshoxxx/circula",
+        "commit": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      },
+      "scorecard": {
+        "version": "v5.6.0",
+        "commit": "61e84743356275f6ffca23b1b2f2cb945e19eb96"
+      },
+      "score": 5.9,
+      "checks": [
+        {
+          "details": [
+            "Warn: Repository was created within the last 90 days."
+          ],
+          "score": 0,
+          "reason": "project was created within the last 90 days. Please review its contents carefully",
+          "name": "Maintained",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#maintained",
+            "short": "Determines if the project is \"actively maintained\"."
+          }
+        },
+        {
+          "details": null,
+          "score": 10,
+          "reason": "no dangerous workflow patterns detected",
+          "name": "Dangerous-Workflow",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#dangerous-workflow",
+            "short": "Determines if the project's GitHub Action workflows avoid dangerous patterns."
+          }
+        },
+        {
+          "details": null,
+          "score": 0,
+          "reason": "Found 0/2 approved changesets -- score normalized to 0",
+          "name": "Code-Review",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#code-review",
+            "short": "Determines if the project requires human code review before pull requests (aka merge requests) are merged."
+          }
+        },
+        {
+          "details": [
+            "Warn: jobLevel 'contents' permission set to 'write': .github/workflows/release.yml:94",
+            "Info: jobLevel 'contents' permission set to 'read': .github/workflows/release.yml:20",
+            "Info: jobLevel 'contents' permission set to 'read': .github/workflows/release.yml:68",
+            "Info: jobLevel 'contents' permission set to 'read': .github/workflows/scorecard.yml:24",
+            "Info: jobLevel 'actions' permission set to 'read': .github/workflows/scorecard.yml:25",
+            "Info: topLevel 'contents' permission set to 'read': .github/workflows/ci.yml:15",
+            "Info: topLevel 'contents' permission set to 'read': .github/workflows/export-reader.yml:18",
+            "Info: topLevel 'contents' permission set to 'read': .github/workflows/qa001-manual.yml:33",
+            "Info: found token with 'none' permissions: .github/workflows/release.yml:1",
+            "Info: topLevel permissions set to 'read-all': .github/workflows/scorecard.yml:14"
+          ],
+          "score": 10,
+          "reason": "GitHub workflow tokens follow principle of least privilege",
+          "name": "Token-Permissions",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#token-permissions",
+            "short": "Determines if the project's workflows follow the principle of least privilege."
+          }
+        },
+        {
+          "details": [
+            "Info: detected update tool: Dependabot: .github/dependabot.yml:1"
+          ],
+          "score": 10,
+          "reason": "update tool detected",
+          "name": "Dependency-Update-Tool",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#dependency-update-tool",
+            "short": "Determines if the project uses a dependency update tool."
+          }
+        },
+        {
+          "details": [
+            "Info: security policy file detected: SECURITY.md:1",
+            "Warn: no linked content found",
+            "Info: Found disclosure, vulnerability, and/or timelines in security policy: SECURITY.md:1",
+            "Info: Found text in security policy: SECURITY.md:1"
+          ],
+          "score": 4,
+          "reason": "security policy file detected",
+          "name": "Security-Policy",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#security-policy",
+            "short": "Determines if the project has published a security policy."
+          }
+        },
+        {
+          "details": [
+            "Warn: no GitHub/GitLab publishing workflow detected."
+          ],
+          "score": -1,
+          "reason": "packaging workflow not detected",
+          "name": "Packaging",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#packaging",
+            "short": "Determines if the project is published as a package that others can easily download, install, easily update, and uninstall."
+          }
+        },
+        {
+          "details": null,
+          "score": 10,
+          "reason": "no binaries found in the repo",
+          "name": "Binary-Artifacts",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#binary-artifacts",
+            "short": "Determines if the project has generated executable (binary) artifacts in the source repository."
+          }
+        },
+        {
+          "details": null,
+          "score": 0,
+          "reason": "no effort to earn an OpenSSF best practices badge detected",
+          "name": "CII-Best-Practices",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#cii-best-practices",
+            "short": "Determines if the project has an OpenSSF (formerly CII) Best Practices Badge."
+          }
+        },
+        {
+          "details": null,
+          "score": 10,
+          "reason": "0 existing vulnerabilities detected",
+          "name": "Vulnerabilities",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#vulnerabilities",
+            "short": "Determines if the project has open, known unfixed vulnerabilities."
+          }
+        },
+        {
+          "details": [
+            "Warn: containerImage not pinned by hash: deploy/Dockerfile:7: pin your Docker image by updating golang:1.26.11 to golang:1.26.11@sha256:4165ee6bf3b7811fd7b40373290405c83d0167dcb87ee5f29c427cdcef45ff8f",
+            "Warn: containerImage not pinned by hash: deploy/Dockerfile:21: pin your Docker image by updating gcr.io/distroless/static-debian12:nonroot to gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab",
+            "Info:  32 out of  32 GitHub-owned GitHubAction dependencies pinned",
+            "Info:   2 out of   2 third-party GitHubAction dependencies pinned",
+            "Info:   0 out of   2 containerImage dependencies pinned",
+            "Info:   1 out of   1 npmCommand dependencies pinned"
+          ],
+          "score": 8,
+          "reason": "dependency not pinned by hash detected -- score normalized to 8",
+          "name": "Pinned-Dependencies",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#pinned-dependencies",
+            "short": "Determines if the project has declared and pinned the dependencies of its build process."
+          }
+        },
+        {
+          "details": [
+            "Warn: 0 commits out of 30 are checked with a SAST tool"
+          ],
+          "score": 0,
+          "reason": "SAST tool is not run on all commits -- score normalized to 0",
+          "name": "SAST",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#sast",
+            "short": "Determines if the project uses static code analysis."
+          }
+        },
+        {
+          "details": [
+            "Info: GoBuiltInFuzzer integration found: cmd/circula/backupfuzz_test.go:36",
+            "Info: GoBuiltInFuzzer integration found: cmd/circula/backupfuzz_test.go:72",
+            "Info: GoBuiltInFuzzer integration found: cmd/circula/backupfuzz_test.go:110",
+            "Info: GoBuiltInFuzzer integration found: cmd/circula/backupfuzz_test.go:130",
+            "Info: GoBuiltInFuzzer integration found: internal/api/boundary_fuzz_test.go:31",
+            "Info: GoBuiltInFuzzer integration found: internal/api/cursor_fuzz_test.go:31",
+            "Info: GoBuiltInFuzzer integration found: internal/api/fuzz_test.go:12",
+            "Info: GoBuiltInFuzzer integration found: internal/api/fuzz_test.go:31",
+            "Info: GoBuiltInFuzzer integration found: internal/api/fuzz_test.go:60",
+            "Info: GoBuiltInFuzzer integration found: internal/api/fuzz_test.go:80",
+            "Info: GoBuiltInFuzzer integration found: internal/domain/fuzz_test.go:11",
+            "Info: GoBuiltInFuzzer integration found: internal/domain/fuzz_test.go:35",
+            "Info: GoBuiltInFuzzer integration found: internal/domain/fuzz_test.go:53",
+            "Info: GoBuiltInFuzzer integration found: internal/domain/money_fuzz_test.go:10",
+            "Info: GoBuiltInFuzzer integration found: internal/domain/money_fuzz_test.go:59",
+            "Info: GoBuiltInFuzzer integration found: internal/domain/money_fuzz_test.go:85",
+            "Info: GoBuiltInFuzzer integration found: internal/service/export_fuzz_test.go:13",
+            "Info: GoBuiltInFuzzer integration found: internal/service/fuzz_test.go:11",
+            "Info: GoBuiltInFuzzer integration found: internal/service/mfa_fuzz_test.go:11",
+            "Info: GoBuiltInFuzzer integration found: internal/service/mfa_fuzz_test.go:68",
+            "Info: GoBuiltInFuzzer integration found: internal/service/mfa_fuzz_test.go:93",
+            "Info: GoBuiltInFuzzer integration found: internal/service/session_position_security_test.go:14",
+            "Info: GoBuiltInFuzzer integration found: internal/service/session_position_security_test.go:49"
+          ],
+          "score": 10,
+          "reason": "project is fuzzed",
+          "name": "Fuzzing",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#fuzzing",
+            "short": "Determines if the project uses fuzzing."
+          }
+        },
+        {
+          "details": [
+            "Warn: branch protection not enabled for branch 'main'"
+          ],
+          "score": 0,
+          "reason": "branch protection not enabled on development/release branches",
+          "name": "Branch-Protection",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#branch-protection",
+            "short": "Determines if the default and release branches are protected with GitHub's branch protection settings."
+          }
+        },
+        {
+          "details": null,
+          "score": -1,
+          "reason": "no releases found",
+          "name": "Signed-Releases",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#signed-releases",
+            "short": "Determines if the project cryptographically signs release artifacts."
+          }
+        },
+        {
+          "details": [
+            "Warn: project does not have a license file"
+          ],
+          "score": 0,
+          "reason": "license file not detected",
+          "name": "License",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#license",
+            "short": "Determines if the project has defined a license."
+          }
+        },
+        {
+          "details": [
+            "Info: found contributions from: anthropics"
+          ],
+          "score": 3,
+          "reason": "project has 1 contributing companies or organizations -- score normalized to 3",
+          "name": "Contributors",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#contributors",
+            "short": "Determines if the project has a set of contributors from multiple organizations (e.g., companies)."
+          }
+        },
+        {
+          "details": null,
+          "score": 10,
+          "reason": "2 out of 2 merged PRs checked by a CI test -- score normalized to 10",
+          "name": "CI-Tests",
+          "documentation": {
+            "url": "https://github.com/ossf/scorecard/blob/61e84743356275f6ffca23b1b2f2cb945e19eb96/docs/checks.md#ci-tests",
+            "short": "Determines if the project runs tests before pull requests are merged."
+          }
+        }
+      ],
+      "metadata": null
+    }
+  ],
+  "interpretation": "Workflow success is execution success, not all checks scoring ten. Observed branch-protection, GitHub approval-review, license, security-policy and other findings remain distinct from product test results."
+}
