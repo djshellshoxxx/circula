@@ -1,90 +1,98 @@
-# Circula Core: post-merge continuation — 20 November 2026
+# Circula Core: finalization complete — 20 November 2026
 
-This is the current continuation for the Core finalization lane. Earlier
-checkpoints remain historical records. Read the live refs and jobs before any
-action; this document is pinned to the observations it cites.
+**The Core consolidation finalization is complete.** The actual merged main
+passed all thirteen applicable jobs, and the four independently proven historical
+PRs have been reconciled. This is the current handoff for that completed lane;
+separate Core-feature and future-module development continues under its existing
+owners. Earlier checkpoints remain historical records at their original commits.
 
-## Outcome and current boundary
+## Qualified main
 
 [Core PR #127](https://github.com/djshellshoxxx/circula/pull/127) merged normally
 at **18:28:43 America/Los_Angeles on 20 November 2026**, as actual main
 `87651d36558a8e421e41fbd76c514045d88c74ed`. PR #129 had already merged into
-that Core candidate. Do not repeat either integration or recreate their fixes.
+that source. Both integrations are complete.
 
-The source `3ef43ac1e05360d2a1641742dc056afe8871879b`, tested synthetic merge
-`6eb49aa2b2c7859fd2a8ceda207ddbb01eaa9d65`, and actual main share complete
-tree `43e65ee91a90ff70b70cc69d0b517b8367a2585f`. The synthetic and actual
-merge also share ordered parents: preceding main `aa01563fcc891da60fefebb8335eca27855678e8`,
-then the qualified source. All nine pre-merge Core jobs and all three native
-reader jobs succeeded. Four specialized independent reviews completed across
-successive worker sets: CI checkout/results, historical preservation, scope and
-remaining source boundaries, and Linux artifact/traceability interpretation.
+The complete tree is `43e65ee91a90ff70b70cc69d0b517b8367a2585f`. Its ordered
+parents are preceding main `aa01563fcc891da60fefebb8335eca27855678e8`, then
+qualified Core source `3ef43ac1e05360d2a1641742dc056afe8871879b`. The earlier
+synthetic merge `6eb49aa2b2c7859fd2a8ceda207ddbb01eaa9d65` has the same
+ordered parents and tree. All twelve pre-merge jobs passed; the following are
+separate successful executions on actual main.
 
-At **18:37:47 America/Los_Angeles**, actual-main scorecard had completed
-successfully; the nine Core and three native reader push jobs remained queued.
-The [new evidence package](evidence/core-main-finalization-20261120/README.md)
-preserves provider records, exact counts, original Linux evidence, source proofs,
-scope boundaries, and a conditional reconciliation plan. A later observation
-may supersede job statuses, never the recorded time or source of this snapshot.
+| Actual-main workflow | Completed result |
+|---|---|
+| [Core 44856110228](https://github.com/djshellshoxxx/circula/actions/runs/44856110228) | 9/9 jobs successful. |
+| [Native readers 44856110230](https://github.com/djshellshoxxx/circula/actions/runs/44856110230) | 3/3 successful, 49 tests per platform. |
+| [Scorecard 44856110197](https://github.com/djshellshoxxx/circula/actions/runs/44856110197) | 1/1 execution successful; findings remain visible. |
 
-The [18:43:25 provider checkpoint](evidence/core-main-finalization-20261120/provider-observation-20261120T184325.json)
-records three successful, five running, and five queued actual-main jobs. There
-were no failures. Historical PR closure remains conditional on completion.
+The final macOS race job completed at **19:22:54 Pacific**. Independent provider
+observations at **19:23:28** and **19:23:46** confirmed all thirteen completed
+successful jobs, all three successful push runs, and unchanged main/tree/parents.
+Every full saved job log identifies the exact actual-main checkout. The
+[completed evidence package](evidence/core-main-qualified-20261120/README.md)
+contains original artifacts, full logs, provider observations, independent reviews,
+source fingerprints, closure receipts and verified archive manifests.
 
-## Required next action
+## Historical PR reconciliation completed
 
-Inspect existing actual-main runs [Core 44856110228](https://github.com/djshellshoxxx/circula/actions/runs/44856110228),
-[native readers 44856110230](https://github.com/djshellshoxxx/circula/actions/runs/44856110230),
-and [scorecard 44856110197](https://github.com/djshellshoxxx/circula/actions/runs/44856110197).
-Require the complete applicable current-main composition to succeed. Do not
-restart queued work, lower assertions, treat skipped/cancelled/missing jobs as
-passes, or repeat long unchanged local suites while provider jobs wait. Read
-complete logs and repair a verified failure if one occurs.
-
-After successful post-merge qualification, refresh the four historical PRs and
-their source refs, then apply the [reconciliation plan](evidence/core-main-finalization-20261120/reconciliation-plan.json):
-
-| PR | Preserved source | Correct final disposition |
+| PR | Final disposition | Preserved source |
 |---|---|---|
-| #109 | `5db3efc084e6a807bb4702c09d3235490d42b71d` | Already incorporated by ancestry; close without another merge. |
-| #112 | `7462138fb4f7110ea4f705c6f09742a2b5a253e4` | Already incorporated by ancestry; close without another merge. |
-| #111 | `45356ca10e1ecd6e6441e0171910dd918b36f5d9` | Six identical documents plus explicitly superseded WAL fixture; not an ancestor. |
-| #104 | `bcdc569cbc483761bf2d0e2d7594636ac1713d7d` | Runtime supersession plus all 102 unique documents durably recovered; not whole-tree inclusion. |
+| #109 | Closed as already incorporated through #127; an ancestor, with zero source-only commits. | `5db3efc084e6a807bb4702c09d3235490d42b71d` |
+| #112 | Closed as already incorporated through #127; an ancestor, with zero source-only commits. | `7462138fb4f7110ea4f705c6f09742a2b5a253e4` |
+| #111 | Closed with six identical documents and explicit alternate WAL-fixture supersession; not an ancestor. | `45356ca10e1ecd6e6441e0171910dd918b36f5d9` |
+| #104 | Closed after runtime supersession and separate recovery of all 102 unique documents; not whole-tree inclusion. | `bcdc569cbc483761bf2d0e2d7594636ac1713d7d` |
 
-All four preservation proofs passed independently. All original source branches
-must remain. #90/#102/#125/#128 were already automatically marked merged after
-#127; observe live states before mutating them. Preserve #128's original audit
-and distinguish evidence inclusion from remediation of its findings.
+These closures completed at **19:26:42 Pacific**. Every PR and source branch was
+refreshed before and after its update; all source heads and original description
+remainders were preserved. No additional runtime merge was performed. #127's
+status description was updated and verified at **19:27:14**. The final open list
+contains only policy drafts #83/#85/#86/#94/#107.
 
-Update PR descriptions and publish dated reconciliation receipts on the existing
-`audit/core127-final-evidence-20261120` branch. Use expected-head updates and
-verify the published Git tree. That evidence branch retains older runtime:
-never merge it wholesale over actual main. Once post-merge qualification and
-the four proven reconciliations are complete, the narrow finalization task can
-complete. Separate Core-feature and future-module development continue in their
-existing ownership lanes.
+The [reconciliation receipt](evidence/core-main-qualified-20261120/reconciliation-result.json)
+retains exact times, classifications, states and body/source-preservation checks.
+#90/#102/#125/#128 were already marked merged after #127. The earlier #80/#87,
+#105/#106 and future-target reconciliations also remain complete. Preserve their
+original evidence and audits rather than recreating or repeating those operations.
+
+## Finalization task retirement
+
+The narrow task's engineering and historical-reconciliation conditions are met.
+After the completed evidence package is published and its tree and blobs are
+verified, pause only **Finalize Circula qualified merges**
+(`Automation_e7f2412412bc81919afc68682f3c0580`) with a final completion handoff.
+Do not alter the separate **Finish Circula features** or **Continue Circula future
+modules** tasks. Do not start a duplicate feature lane from this continuation.
+
+Publish on the existing `audit/core127-final-evidence-20261120` branch using a
+normal expected-head fast-forward. That branch retains older runtime and must
+never be merged wholesale over actual main. Future work must first inspect the
+current live heads and its existing owner because this is a dated completion record.
 
 ## Evidence interpretation
 
-The pre-merge Linux artifact has **3,258 passing named tests/subtests, six named
-skips, and zero failures**: 1,293 passing top-level names and 1,965 passing
-subtests. Sixteen packages passed and two helper packages had no tests. The
-3,282 count in its log totals terminal events, not passing tests. Its verified
-source fingerprint matches current main, while its execution remains pre-merge.
-The artifact review records all skip classifications and their evidence limits.
+The independently downloaded **actual-main** Linux artifact records **3,258 passing
+named tests/subtests, six named skips and zero failures**: 1,293 top-level passes
+and 1,965 passing subtests. Sixteen packages passed; two helper packages had no
+tests. The 3,282 terminal-event total includes package events and skips, and is
+not the count of passing tests. The archive records exact main, a clean checkout,
+exit zero and a source fingerprint independently reproduced from 2,023 inputs.
+Browser execution separately passed **597** tests. The full qualification review
+retains all six named-skip classifications and their evidence limits.
 
 The thirteen built requirements without test citations are inherited citation
 gaps with mixed inspection, shell, manual and deployment evidence. A missing
-test citation alone does not establish a missing implementation or unmet
-acceptance criterion. The eleven unresolved frozen legacy citations are historical code
-references, unchanged from preceding main and the earlier audit. Two substantive
-identifier regressions are implemented and passed. Do not modify frozen history,
-add superficial tests, or restore removed stubs to manufacture complete coverage.
+citation alone does not establish missing implementation or unmet acceptance.
+The eleven unresolved frozen legacy citations are historical code references,
+unchanged from preceding main and the earlier audit. Both substantive persisted-ID
+regressions are implemented and passed on actual main. Preserve frozen history;
+do not add superficial tests or restore removed stubs to manufacture coverage.
 
-Scorecard execution success does not mean all supply-chain checks passed their
-criteria. Its result still reports missing branch protection, no sampled GitHub
-approval reviews, missing project license, and other process findings. The
-existing owner/release decisions remain separate.
+Scorecard execution success does not mean every supply-chain criterion passed.
+Its retained 5.9 score across eighteen criteria includes missing branch protection,
+no sampled GitHub approval reviews, missing project license and other process
+findings. Existing owner/release decisions remain separate. Worker review is not
+a formal GitHub approval or an independent professional security audit.
 
 ## Remaining ordinary engineering
 

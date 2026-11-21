@@ -1,0 +1,22 @@
+{
+  "archive": "provider-and-reconciliation.tar.gz",
+  "bytes": 103869,
+  "sha256": "f2f8e57a4ba130c900c3403c6eca8ed7be25edd64cd3cb33ee3eba9168e951c9",
+  "members": [
+    {
+      "path": "circula-final-core-pr-receipt.json",
+      "bytes": 257340,
+      "sha256": "04327302ade8b7bac9629992f0ea1270d3ace0616d99d82f307cae5826f03a00"
+    },
+    {
+      "path": "circula-final-reconciliation-receipt.json",
+      "bytes": 301322,
+      "sha256": "de0c06463cb089873498f69b23d9ee7c31cf43fb282490d116e3172aa6a4cf36"
+    },
+    {
+      "path": "circula-final-root-provider.json",
+      "bytes": 318354,
+      "sha256": "2539e6b74c2712e2e5cb83600e180d68a3f6151ca454f952b6941eddaaab69f3"
+    }
+  ]
+}

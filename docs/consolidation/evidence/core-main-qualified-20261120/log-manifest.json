@@ -1,0 +1,197 @@
+[
+  {
+    "job_id": 136698603681,
+    "run_id": 44856110228,
+    "path": "core/logs/136698603681.log.gz",
+    "decoded_utf8_bytes": 23865,
+    "decoded_utf8_sha256": "6bc2e32c2b791ba4c71aefe0d911c59a4a782ef615f063fced6afae018f6dbee",
+    "gzip_bytes": 5778,
+    "gzip_sha256": "f863952e8fe4616655357f5be89dc9be29dd953c7e8f0cddd7de155886cef8d3",
+    "checkout_witnesses": [
+      {
+        "command": "[command]/usr/bin/git log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698603787,
+    "run_id": 44856110228,
+    "path": "core/logs/136698603787.log.gz",
+    "decoded_utf8_bytes": 22117,
+    "decoded_utf8_sha256": "a6331ac72ae4b214e6f6946887791cd8cdc9fc6b4d8470ed7e0c8944b532daeb",
+    "gzip_bytes": 4943,
+    "gzip_sha256": "8de329368d473acfcb1edc88adb535c5278cfe091ca18708b38b77a36aba4e15",
+    "checkout_witnesses": [
+      {
+        "command": "[command]\"C:\\Program Files\\Git\\bin\\git.exe\" log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698603858,
+    "run_id": 44856110228,
+    "path": "core/logs/136698603858.log.gz",
+    "decoded_utf8_bytes": 19933,
+    "decoded_utf8_sha256": "1f211e1dcfe0781e715972c217d4069607ab334d730c3a6e630b15a45e8f315f",
+    "gzip_bytes": 4727,
+    "gzip_sha256": "635381a576715a8d81165c772e0adee750fd910b9a5aadc9e8216ad8b515cc3f",
+    "checkout_witnesses": [
+      {
+        "command": "[command]/usr/bin/git log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698603892,
+    "run_id": 44856110228,
+    "path": "core/logs/136698603892.log.gz",
+    "decoded_utf8_bytes": 23811,
+    "decoded_utf8_sha256": "50ebd887e76da4543bb46c403482e4f164e12b153008c436df5f131ffe549f48",
+    "gzip_bytes": 5848,
+    "gzip_sha256": "5cc7b28e0fc7de5daefa0eb51a75695b64719dc6082c27fd0dd27e5005f62bba",
+    "checkout_witnesses": [
+      {
+        "command": "[command]/usr/bin/git log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698603901,
+    "run_id": 44856110228,
+    "path": "core/logs/136698603901.log.gz",
+    "decoded_utf8_bytes": 27475,
+    "decoded_utf8_sha256": "f39c266eced6c6dbb7de26179327a28840e9ac8ec759548d791df3005ad9f78a",
+    "gzip_bytes": 6085,
+    "gzip_sha256": "e76cda963d12aabbe0ea1a187ab87cd3730217222600678588a8b7cacafd06e4",
+    "checkout_witnesses": [
+      {
+        "command": "[command]/usr/bin/git log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698603910,
+    "run_id": 44856110228,
+    "path": "core/logs/136698603910.log.gz",
+    "decoded_utf8_bytes": 41154,
+    "decoded_utf8_sha256": "00cd91649c7b22ee683fadbf1f8284a73ffa34a317584eedceeb8555cae8be8c",
+    "gzip_bytes": 9608,
+    "gzip_sha256": "92f0a5add24b15a82fc4262f946d04f98c5ad812384da2c17cc8c6ed38e4f452",
+    "checkout_witnesses": [
+      {
+        "command": "[command]/usr/bin/git log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698603986,
+    "run_id": 44856110228,
+    "path": "core/logs/136698603986.log.gz",
+    "decoded_utf8_bytes": 24198,
+    "decoded_utf8_sha256": "4ffc59c1876ade49aac338cebe37aa8ede8e7d3a58744efd630063816aa09955",
+    "gzip_bytes": 5630,
+    "gzip_sha256": "2b06d252c81bbacbe4e38027b439745834ed9b3b8b5f47dbc302c4c7625c4e65",
+    "checkout_witnesses": [
+      {
+        "command": "[command]/usr/local/bin/git log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698604023,
+    "run_id": 44856110228,
+    "path": "core/logs/136698604023.log.gz",
+    "decoded_utf8_bytes": 129786,
+    "decoded_utf8_sha256": "beae77c82bce67382144ed271a71d223cff4afcd31b361bcbb6790105230f636",
+    "gzip_bytes": 23150,
+    "gzip_sha256": "0a2bd68d06c687ee40dcfdfbda2c158097c02a70741bb3df2820a6c192ab9c59",
+    "checkout_witnesses": [
+      {
+        "command": "[command]/usr/bin/git log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698604084,
+    "run_id": 44856110228,
+    "path": "core/logs/136698604084.log.gz",
+    "decoded_utf8_bytes": 22800,
+    "decoded_utf8_sha256": "e234957e981a12de5c42856359440db946b08c48a40421fa9f708b5cd22e7bf0",
+    "gzip_bytes": 5598,
+    "gzip_sha256": "9c537ae9c165e86b1e208ec6150533509ac7b28c269ff1e92f0830101c2253d2",
+    "checkout_witnesses": [
+      {
+        "command": "[command]/usr/bin/git log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698603597,
+    "run_id": 44856110230,
+    "path": "native-and-scorecard/logs/136698603597.log.gz",
+    "decoded_utf8_bytes": 16865,
+    "decoded_utf8_sha256": "5d5c544a97a23d91db0df69f18b8f8fac38ca9fb31e5a0895fbbc59d4fb27526",
+    "gzip_bytes": 3661,
+    "gzip_sha256": "f05a5d4bfa0e0fa322d70905b2bd80416fe2910ffc4d867daada8dd5da7ed605",
+    "checkout_witnesses": [
+      {
+        "command": "[command]/usr/local/bin/git log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698603854,
+    "run_id": 44856110230,
+    "path": "native-and-scorecard/logs/136698603854.log.gz",
+    "decoded_utf8_bytes": 16311,
+    "decoded_utf8_sha256": "0d91fc5b0edcca63dfcbd543d3455dadfbc0f90409b1a23865583f5718530f8e",
+    "gzip_bytes": 3633,
+    "gzip_sha256": "bd7e2c501ffb2eaba130458bc6e59fb41dbd420db4fc9145991652308b6c747b",
+    "checkout_witnesses": [
+      {
+        "command": "[command]/usr/bin/git log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698603942,
+    "run_id": 44856110230,
+    "path": "native-and-scorecard/logs/136698603942.log.gz",
+    "decoded_utf8_bytes": 16347,
+    "decoded_utf8_sha256": "995609b10d802d9162974ad794f4e41cf5b297071b0c0fed94365ef5537bfd0d",
+    "gzip_bytes": 3472,
+    "gzip_sha256": "a9028372dcab7c465a31b0a8d00783985cc2dccee70a1a14c82ec4cdb82de884",
+    "checkout_witnesses": [
+      {
+        "command": "[command]\"C:\\Program Files\\Git\\bin\\git.exe\" log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  },
+  {
+    "job_id": 136698602978,
+    "run_id": 44856110197,
+    "path": "native-and-scorecard/logs/136698602978.log.gz",
+    "decoded_utf8_bytes": 176244,
+    "decoded_utf8_sha256": "e9ff16edc0f48b50e36e03ea7c50a71804b0026dc2879dbd132565fc738e8e0f",
+    "gzip_bytes": 38296,
+    "gzip_sha256": "59f32012a70c34d3bdb9de8c7a9103c2b92909916aa1cab0a31e1858a654ccd9",
+    "checkout_witnesses": [
+      {
+        "command": "[command]/usr/bin/git log -1 --format=%H",
+        "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+      }
+    ]
+  }
+]

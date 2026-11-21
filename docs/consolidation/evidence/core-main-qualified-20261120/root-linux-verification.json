@@ -1,0 +1,37 @@
+{
+  "main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+  "archive_bytes": 138870,
+  "archive_sha256": "df5b84d700ad1193afe6244178384fc8ae7fa02eeab2fbe8482220661af89a54",
+  "recorded_clean": true,
+  "recorded_exit_code": 0,
+  "source_digest": "9de685071744f0b9e260d53fc7d934cb4289c3b10f84a020db8e319227b77100",
+  "all_terminal_counts": {
+    "pass": 3274,
+    "skip": 8
+  },
+  "named_counts": {
+    "pass": 3258,
+    "skip": 6
+  },
+  "reconciliation_relevant_test_results": [
+    {
+      "Time": "2026-11-21T03:12:09.995042208Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Test": "TestSQLiteWALWriteFailureRollsBackAndRecovers"
+    },
+    {
+      "Time": "2026-11-21T03:02:27.645177418Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Test": "TestDefaultIDGeneratorPersistsCanonicalUUIDv7"
+    },
+    {
+      "Time": "2026-11-21T03:02:29.524841675Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Test": "TestInjectedIDGeneratorReachesPersistedPerson"
+    }
+  ],
+  "method": "Coordinator independently read the original actual-main provider ZIP and rechecked its metadata and terminal events; no product suite rerun."
+}

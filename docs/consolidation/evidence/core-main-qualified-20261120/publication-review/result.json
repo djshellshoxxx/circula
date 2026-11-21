@@ -1,0 +1,1460 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-21 03:37:06 UTC",
+  "verdict": "APPROVE_DOCUMENTARY_PUBLICATION",
+  "blockers": [],
+  "reviewed_base": "9f713dcb2157b66b4e2af7aec68a37b4a9057e6d",
+  "initial_staged_tree": "9964506f0e1e9bcfdf56e7f77c5c50166600afc6",
+  "corrected_reviewed_staged_tree": "4e25db7841065ee7e5245bb779fb1f74c3234a14",
+  "reviewed_paths": 16,
+  "actual_main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+  "independent_integrity_checks": [
+    {
+      "check": "package_sha256",
+      "pass": true,
+      "details": {
+        "entries": 14,
+        "duplicates": 0,
+        "errors": [],
+        "names": [
+          "README.md",
+          "actual-main-linux-evidence.zip",
+          "actual-main-review.tar.gz",
+          "log-manifest.json",
+          "provider-and-reconciliation.tar.gz",
+          "provider-archive-manifest.json",
+          "qualification-archive-manifest.json",
+          "qualification-result.json",
+          "qualification-review.md",
+          "reconciliation-result.json",
+          "root-linux-verification.json",
+          "root-provider-summary.json",
+          "scope-review.json",
+          "scope-review.md"
+        ]
+      }
+    },
+    {
+      "check": "archive_actual-main-review.tar.gz",
+      "pass": true,
+      "details": {
+        "member_count": 54,
+        "member_names_unique": true,
+        "sorted": true,
+        "safe_regular_paths": true,
+        "normalized_metadata": true,
+        "gzip_mtime_zero": true,
+        "byte_size": 349937,
+        "sha256": "34ead5191abd628a83bec932bacbed3a6a02d7aed803d72436cb50ffdd73d8c4",
+        "archive_manifest_matches": true,
+        "member_manifest_errors": [],
+        "member_manifest_set_matches": true,
+        "deterministic_rebuild_byte_equal": true,
+        "original_source_checks": [
+          {
+            "member": "actual-main-review/README.md",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/SHA256SUMS",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/compile_receipt.py",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/browser-actual-main.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/initial-completed-logs.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/linux-actual-main.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/logs/136698603681.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/logs/136698603787.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/logs/136698603858.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/logs/136698603892.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/logs/136698603901.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/logs/136698603910.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/logs/136698603986.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/logs/136698604023.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/logs/136698604084.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/macos-actual-main.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T025255Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T025510Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T025711Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T025916Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T030141Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T030428Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T030625Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T030835Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T031032Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T031238Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T031445Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T031656Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T031901Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T032105Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/observation-20261121T032315Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/core/review-pending-at-20261121T025510Z.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/final-provider-observation.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/inspect_linux_artifact.py",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/linux-artifact/README.md",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/linux-artifact/circula-actual-main-linux-test-evidence.zip",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/linux-artifact/provider-artifact.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/linux-artifact/result.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/linux-artifact/skip-guard-review.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/log-manifest.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/native-and-scorecard/README.md",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/native-and-scorecard/SHA256SUMS",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/native-and-scorecard/log-manifest.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/native-and-scorecard/logs/136698602978.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/native-and-scorecard/logs/136698603597.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/native-and-scorecard/logs/136698603854.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/native-and-scorecard/logs/136698603942.log.gz",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/native-and-scorecard/provider-observation.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/native-and-scorecard/result.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/result.json",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/source-digest/README.md",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/source-digest/SHA256SUMS",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/source-digest/calculate_source_digest.py",
+            "byte_equal": true
+          },
+          {
+            "member": "actual-main-review/source-digest/result.json",
+            "byte_equal": true
+          }
+        ]
+      }
+    },
+    {
+      "check": "archive_provider-and-reconciliation.tar.gz",
+      "pass": true,
+      "details": {
+        "member_count": 3,
+        "member_names_unique": true,
+        "sorted": true,
+        "safe_regular_paths": true,
+        "normalized_metadata": true,
+        "gzip_mtime_zero": true,
+        "byte_size": 103869,
+        "sha256": "f2f8e57a4ba130c900c3403c6eca8ed7be25edd64cd3cb33ee3eba9168e951c9",
+        "archive_manifest_matches": true,
+        "member_manifest_errors": [],
+        "member_manifest_set_matches": true,
+        "deterministic_rebuild_byte_equal": true,
+        "original_source_checks": [
+          {
+            "member": "circula-final-core-pr-receipt.json",
+            "byte_equal": true
+          },
+          {
+            "member": "circula-final-reconciliation-receipt.json",
+            "byte_equal": true
+          },
+          {
+            "member": "circula-final-root-provider.json",
+            "byte_equal": true
+          }
+        ]
+      }
+    },
+    {
+      "check": "nested_sha256_actual-main-review/SHA256SUMS",
+      "pass": true,
+      "details": {
+        "entries": 53,
+        "errors": []
+      }
+    },
+    {
+      "check": "nested_sha256_actual-main-review/native-and-scorecard/SHA256SUMS",
+      "pass": true,
+      "details": {
+        "entries": 8,
+        "errors": []
+      }
+    },
+    {
+      "check": "nested_sha256_actual-main-review/source-digest/SHA256SUMS",
+      "pass": true,
+      "details": {
+        "entries": 3,
+        "errors": []
+      }
+    },
+    {
+      "check": "frozen_readable_copies",
+      "pass": true,
+      "details": {
+        "qualification-review.md": true,
+        "qualification-result.json": true,
+        "log-manifest.json": true,
+        "actual-main-linux-evidence.zip": true,
+        "scope-review.md": true,
+        "scope-review.json": true
+      }
+    },
+    {
+      "check": "qualification_main_identity",
+      "pass": true,
+      "details": null
+    },
+    {
+      "check": "all_13_provider_jobs",
+      "pass": true,
+      "details": [
+        {
+          "run_id": 44856110228,
+          "head": "87651d36558a8e421e41fbd76c514045d88c74ed",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "job_count": 9,
+          "expected_jobs_match": true,
+          "all_jobs_success": true,
+          "failed_steps": []
+        },
+        {
+          "run_id": 44856110230,
+          "head": "87651d36558a8e421e41fbd76c514045d88c74ed",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "job_count": 3,
+          "expected_jobs_match": true,
+          "all_jobs_success": true,
+          "failed_steps": []
+        },
+        {
+          "run_id": 44856110197,
+          "head": "87651d36558a8e421e41fbd76c514045d88c74ed",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "job_count": 1,
+          "expected_jobs_match": true,
+          "all_jobs_success": true,
+          "failed_steps": []
+        }
+      ]
+    },
+    {
+      "check": "all_13_full_log_hashes_and_actual_checkout",
+      "pass": true,
+      "details": [
+        {
+          "job_id": 136698603681,
+          "gzip_bytes": 5778,
+          "gzip_sha256": "f863952e8fe4616655357f5be89dc9be29dd953c7e8f0cddd7de155886cef8d3",
+          "decoded_bytes": 23865,
+          "decoded_sha256": "6bc2e32c2b791ba4c71aefe0d911c59a4a782ef615f063fced6afae018f6dbee",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]/usr/bin/git log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698603787,
+          "gzip_bytes": 4943,
+          "gzip_sha256": "8de329368d473acfcb1edc88adb535c5278cfe091ca18708b38b77a36aba4e15",
+          "decoded_bytes": 22117,
+          "decoded_sha256": "a6331ac72ae4b214e6f6946887791cd8cdc9fc6b4d8470ed7e0c8944b532daeb",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]\"C:\\Program Files\\Git\\bin\\git.exe\" log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698603858,
+          "gzip_bytes": 4727,
+          "gzip_sha256": "635381a576715a8d81165c772e0adee750fd910b9a5aadc9e8216ad8b515cc3f",
+          "decoded_bytes": 19933,
+          "decoded_sha256": "1f211e1dcfe0781e715972c217d4069607ab334d730c3a6e630b15a45e8f315f",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]/usr/bin/git log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698603892,
+          "gzip_bytes": 5848,
+          "gzip_sha256": "5cc7b28e0fc7de5daefa0eb51a75695b64719dc6082c27fd0dd27e5005f62bba",
+          "decoded_bytes": 23811,
+          "decoded_sha256": "50ebd887e76da4543bb46c403482e4f164e12b153008c436df5f131ffe549f48",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]/usr/bin/git log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698603901,
+          "gzip_bytes": 6085,
+          "gzip_sha256": "e76cda963d12aabbe0ea1a187ab87cd3730217222600678588a8b7cacafd06e4",
+          "decoded_bytes": 27475,
+          "decoded_sha256": "f39c266eced6c6dbb7de26179327a28840e9ac8ec759548d791df3005ad9f78a",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]/usr/bin/git log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698603910,
+          "gzip_bytes": 9608,
+          "gzip_sha256": "92f0a5add24b15a82fc4262f946d04f98c5ad812384da2c17cc8c6ed38e4f452",
+          "decoded_bytes": 41154,
+          "decoded_sha256": "00cd91649c7b22ee683fadbf1f8284a73ffa34a317584eedceeb8555cae8be8c",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]/usr/bin/git log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698603986,
+          "gzip_bytes": 5630,
+          "gzip_sha256": "2b06d252c81bbacbe4e38027b439745834ed9b3b8b5f47dbc302c4c7625c4e65",
+          "decoded_bytes": 24198,
+          "decoded_sha256": "4ffc59c1876ade49aac338cebe37aa8ede8e7d3a58744efd630063816aa09955",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]/usr/local/bin/git log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698604023,
+          "gzip_bytes": 23150,
+          "gzip_sha256": "0a2bd68d06c687ee40dcfdfbda2c158097c02a70741bb3df2820a6c192ab9c59",
+          "decoded_bytes": 129786,
+          "decoded_sha256": "beae77c82bce67382144ed271a71d223cff4afcd31b361bcbb6790105230f636",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]/usr/bin/git log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698604084,
+          "gzip_bytes": 5598,
+          "gzip_sha256": "9c537ae9c165e86b1e208ec6150533509ac7b28c269ff1e92f0830101c2253d2",
+          "decoded_bytes": 22800,
+          "decoded_sha256": "e234957e981a12de5c42856359440db946b08c48a40421fa9f708b5cd22e7bf0",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]/usr/bin/git log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698603597,
+          "gzip_bytes": 3661,
+          "gzip_sha256": "f05a5d4bfa0e0fa322d70905b2bd80416fe2910ffc4d867daada8dd5da7ed605",
+          "decoded_bytes": 16865,
+          "decoded_sha256": "5d5c544a97a23d91db0df69f18b8f8fac38ca9fb31e5a0895fbbc59d4fb27526",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]/usr/local/bin/git log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698603854,
+          "gzip_bytes": 3633,
+          "gzip_sha256": "bd7e2c501ffb2eaba130458bc6e59fb41dbd420db4fc9145991652308b6c747b",
+          "decoded_bytes": 16311,
+          "decoded_sha256": "0d91fc5b0edcca63dfcbd543d3455dadfbc0f90409b1a23865583f5718530f8e",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]/usr/bin/git log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698603942,
+          "gzip_bytes": 3472,
+          "gzip_sha256": "a9028372dcab7c465a31b0a8d00783985cc2dccee70a1a14c82ec4cdb82de884",
+          "decoded_bytes": 16347,
+          "decoded_sha256": "995609b10d802d9162974ad794f4e41cf5b297071b0c0fed94365ef5537bfd0d",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]\"C:\\Program Files\\Git\\bin\\git.exe\" log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        },
+        {
+          "job_id": 136698602978,
+          "gzip_bytes": 38296,
+          "gzip_sha256": "59f32012a70c34d3bdb9de8c7a9103c2b92909916aa1cab0a31e1858a654ccd9",
+          "decoded_bytes": 176244,
+          "decoded_sha256": "e9ff16edc0f48b50e36e03ea7c50a71804b0026dc2879dbd132565fc738e8e0f",
+          "gzip_manifest_match": true,
+          "decoded_manifest_match": true,
+          "actual_checkout_witnesses": [
+            {
+              "command": "[command]/usr/bin/git log -1 --format=%H",
+              "head": "87651d36558a8e421e41fbd76c514045d88c74ed"
+            }
+          ],
+          "witness_manifest_match": true,
+          "actual_main_checkout": true,
+          "provider_job_match": true
+        }
+      ]
+    },
+    {
+      "check": "linux_original_zip_and_counts",
+      "pass": true,
+      "details": {
+        "sha256": "df5b84d700ad1193afe6244178384fc8ae7fa02eeab2fbe8482220661af89a54",
+        "bytes": 138870,
+        "corrupt_member": null,
+        "recorded_evidence": {
+          "version": 1,
+          "head": "87651d36558a8e421e41fbd76c514045d88c74ed",
+          "dirty": false,
+          "source_digest": "9de685071744f0b9e260d53fc7d934cb4289c3b10f84a020db8e319227b77100",
+          "command": [
+            "go",
+            "test",
+            "-json",
+            "-count=1",
+            "-race",
+            "-timeout",
+            "30m",
+            "./..."
+          ],
+          "exit_code": 0
+        },
+        "members": [
+          {
+            "path": "traceability-results.json",
+            "bytes": 709436,
+            "sha256": "18dc4c8919487c3ea09354848d81b28363286d5f4fc9a786f643a8081ff16917"
+          },
+          {
+            "path": "TRACEABILITY-results.md",
+            "bytes": 319377,
+            "sha256": "9c6f6d63cc03a7c9a365e0dafedc08c65beface494eec5eca31c121717276c07"
+          }
+        ],
+        "terminal_counts": {
+          "total": 3282,
+          "pass": 3274,
+          "fail": 0,
+          "skip": 8
+        },
+        "named_counts": {
+          "total": 3264,
+          "pass": 3258,
+          "fail": 0,
+          "skip": 6
+        },
+        "top_level_counts": {
+          "total": 1299,
+          "pass": 1293,
+          "fail": 0,
+          "skip": 6
+        },
+        "subtest_counts": {
+          "total": 1965,
+          "pass": 1965,
+          "fail": 0,
+          "skip": 0
+        },
+        "package_counts": {
+          "total": 18,
+          "pass": 16,
+          "fail": 0,
+          "skip": 2
+        },
+        "top_level_Test_counts": {
+          "total": 1276,
+          "pass": 1270,
+          "fail": 0,
+          "skip": 6
+        },
+        "top_level_Fuzz_counts": {
+          "total": 23,
+          "pass": 23,
+          "fail": 0,
+          "skip": 0
+        },
+        "duplicate_event_count": 0,
+        "unknown_actions": [],
+        "reconciliation_targets": [
+          {
+            "Time": "2026-11-21T02:44:41.658631401Z",
+            "Action": "pass",
+            "Package": "github.com/djshellshoxxx/circula/internal/api",
+            "Test": "TestJobIDPreservesRecordsAndAllocatesUUIDv7"
+          },
+          {
+            "Time": "2026-11-21T03:02:27.645177418Z",
+            "Action": "pass",
+            "Package": "github.com/djshellshoxxx/circula/internal/service",
+            "Test": "TestDefaultIDGeneratorPersistsCanonicalUUIDv7"
+          },
+          {
+            "Time": "2026-11-21T03:12:09.995042208Z",
+            "Action": "pass",
+            "Package": "github.com/djshellshoxxx/circula/internal/service",
+            "Test": "TestSQLiteWALWriteFailureRollsBackAndRecovers"
+          }
+        ]
+      }
+    },
+    {
+      "check": "independent_source_digest",
+      "pass": true,
+      "details": {
+        "source_digest": "9de685071744f0b9e260d53fc7d934cb4289c3b10f84a020db8e319227b77100",
+        "inputs": 2023
+      }
+    },
+    {
+      "check": "native_readers_49_each",
+      "pass": true,
+      "details": [
+        {
+          "job_id": 136698603597,
+          "Ran_tests_counts": [
+            "49"
+          ],
+          "OK_lines": 1
+        },
+        {
+          "job_id": 136698603854,
+          "Ran_tests_counts": [
+            "49"
+          ],
+          "OK_lines": 1
+        },
+        {
+          "job_id": 136698603942,
+          "Ran_tests_counts": [
+            "49"
+          ],
+          "OK_lines": 1
+        }
+      ]
+    },
+    {
+      "check": "browser_597_and_mac_16",
+      "pass": true,
+      "details": {
+        "browser_lines": [
+          "2026-11-21T02:55:47.6649008Z   597 passed (6.6m)"
+        ],
+        "mac_package_pass_lines": [
+          "ok  \tgithub.com/djshellshoxxx/circula/cmd/circula\t433.700s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t667.683s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t94.912s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t2.798s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t1.193s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t1.154s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/integrity\t1.161s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t1.172s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/passwordwork\t1.065s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t1.305s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t1766.028s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t986.942s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t662.621s",
+          "ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t1.422s",
+          "ok  \tgithub.com/djshellshoxxx/circula/scripts/sbom\t1.236s",
+          "ok  \tgithub.com/djshellshoxxx/circula/scripts/traceability\t8.414s"
+        ],
+        "mac_completed_at": "2026-11-21T03:22:54Z"
+      }
+    },
+    {
+      "check": "linux_provider_artifact_and_upload_digest",
+      "pass": true,
+      "details": {
+        "provider_artifact": {
+          "id": 14689307829,
+          "node_id": "MDg6QXJ0aWZhY3QxNDY4OTMwNzgyOQ==",
+          "name": "test-evidence-ubuntu-24.04",
+          "size_in_bytes": 138870,
+          "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/artifacts/14689307829",
+          "archive_download_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/artifacts/14689307829/zip",
+          "expired": false,
+          "digest": "sha256:df5b84d700ad1193afe6244178384fc8ae7fa02eeab2fbe8482220661af89a54",
+          "created_at": "2026-11-21T03:13:42Z",
+          "updated_at": "2026-11-21T03:13:42Z",
+          "expires_at": "2026-12-05T03:13:40Z",
+          "workflow_run": {
+            "id": 44856110228,
+            "repository_id": 1427759862,
+            "head_repository_id": 1427759862,
+            "head_branch": "main",
+            "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed"
+          }
+        },
+        "matching_upload_lines": [
+          "2026-11-21T03:13:41.8414883Z SHA256 digest of uploaded artifact is df5b84d700ad1193afe6244178384fc8ae7fa02eeab2fbe8482220661af89a54"
+        ]
+      }
+    },
+    {
+      "check": "frozen_scope_15_actual_manifests_and_23_refs",
+      "pass": true,
+      "details": {
+        "summary": {
+          "selected_refs": 23,
+          "matching_refs": 23,
+          "held_policy_prs": 5,
+          "unchanged_open_draft_unmerged_policy_prs": 5,
+          "future_manifests": 15,
+          "disabled_hold_manifests": 15,
+          "manifest_git_blob_matches": 15,
+          "held_branches_outside_main": 7,
+          "drift_count": 0
+        },
+        "manifest_rechecks": [
+          {
+            "id": "FNET-201",
+            "head": "12850290c6bca7720853c33689662d751aced160",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FNET-202",
+            "head": "efc9d696eea2dd3260ecb6c5091802ef31e20572",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FNET-203",
+            "head": "5200c5bf940f051a86d6e502787af06892200974",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FNET-204",
+            "head": "108107435645db687f8ac380e6571319f419fa32",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FNET-205",
+            "head": "64f1fef75d167ca322179e3e120214f9a56c6583",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FNET-206",
+            "head": "6aac35e226135a53d69c1e6ce74e340dcfe1d85f",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FNET-207",
+            "head": "89c6aeb6b4f73292d38a4a0803146ff5b9386e6f",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FNET-208",
+            "head": "5eac085005361e973ca8f358e01f039aea718bed",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FNET-209",
+            "head": "0aeb5a1446798019141a3f6f5bcb1e7a24b70c47",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FUX-101",
+            "head": "3415fe24df7b87a2803552b37ca31bf898f7aa8e",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FUX-102",
+            "head": "6028dae56723b8488db6e52e25c83da7888777c1",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FUX-103",
+            "head": "34d0f889631e2d133149a89a276cf9c71fd261a9",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FUX-104",
+            "head": "54a41b12a314e7652802b71d693e2594c37f172f",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FUX-105",
+            "head": "54d3af51aa32c022562e8041d1baa149da071db3",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          },
+          {
+            "id": "FUX-106",
+            "head": "4c3ce1d7b7f2b4ed809669985d5e38981408494b",
+            "hold_false": true,
+            "bytes_match": true,
+            "sha256_match": true,
+            "git_blob_match": true
+          }
+        ],
+        "refs_observed_at_utc": "2026-11-21 03:23:29 UTC",
+        "manifests_completed_at_utc": "2026-11-21 03:26:01 UTC"
+      }
+    },
+    {
+      "check": "scorecard_findings_qualified_limit",
+      "pass": true,
+      "details": {
+        "score": 5.9,
+        "criteria": 18,
+        "criteria_scores": [
+          {
+            "name": "Maintained",
+            "score": 0
+          },
+          {
+            "name": "Dangerous-Workflow",
+            "score": 10
+          },
+          {
+            "name": "Code-Review",
+            "score": 0
+          },
+          {
+            "name": "Token-Permissions",
+            "score": 10
+          },
+          {
+            "name": "Dependency-Update-Tool",
+            "score": 10
+          },
+          {
+            "name": "Security-Policy",
+            "score": 4
+          },
+          {
+            "name": "Packaging",
+            "score": -1
+          },
+          {
+            "name": "Binary-Artifacts",
+            "score": 10
+          },
+          {
+            "name": "CII-Best-Practices",
+            "score": 0
+          },
+          {
+            "name": "Vulnerabilities",
+            "score": 10
+          },
+          {
+            "name": "Pinned-Dependencies",
+            "score": 8
+          },
+          {
+            "name": "SAST",
+            "score": 0
+          },
+          {
+            "name": "Fuzzing",
+            "score": 10
+          },
+          {
+            "name": "Branch-Protection",
+            "score": 0
+          },
+          {
+            "name": "Signed-Releases",
+            "score": -1
+          },
+          {
+            "name": "License",
+            "score": 0
+          },
+          {
+            "name": "Contributors",
+            "score": 3
+          },
+          {
+            "name": "CI-Tests",
+            "score": 10
+          }
+        ]
+      }
+    },
+    {
+      "check": "root_compact_receipts_correspond",
+      "pass": true,
+      "details": {
+        "provider_observed_at_utc": "2026-11-21 03:23:46 UTC",
+        "root_relevant_tests": [
+          {
+            "Time": "2026-11-21T03:12:09.995042208Z",
+            "Action": "pass",
+            "Package": "github.com/djshellshoxxx/circula/internal/service",
+            "Test": "TestSQLiteWALWriteFailureRollsBackAndRecovers"
+          },
+          {
+            "Time": "2026-11-21T03:02:27.645177418Z",
+            "Action": "pass",
+            "Package": "github.com/djshellshoxxx/circula/internal/service",
+            "Test": "TestDefaultIDGeneratorPersistsCanonicalUUIDv7"
+          },
+          {
+            "Time": "2026-11-21T03:02:29.524841675Z",
+            "Action": "pass",
+            "Package": "github.com/djshellshoxxx/circula/internal/service",
+            "Test": "TestInjectedIDGeneratorReachesPersistedPerson"
+          }
+        ]
+      }
+    },
+    {
+      "check": "fresh_main_and_five_open_drafts",
+      "pass": true,
+      "details": {
+        "started_at": {
+          "current_time": "2026-11-21 03:33:11 UTC"
+        },
+        "completed_at": {
+          "current_time": "2026-11-21 03:33:11 UTC"
+        },
+        "main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+        "open_prs": [
+          {
+            "number": 107,
+            "head": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+            "state": "open",
+            "draft": true,
+            "merged_at": null,
+            "closed_at": null
+          },
+          {
+            "number": 94,
+            "head": "45b596f12876e3f91c30b996457f7096e1fffe24",
+            "state": "open",
+            "draft": true,
+            "merged_at": null,
+            "closed_at": null
+          },
+          {
+            "number": 86,
+            "head": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+            "state": "open",
+            "draft": true,
+            "merged_at": null,
+            "closed_at": null
+          },
+          {
+            "number": 85,
+            "head": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+            "state": "open",
+            "draft": true,
+            "merged_at": null,
+            "closed_at": null
+          },
+          {
+            "number": 83,
+            "head": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+            "state": "open",
+            "draft": true,
+            "merged_at": null,
+            "closed_at": null
+          }
+        ]
+      }
+    },
+    {
+      "check": "staged_documentary_scope",
+      "pass": true,
+      "details": {
+        "base": "9f713dcb2157b66b4e2af7aec68a37b4a9057e6d",
+        "staged_tree": "4e25db7841065ee7e5245bb779fb1f74c3234a14",
+        "path_count": 16,
+        "paths": [
+          "M\tdocs/consolidation/CORE_POSTMERGE_CONTINUATION_20261120.md",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/SHA256SUMS",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/actual-main-linux-evidence.zip",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/actual-main-review.tar.gz",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/log-manifest.json",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/provider-and-reconciliation.tar.gz",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/provider-archive-manifest.json",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/qualification-archive-manifest.json",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/qualification-result.json",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/qualification-review.md",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/reconciliation-result.json",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/root-linux-verification.json",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/root-provider-summary.json",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/scope-review.json",
+          "A\tdocs/consolidation/evidence/core-main-qualified-20261120/scope-review.md"
+        ],
+        "unstaged_diff": ""
+      }
+    },
+    {
+      "check": "relative_markdown_links",
+      "pass": true,
+      "details": [
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "../core-main-finalization-20261120/README.md",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "qualification-review.md",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "qualification-result.json",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "root-provider-summary.json",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "actual-main-linux-evidence.zip",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "root-linux-verification.json",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "reconciliation-result.json",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "../core-main-finalization-20261120/history-review/REVIEW.md",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "scope-review.md",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "scope-review.json",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "../../CORE_POSTMERGE_CONTINUATION_20261120.md",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "actual-main-review.tar.gz",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "qualification-archive-manifest.json",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "provider-and-reconciliation.tar.gz",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "provider-archive-manifest.json",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "log-manifest.json",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/evidence/core-main-qualified-20261120/README.md",
+          "target": "SHA256SUMS",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/CORE_POSTMERGE_CONTINUATION_20261120.md",
+          "target": "evidence/core-main-qualified-20261120/README.md",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/CORE_POSTMERGE_CONTINUATION_20261120.md",
+          "target": "evidence/core-main-qualified-20261120/reconciliation-result.json",
+          "exists": true
+        },
+        {
+          "source": "docs/consolidation/CORE_POSTMERGE_CONTINUATION_20261120.md",
+          "target": "evidence/core-main-finalization-20261120/scope-review/report.md",
+          "exists": true
+        }
+      ]
+    }
+  ],
+  "independent_closure_audit": {
+    "reviewed_at_utc": "2026-11-21 03:34:29 UTC",
+    "kind": "independent closure receipt audit",
+    "verdict": "closure evidence passes; one documentary sentence requires narrowing",
+    "evidence_archive_sha256": "f2f8e57a4ba130c900c3403c6eca8ed7be25edd64cd3cb33ee3eba9168e951c9",
+    "main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+    "actions": [
+      {
+        "number": 109,
+        "branch": "feature/core-catalogue-continuation-20261119",
+        "source": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+        "before_state": "open",
+        "after_state": "closed",
+        "after_merged": false,
+        "source_ref_preserved": true,
+        "main_after_close": "87651d36558a8e421e41fbd76c514045d88c74ed",
+        "local_ancestor": true,
+        "source_only_commits": 0,
+        "tail_bytes": 3395,
+        "tail_preserved": true,
+        "hashes": {
+          "before_body_sha256": "1bef8cbf3a415dff7acaf68a3486aa0502441b3986153609ec4305debe8c0952",
+          "after_body_sha256": "49f053e44685700d61a4897efffa11867daedeec6b9e62a3507cc9922d746cbb",
+          "preserved_original_tail_sha256": "e3da38da358aeac68d92fe1096730e9628008560c5a781b524d46715a20fc090"
+        },
+        "before_time_utc": "2026-11-21 03:26:33 UTC",
+        "closed_at": "2026-11-21T03:26:33Z",
+        "after_time_utc": "2026-11-21 03:26:34 UTC",
+        "classification": "ancestor"
+      },
+      {
+        "number": 112,
+        "branch": "integration/core-ui-completion-20261119",
+        "source": "7462138fb4f7110ea4f705c6f09742a2b5a253e4",
+        "before_state": "open",
+        "after_state": "closed",
+        "after_merged": false,
+        "source_ref_preserved": true,
+        "main_after_close": "87651d36558a8e421e41fbd76c514045d88c74ed",
+        "local_ancestor": true,
+        "source_only_commits": 0,
+        "tail_bytes": 8530,
+        "tail_preserved": true,
+        "hashes": {
+          "before_body_sha256": "1a2c202c05b36077ce4ff8209530eeb01946d8aeddcdb966438ed463e225bf6d",
+          "after_body_sha256": "420d31c34d28c973e4b6e68dbf331934f235b18e22d23473a5b9924fde0a3a71",
+          "preserved_original_tail_sha256": "bf67be043e39ac522e8758fb003e9d971ce97fb7cdbf60d5a18ff468d391d521"
+        },
+        "before_time_utc": "2026-11-21 03:26:35 UTC",
+        "closed_at": "2026-11-21T03:26:35Z",
+        "after_time_utc": "2026-11-21 03:26:37 UTC",
+        "classification": "ancestor"
+      },
+      {
+        "number": 111,
+        "branch": "codex/api036-qualification-20261119",
+        "source": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+        "before_state": "open",
+        "after_state": "closed",
+        "after_merged": false,
+        "source_ref_preserved": true,
+        "main_after_close": "87651d36558a8e421e41fbd76c514045d88c74ed",
+        "local_ancestor": false,
+        "source_only_commits": 3,
+        "tail_bytes": 4454,
+        "tail_preserved": true,
+        "hashes": {
+          "before_body_sha256": "269fa1e5accb9e32b86036830671fdf7e507a3ed0e296537e2c2f9691db9237f",
+          "after_body_sha256": "72373919f5991995c40fe9c4b50f8ca35dd0e646271eb1dcf8f7e87e009acd4e",
+          "preserved_original_tail_sha256": "cc95f9d43144128c0de2560e6459aca78feadac9ca1bc38cf126c426f912c9f1"
+        },
+        "before_time_utc": "2026-11-21 03:26:37 UTC",
+        "closed_at": "2026-11-21T03:26:38Z",
+        "after_time_utc": "2026-11-21 03:26:40 UTC",
+        "classification": "superseded alternative fixture, not ancestor"
+      },
+      {
+        "number": 104,
+        "branch": "integration/circula-master-consolidation-20261119",
+        "source": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+        "before_state": "open",
+        "after_state": "closed",
+        "after_merged": false,
+        "source_ref_preserved": true,
+        "main_after_close": "87651d36558a8e421e41fbd76c514045d88c74ed",
+        "local_ancestor": false,
+        "source_only_commits": 2,
+        "tail_bytes": 6739,
+        "tail_preserved": true,
+        "hashes": {
+          "before_body_sha256": "fc62c9563326395d9054c74b2abf901ae102471d0c65da99298f3b2cdd052d99",
+          "after_body_sha256": "e90f8c1382fa3aebc2dd3af321d2191e7c95e4d8ea38341025feab25c69a8502",
+          "preserved_original_tail_sha256": "7caf3dfca344ce0aecae356fd22f46446a244cedad0fb940261c8ce55bb028e2"
+        },
+        "before_time_utc": "2026-11-21 03:26:40 UTC",
+        "closed_at": "2026-11-21T03:26:40Z",
+        "after_time_utc": "2026-11-21 03:26:42 UTC",
+        "classification": "runtime supersession and separate documentary recovery, not whole-tree inclusion"
+      }
+    ],
+    "core_pr": {
+      "number": 127,
+      "state": "closed",
+      "merged": true,
+      "merge_commit_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "original_tail_bytes": 31849,
+      "tail_preserved": true,
+      "before_body_sha256": "c63a68bae9f48754086f802455fa9b9bdccf2adaadacd7fd710d7524a5527c7d",
+      "after_body_sha256": "ae6e9245292682f27f3b2067225fb765a9c9be737c3e4852ac0174314ee689a0",
+      "tail_sha256": "0ea448790eadf33fe32b15424cc37ba79caf8191eab287901fff48d9fd83f873",
+      "observed_at_utc": "2026-11-21 03:27:14 UTC"
+    },
+    "remaining_open_prs": [
+      {
+        "number": 107,
+        "head": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+        "state": "open",
+        "draft": true
+      },
+      {
+        "number": 94,
+        "head": "45b596f12876e3f91c30b996457f7096e1fffe24",
+        "state": "open",
+        "draft": true
+      },
+      {
+        "number": 86,
+        "head": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+        "state": "open",
+        "draft": true
+      },
+      {
+        "number": 85,
+        "head": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+        "state": "open",
+        "draft": true
+      },
+      {
+        "number": 83,
+        "head": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+        "state": "open",
+        "draft": true
+      }
+    ],
+    "provider_qualification": {
+      "all_13_job_records_completed_success_at_main": true,
+      "last_completed_at_utc": "2026-11-21T03:22:54+00:00",
+      "last_completed_at_pacific": "2026-11-20T19:22:54-08:00",
+      "qualification_observed_at_utc": "2026-11-21 03:23:46 UTC"
+    },
+    "reconciliation_completed_at_utc": "2026-11-21 03:26:42 UTC",
+    "finding": {
+      "severity": "documentary correction",
+      "status": "reported to parent; parent will verify root correction",
+      "location": "core-main-qualified-20261120/README.md, reconciliation paragraph",
+      "observed_claim": "The coordinator refreshed the PR, direct source ref and main immediately before each close, then read all three again.",
+      "evidence_limit": "Each archived action has before_pr, before_ref, after_pr, after_ref and after_main_ref. No per-action before_main_ref is archived. The earlier root provider receipt records main at 03:23:46 UTC. Therefore the receipt independently supports source/PR checks before each closure and all three after each closure, not the specific per-action pre-close main-read assertion.",
+      "recommended_text": "The archived receipts retain PR and direct source-ref checks before every close, followed by PR, source-ref and main readbacks afterward. Main also matched the qualified commit in the preceding provider snapshot."
+    },
+    "limits": [
+      "This audit reads frozen saved provider records and local Git history; parent independently performed the fresh native provider readback.",
+      "The full source-history preservation comparisons and log qualification are covered by the parent review and existing frozen independent proofs.",
+      "No remote state, shared worktree, automation, or product suite was changed or run."
+    ]
+  },
+  "closure_audit_finding_disposition": "The frozen child finding is resolved by the README correction independently verified by the publication reviewer.",
+  "corrections": [
+    {
+      "id": "receipt-wording",
+      "status": "resolved",
+      "finding": "Per-action raw receipts retain before PR/source refs and after PR/source refs/main. A separate per-action before-main receipt is not archived.",
+      "resolution": "README accurately describes the retained before-and-after PR/source snapshots and after-close main snapshot. No missing receipt was reconstructed.",
+      "raw_records_unchanged": true
+    },
+    {
+      "id": "historical-macos-sentence",
+      "status": "resolved",
+      "finding": "Frozen scope report contains a pending-macOS sentence from its earlier task context.",
+      "resolution": "README explicitly identifies that sentence as historical and superseded by the final qualification at 19:22:54 Pacific. The original scope report and JSON remain byte-identical.",
+      "raw_records_unchanged": true
+    }
+  ],
+  "publication_followthrough": [
+    "Coordinator will preserve this frozen review directory and its supporting records, add readable report/result copies, regenerate the package SHA256SUMS, and verify final staged documentary scope.",
+    "Coordinator owns expected-head publication from 9f713dcb2157b66b4e2af7aec68a37b4a9057e6d and remote readback; this report does not claim the final evidence commit has already been published.",
+    "Only the Finalize Circula qualified merges automation may be retired after verified publication; the separate feature and future-module owners remain unchanged."
+  ],
+  "limits": [
+    "This review recomputed stored-evidence integrity and test-event counts. It did not execute product suites, archive scripts, or archive payloads.",
+    "The existing independent source digest receipt was compared to the original actual-main artifact; the 2023-file source digest calculation was not rerun by this publication review.",
+    "The fresh native provider observation is timestamped at 2026-11-21 03:33:11 UTC; scope refs/manifests retain their own explicitly recorded earlier observation times.",
+    "Scorecard execution success is distinct from its score of 5.9 across 18 criteria and retained findings. Manual, policy, hardware-performance, deployment, and release acceptance remain outside CI qualification.",
+    "No shared checkout files, refs, remote state, PRs, automation, or product test execution were changed by this reviewer."
+  ],
+  "supporting_files": [
+    "integrity-result.json",
+    "fresh-provider-readback.json",
+    "verify_package.py",
+    "closure-audit/report.md",
+    "closure-audit/result.json"
+  ]
+}

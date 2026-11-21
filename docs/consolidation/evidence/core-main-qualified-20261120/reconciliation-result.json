@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "repository": "djshellshoxxx/circula",
+  "actual_main": "87651d36558a8e421e41fbd76c514045d88c74ed",
+  "qualification_observed_at_utc": "2026-11-21 03:23:46 UTC",
+  "all_13_jobs_and_log_checkouts_verified": true,
+  "completed_at_utc": "2026-11-21 03:26:42 UTC",
+  "actions": [
+    {
+      "number": 109,
+      "classification": "ancestor",
+      "expected_head": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+      "branch": "feature/core-catalogue-continuation-20261119",
+      "before_time_utc": "2026-11-21 03:26:33 UTC",
+      "after_time_utc": "2026-11-21 03:26:34 UTC",
+      "status": "closed_and_verified",
+      "original_description_preserved": true,
+      "source_branch_preserved": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/109",
+      "before_state": "open",
+      "after_state": "closed",
+      "after_merged": false,
+      "before_body_sha256": "1bef8cbf3a415dff7acaf68a3486aa0502441b3986153609ec4305debe8c0952",
+      "after_body_sha256": "49f053e44685700d61a4897efffa11867daedeec6b9e62a3507cc9922d746cbb",
+      "preserved_original_tail_sha256": "e3da38da358aeac68d92fe1096730e9628008560c5a781b524d46715a20fc090",
+      "closed_at": "2026-11-21T03:26:33Z"
+    },
+    {
+      "number": 112,
+      "classification": "ancestor",
+      "expected_head": "7462138fb4f7110ea4f705c6f09742a2b5a253e4",
+      "branch": "integration/core-ui-completion-20261119",
+      "before_time_utc": "2026-11-21 03:26:35 UTC",
+      "after_time_utc": "2026-11-21 03:26:37 UTC",
+      "status": "closed_and_verified",
+      "original_description_preserved": true,
+      "source_branch_preserved": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/112",
+      "before_state": "open",
+      "after_state": "closed",
+      "after_merged": false,
+      "before_body_sha256": "1a2c202c05b36077ce4ff8209530eeb01946d8aeddcdb966438ed463e225bf6d",
+      "after_body_sha256": "420d31c34d28c973e4b6e68dbf331934f235b18e22d23473a5b9924fde0a3a71",
+      "preserved_original_tail_sha256": "bf67be043e39ac522e8758fb003e9d971ce97fb7cdbf60d5a18ff468d391d521",
+      "closed_at": "2026-11-21T03:26:35Z"
+    },
+    {
+      "number": 111,
+      "classification": "superseded alternative fixture, not ancestor",
+      "expected_head": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+      "branch": "codex/api036-qualification-20261119",
+      "before_time_utc": "2026-11-21 03:26:37 UTC",
+      "after_time_utc": "2026-11-21 03:26:40 UTC",
+      "status": "closed_and_verified",
+      "original_description_preserved": true,
+      "source_branch_preserved": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/111",
+      "before_state": "open",
+      "after_state": "closed",
+      "after_merged": false,
+      "before_body_sha256": "269fa1e5accb9e32b86036830671fdf7e507a3ed0e296537e2c2f9691db9237f",
+      "after_body_sha256": "72373919f5991995c40fe9c4b50f8ca35dd0e646271eb1dcf8f7e87e009acd4e",
+      "preserved_original_tail_sha256": "cc95f9d43144128c0de2560e6459aca78feadac9ca1bc38cf126c426f912c9f1",
+      "closed_at": "2026-11-21T03:26:38Z"
+    },
+    {
+      "number": 104,
+      "classification": "runtime supersession and separate documentary recovery, not whole-tree inclusion",
+      "expected_head": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+      "branch": "integration/circula-master-consolidation-20261119",
+      "before_time_utc": "2026-11-21 03:26:40 UTC",
+      "after_time_utc": "2026-11-21 03:26:42 UTC",
+      "status": "closed_and_verified",
+      "original_description_preserved": true,
+      "source_branch_preserved": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/104",
+      "before_state": "open",
+      "after_state": "closed",
+      "after_merged": false,
+      "before_body_sha256": "fc62c9563326395d9054c74b2abf901ae102471d0c65da99298f3b2cdd052d99",
+      "after_body_sha256": "e90f8c1382fa3aebc2dd3af321d2191e7c95e4d8ea38341025feab25c69a8502",
+      "preserved_original_tail_sha256": "7caf3dfca344ce0aecae356fd22f46446a244cedad0fb940261c8ce55bb028e2",
+      "closed_at": "2026-11-21T03:26:40Z"
+    }
+  ],
+  "core_pr_description": {
+    "number": 127,
+    "state": "closed",
+    "merged": true,
+    "source": "3ef43ac1e05360d2a1641742dc056afe8871879b",
+    "original_body_preserved": true,
+    "observed_at_utc": "2026-11-21 03:27:14 UTC"
+  },
+  "remaining_open_prs": [
+    {
+      "number": 107,
+      "head": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "state": "open",
+      "draft": true
+    },
+    {
+      "number": 94,
+      "head": "45b596f12876e3f91c30b996457f7096e1fffe24",
+      "state": "open",
+      "draft": true
+    },
+    {
+      "number": 86,
+      "head": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "state": "open",
+      "draft": true
+    },
+    {
+      "number": 85,
+      "head": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "state": "open",
+      "draft": true
+    },
+    {
+      "number": 83,
+      "head": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+      "state": "open",
+      "draft": true
+    }
+  ]
+}

@@ -1,0 +1,491 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-11-21 03:23:28 UTC",
+  "head": "87651d36558a8e421e41fbd76c514045d88c74ed",
+  "tree": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+  "parents": [
+    "aa01563fcc891da60fefebb8335eca27855678e8",
+    "3ef43ac1e05360d2a1641742dc056afe8871879b"
+  ],
+  "qualification": "complete",
+  "gates": {
+    "main_ref_unchanged": true,
+    "commit_tree_matches": true,
+    "ordered_parents_match": true,
+    "all_three_expected_runs": true,
+    "all_three_actual_main_pushes": true,
+    "all_workflow_job_sets_match": true,
+    "all_three_runs_succeeded": true,
+    "all_thirteen_jobs_succeeded": true,
+    "all_thirteen_checkout_witnesses_match": true,
+    "all_thirteen_job_heads_match": true,
+    "linux_artifact_qualified": true,
+    "no_failed_steps": true
+  },
+  "workflows": [
+    {
+      "id": 44856110228,
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "expected_job_set_matches": true,
+      "actual_main_push": true
+    },
+    {
+      "id": 44856110230,
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "expected_job_set_matches": true,
+      "actual_main_push": true
+    },
+    {
+      "id": 44856110197,
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "expected_job_set_matches": true,
+      "actual_main_push": true
+    }
+  ],
+  "jobs": [
+    {
+      "id": 136698603681,
+      "run_id": 44856110228,
+      "name": "build release targets",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603681",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:40:33Z",
+      "completed_at": "2026-11-21T02:42:44Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [],
+      "failed_steps": [],
+      "package_pass_lines": []
+    },
+    {
+      "id": 136698603787,
+      "run_id": 44856110228,
+      "name": "test (windows-2022)",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603787",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:39:28Z",
+      "completed_at": "2026-11-21T02:47:55Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [
+        "test with race detector (macOS Intel, bounded parallelism)"
+      ],
+      "failed_steps": [],
+      "package_pass_lines": [
+        "ok  \tgithub.com/djshellshoxxx/circula/cmd/circula\t152.564s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t175.613s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t15.281s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t0.135s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t0.046s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t0.036s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/integrity\t0.022s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t0.027s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/passwordwork\t0.024s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t1.986s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t432.835s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t395.955s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t133.445s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t0.106s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/sbom\t0.135s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/traceability\t6.638s"
+      ]
+    },
+    {
+      "id": 136698603858,
+      "run_id": 44856110228,
+      "name": "reproducible build (two builds, same sha256)",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603858",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:42:47Z",
+      "completed_at": "2026-11-21T02:44:08Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [],
+      "failed_steps": [],
+      "package_pass_lines": []
+    },
+    {
+      "id": 136698603892,
+      "run_id": 44856110228,
+      "name": "test (ubuntu-24.04)",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603892",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:42:47Z",
+      "completed_at": "2026-11-21T03:13:45Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [],
+      "failed_steps": [],
+      "package_pass_lines": []
+    },
+    {
+      "id": 136698603901,
+      "run_id": 44856110228,
+      "name": "fuzz smoke (RB-017)",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603901",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:46:26Z",
+      "completed_at": "2026-11-21T02:48:26Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [],
+      "failed_steps": [],
+      "package_pass_lines": [
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t0.578s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t0.045s [no tests to run]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t0.011s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t0.004s [no tests to run]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t0.006s [no tests to run]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/integrity\t0.005s [no tests to run]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t0.006s [no tests to run]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/passwordwork\t0.006s [no tests to run]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t0.008s [no tests to run]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t0.166s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t0.005s [no tests to run]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t0.008s [no tests to run]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t0.005s [no tests to run]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t10.678s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t13.787s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t8.577s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t6.362s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t6.186s"
+      ]
+    },
+    {
+      "id": 136698603910,
+      "run_id": 44856110228,
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603910",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:45:24Z",
+      "completed_at": "2026-11-21T02:46:58Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [],
+      "failed_steps": [],
+      "package_pass_lines": []
+    },
+    {
+      "id": 136698603986,
+      "run_id": 44856110228,
+      "name": "test (macos-15-intel)",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698603986",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:41:57Z",
+      "completed_at": "2026-11-21T03:22:54Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [
+        "test"
+      ],
+      "failed_steps": [],
+      "package_pass_lines": [
+        "ok  \tgithub.com/djshellshoxxx/circula/cmd/circula\t433.700s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t667.683s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t94.912s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t2.798s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t1.193s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t1.154s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/integrity\t1.161s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t1.172s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/passwordwork\t1.065s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t1.305s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t1766.028s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t986.942s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t662.621s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t1.422s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/sbom\t1.236s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/traceability\t8.414s"
+      ]
+    },
+    {
+      "id": 136698604023,
+      "run_id": 44856110228,
+      "name": "e2e (Playwright, axe, keyboard)",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698604023",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:47:57Z",
+      "completed_at": "2026-11-21T02:55:49Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [
+        "upload failure screenshots"
+      ],
+      "failed_steps": [],
+      "package_pass_lines": []
+    },
+    {
+      "id": 136698604084,
+      "run_id": 44856110228,
+      "name": "API contract and load smoke",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110228/job/136698604084",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:48:14Z",
+      "completed_at": "2026-11-21T02:48:43Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [],
+      "failed_steps": [],
+      "package_pass_lines": [
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t0.530s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t0.695s"
+      ]
+    },
+    {
+      "id": 136698603597,
+      "run_id": 44856110230,
+      "name": "Python export reader (macos-15-intel)",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110230/job/136698603597",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:42:27Z",
+      "completed_at": "2026-11-21T02:43:18Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [],
+      "failed_steps": [],
+      "package_pass_lines": []
+    },
+    {
+      "id": 136698603854,
+      "run_id": 44856110230,
+      "name": "Python export reader (ubuntu-24.04)",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110230/job/136698603854",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:43:14Z",
+      "completed_at": "2026-11-21T02:43:35Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [],
+      "failed_steps": [],
+      "package_pass_lines": []
+    },
+    {
+      "id": 136698603942,
+      "run_id": 44856110230,
+      "name": "Python export reader (windows-2022)",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110230/job/136698603942",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:48:45Z",
+      "completed_at": "2026-11-21T02:49:21Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [],
+      "failed_steps": [],
+      "package_pass_lines": []
+    },
+    {
+      "id": 136698602978,
+      "run_id": 44856110197,
+      "name": "scorecard analysis",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44856110197/job/136698602978",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "started_at": "2026-11-21T02:35:54Z",
+      "completed_at": "2026-11-21T02:36:28Z",
+      "explicit_checkout_matches": true,
+      "skipped_steps": [],
+      "failed_steps": [],
+      "package_pass_lines": []
+    }
+  ],
+  "linux_evidence_summary": {
+    "artifact_id": 14689307829,
+    "archive_file": "circula-actual-main-linux-test-evidence.zip",
+    "archive_bytes": 138870,
+    "archive_sha256": "df5b84d700ad1193afe6244178384fc8ae7fa02eeab2fbe8482220661af89a54",
+    "provider_artifact_metadata_file": "provider-artifact.json",
+    "source_baseline_file": "/workspace/scratch/56ccc19d5666/circula-postmerge-review/source-digest/result.json",
+    "members": [
+      {
+        "name": "traceability-results.json",
+        "bytes": 709436,
+        "sha256": "18dc4c8919487c3ea09354848d81b28363286d5f4fc9a786f643a8081ff16917"
+      },
+      {
+        "name": "TRACEABILITY-results.md",
+        "bytes": 319377,
+        "sha256": "9c6f6d63cc03a7c9a365e0dafedc08c65beface494eec5eca31c121717276c07"
+      }
+    ],
+    "recorded_evidence": {
+      "version": 1,
+      "head": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "dirty": false,
+      "source_digest": "9de685071744f0b9e260d53fc7d934cb4289c3b10f84a020db8e319227b77100",
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-race",
+        "-timeout",
+        "30m",
+        "./..."
+      ],
+      "exit_code": 0
+    },
+    "terminal_counts": {
+      "total": 3282,
+      "pass": 3274,
+      "fail": 0,
+      "skip": 8
+    },
+    "named_test_counts": {
+      "total": 3264,
+      "pass": 3258,
+      "fail": 0,
+      "skip": 6
+    },
+    "top_level_counts": {
+      "total": 1299,
+      "pass": 1293,
+      "fail": 0,
+      "skip": 6
+    },
+    "top_level_test_function_counts": {
+      "pass": 1270,
+      "fail": 0,
+      "skip": 6
+    },
+    "top_level_fuzz_entry_counts": {
+      "pass": 23,
+      "fail": 0,
+      "skip": 0
+    },
+    "subtest_counts": {
+      "total": 1965,
+      "pass": 1965,
+      "fail": 0,
+      "skip": 0
+    },
+    "package_counts": {
+      "total": 18,
+      "pass": 16,
+      "fail": 0,
+      "skip": 2
+    },
+    "first_terminal_at": "2026-11-21T02:44:03.322552027Z",
+    "last_terminal_at": "2026-11-21T03:13:38.969671289Z",
+    "skipped_events": [
+      {
+        "Time": "2026-11-21T02:45:03.789539681Z",
+        "Action": "skip",
+        "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "Test": "TestBackupStagingRefusesForeignOwnedParent"
+      },
+      {
+        "Time": "2026-11-21T02:45:44.694227294Z",
+        "Action": "skip",
+        "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "Test": "TestBackupWorkLeaseChild"
+      },
+      {
+        "Time": "2026-11-21T02:52:35.065610049Z",
+        "Action": "skip",
+        "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "Test": "TestRestoreSwapCrashChild"
+      },
+      {
+        "Time": "2026-11-21T03:03:35.233135761Z",
+        "Action": "skip",
+        "Package": "github.com/djshellshoxxx/circula/internal/service",
+        "Test": "TestLoadConcurrentTrades"
+      },
+      {
+        "Time": "2026-11-21T02:58:20.943583389Z",
+        "Action": "skip",
+        "Package": "github.com/djshellshoxxx/circula/internal/service",
+        "Test": "TestLoginTimingStatistical"
+      },
+      {
+        "Time": "2026-11-21T03:08:09.059057695Z",
+        "Action": "skip",
+        "Package": "github.com/djshellshoxxx/circula/internal/service",
+        "Test": "TestQA010CrashChild"
+      },
+      {
+        "Time": "2026-11-21T02:53:52.687960109Z",
+        "Action": "skip",
+        "Package": "github.com/djshellshoxxx/circula/internal/storetest",
+        "Test": ""
+      },
+      {
+        "Time": "2026-11-21T02:53:52.688026312Z",
+        "Action": "skip",
+        "Package": "github.com/djshellshoxxx/circula/internal/testutil",
+        "Test": ""
+      }
+    ],
+    "failed_events": [],
+    "duplicate_terminal_results": [],
+    "unknown_terminal_actions": [],
+    "validations": {
+      "archive_sha256_matches_provider": true,
+      "archive_size_matches_provider": true,
+      "provider_run_matches": true,
+      "provider_head_matches": true,
+      "recorded_head_matches": true,
+      "recorded_clean_tree": true,
+      "recorded_source_digest_matches_independent_baseline": true,
+      "recorded_exit_zero": true,
+      "command_is_uncached_race_suite": true,
+      "no_duplicate_terminal_results": true,
+      "no_unknown_terminal_actions": true,
+      "no_failed_terminal_results": true
+    },
+    "qualified": true,
+    "scope": "Actual-main Linux race execution only. Passing cited tests do not independently establish whole-requirement acceptance."
+  },
+  "native_readers": [
+    {
+      "job_id": 136698603597,
+      "head": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "test_count": 49,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "job_id": 136698603854,
+      "head": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "test_count": 49,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "job_id": 136698603942,
+      "head": "87651d36558a8e421e41fbd76c514045d88c74ed",
+      "test_count": 49,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "scorecard_execution": {
+    "job_id": 136698602978,
+    "score": 5.9,
+    "checks": 18,
+    "note": "Job success confirms execution/upload, not satisfaction of every security criterion. Full findings are preserved in native-and-scorecard/result.json."
+  },
+  "scope": "Qualification of actual-main push executions. Premerge synthetic checkout results were not substituted. No product suite was rerun during this review; no remote state was changed."
+}
