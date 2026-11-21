@@ -1,6 +1,12 @@
 # Circula handoff
 
-## Current comprehensive audit
+## 2026-11-20 Pacific: current Core continuation
+
+Core consolidation and finalization are recorded at `main@87651d36558a8e421e41fbd76c514045d88c74ed`. The [post-merge continuation record](https://github.com/djshellshoxxx/circula/blob/8f936b6eb4eefbe85250ee5cf44a839ad361e4ce/docs/consolidation/CORE_POSTMERGE_CONTINUATION_20261120.md) preserves the exact main qualification and historical PR dispositions.
+
+The current UX-047 slice corrects setup amount-validation wording when the selected precision is one decimal place. Its source, regression evidence and independent reviews are recorded in [the setup precision qualification note](docs/qa/UX047-setup-precision-2026-11-20.md). That note records local qualification of this bounded change; the resulting PR and actual-main checks qualify its integration. UX-047 remains partial. The dated checkpoints below describe their original state and are not current merge instructions.
+
+## 2026-11-18 Pacific: comprehensive audit checkpoint (historical)
 
 The audit beginning 2026-11-18 Pacific starts at `main@ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`. [PR #90](https://github.com/djshellshoxxx/circula/pull/90) holds the reviewed core consolidation, new ledger/authentication/dispute/policy/setup repairs, account-session work and onboarding catalogue continuation. Verify its current head and gates before merging; source-PR passes and local pure-package tests are not combined-main qualification.
 

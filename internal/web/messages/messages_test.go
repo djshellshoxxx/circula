@@ -77,7 +77,7 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 		case "notice.closing_date", "balance.spoken_level", "status.waiting_other", "reversal.ledger", "row.ledger", "join.network.title", "join.network.invite_only", "join.flash.joined", "join.terms.heading":
 			args = []any{"example"}
 		case "setup.amount.invalid":
-			args = []any{"Default credit limit", 2, "12.50"}
+			args = []any{2, "Default credit limit", "12.50"}
 		case "freshness.snapshot", "freshness.offline", "freshness.history", "session_warning.extendable", "session_warning.fixed":
 			args = []any{"example"}
 		case "auth.login.create_prompt", "auth.login.recovery_prompt", "auth.enrol.already_on", "auth.enrol.uri_note", "auth.register.have_account", "security.mfa.state", "about.title":

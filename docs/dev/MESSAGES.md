@@ -1,5 +1,12 @@
 # UI messages (UX-047)
 
+The sections below preserve the scope and qualification recorded for each
+catalogue continuation. Their original "not migrated" and pending-check
+statements describe their historical slice; later continuations and dated
+integrated-source qualification supersede those statements. The current
+[setup precision qualification](../qa/UX047-setup-precision-2026-11-20.md)
+records the 2026-11-20 Pacific continuation. UX-047 remains partial.
+
 `internal/web/messages/en.json` is the first English message catalogue. It is
 embedded in the binary; there is no runtime file, language selector or new
 dependency. The existing pinned `golang.org/x/text` supplies CLDR plural rules
@@ -17,6 +24,8 @@ for member names, currency names and other interpolated content; never cast the
 result to trusted HTML. Unknown keys fail visibly instead of printing a key to
 the user. The embedded catalogue is validated on load. Each new entry needs a
 formatting test, including its plural forms and argument ordering where relevant.
+
+## Initial catalogue scope (historical)
 
 Migrated: all six administrator-overview count sentences, overview actions and
 check messages, overview/queue titles, queue party descriptions and row status.
@@ -736,3 +745,28 @@ code in `h_admin_f2.go`, including overview, stale queue, reversal and
 `atoiRange`, remains byte-identical. Raw receipts are retained under
 `docs/consolidation/evidence/continuation/admin-history-*-{before,after}.log`.
 UX-047 remains partial.
+
+## Setup amount-validation precision continuation — 2026-11-20 Pacific
+
+`setup.amount.invalid` now supplies `one` and `other` forms, selecting on the
+integer precision passed as argument 1. The localized field label is argument
+2 and the exact fixed-point example is argument 3. Both setup amount fields
+therefore use "1 decimal place" for precision one, while the other covered
+precisions retain "decimal places". This changes an existing entry; the
+catalogue still has 1,458 keys.
+
+`TestSetupAmountValidationMessages` and
+`TestSetupAmountValidationUsesSelectedPrecision` cover both fields at
+precisions 0, 1, 2 and 4. The real-handler regression checks the 422 response,
+retained values and precision, escaped input, summary links, inline errors,
+ARIA associations and absence of a created network. The existing precision
+guard and amount parsing are unchanged.
+
+The focused checks, complete messages race suite, setup/onboarding race
+selection, two-package vet and executable build passed locally. The
+[qualification note](../qa/UX047-setup-precision-2026-11-20.md) preserves exact
+commands, source hashes, red/green evidence, independent reviews and the
+initial linked-worktree build failure followed by the successful identical
+source build. Current-head CI and actual-main qualification remain distinct
+integration gates. This continuation does not complete UX-047 or select a new
+locale.

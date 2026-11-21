@@ -1944,7 +1944,8 @@
     "other": "Setup secret: not correct. Ask the person who runs this service."
   },
   "setup.amount.invalid": {
-    "other": "%[1]s: enter a number with up to %[2]d decimal places, for example %[3]s."
+    "one": "%[2]s: enter a number with up to %[1]d decimal place, for example %[3]s.",
+    "other": "%[2]s: enter a number with up to %[1]d decimal places, for example %[3]s."
   },
   "setup.slug.unavailable": {
     "other": "Web address name: already in use. Choose a different one."
