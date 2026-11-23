@@ -228,4 +228,3 @@ func TestTermsRulesLeaveCatalogueEscapesMessages(t *testing.T) {
 		})
 	}
 }
-
