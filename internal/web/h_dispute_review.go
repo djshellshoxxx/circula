@@ -33,7 +33,7 @@ func (s *server) reviewData(c *rc, v *service.DisputeView, out *disputeData) {
 	if until := v.Deadlines.ReReviewCloses; d.Status == domain.DisputeResolved && !until.IsZero() {
 		// The service's date: the window of the policy in force when the
 		// dispute was opened (GOV-001), inclusive, as RequestReReview enforces it.
-		out.ReReviewUntil = fmtTime(until)
+		out.ReReviewUntil = c.when(until)
 		out.CanReReview = rr == nil && party && c.isActive() && !s.opts.Clock.Now().After(until)
 	}
 	out.DecideReRev = rr != nil && rr.Status == service.ReReviewRequested && (c.isReviewer() || c.isAdmin()) && !party &&

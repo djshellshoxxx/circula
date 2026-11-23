@@ -46,9 +46,9 @@ func (s *server) breakGlassPage(w http.ResponseWriter, r *http.Request, c *rc) {
 	rows := make([]breakGlassRow, 0, len(bs))
 	for _, b := range bs {
 		row := breakGlassRow{ID: b.ID, Operator: b.OperatorLabel, Reason: b.Reason, Status: breakGlassStatusText(b.Status(now)),
-			Opened: fmtTime(b.OpenedAt), Expires: fmtTime(b.ExpiresAt), ClosedReason: b.ClosedReason}
+			Opened: c.when(b.OpenedAt), Expires: c.when(b.ExpiresAt), ClosedReason: b.ClosedReason}
 		if b.ClosedAt != nil {
-			row.Closed = fmtTime(*b.ClosedAt)
+			row.Closed = c.when(*b.ClosedAt)
 		}
 		rows = append(rows, row)
 	}

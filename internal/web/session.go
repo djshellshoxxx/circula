@@ -145,6 +145,12 @@ type rc struct {
 	loc *time.Location
 }
 
+func (c *rc) loadDisplayZone() {
+	if z, err := c.s.svc.GetTimeZone(c.ctx, c.actor); err == nil {
+		c.loc = service.Location(z)
+	}
+}
+
 func (c *rc) netID() string { return c.Net.ID }
 
 func (c *rc) isAdmin() bool {
@@ -216,9 +222,7 @@ func (s *server) netH(h func(http.ResponseWriter, *http.Request, *rc)) http.Hand
 			return
 		}
 		c.Info = info
-		if z, err := s.svc.GetTimeZone(r.Context(), c.actor); err == nil {
-			c.loc = service.Location(z)
-		}
+		c.loadDisplayZone()
 		if c.Me.Status == domain.MemberPending {
 			s.render(w, r, c, "pending", 200, &page{Title: messages.Text("notice.membership_pending.title")})
 			return

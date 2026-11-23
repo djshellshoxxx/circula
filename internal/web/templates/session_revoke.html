@@ -1,8 +1,8 @@
 {{define "content"}}
 <h2>{{if .D.Current}}{{msg "sessions.current"}}{{else}}{{msg "sessions.other"}}{{end}}</h2>
 <dl>
-  <dt>{{msg "sessions.started"}}</dt><dd>{{time .D.CreatedAt}}</dd>
-  <dt>{{msg "sessions.last_active"}}</dt><dd>{{time .D.LastSeenAt}}</dd>
+  <dt>{{msg "sessions.started"}}</dt><dd>{{$.Time .D.CreatedAt}}</dd>
+  <dt>{{msg "sessions.last_active"}}</dt><dd>{{$.Time .D.LastSeenAt}}</dd>
 </dl>
 <p>{{if .D.Current}}{{msg "sessions.current_consequence"}}{{else}}{{msg "sessions.other_consequence"}}{{end}}</p>
 <form method="post" action="/account/sessions/{{.D.ID}}/revoke" novalidate>

@@ -87,7 +87,7 @@ func TestRulesCatalogueRowsAndStates(t *testing.T) {
 	const unsafe = `"><img src=x> & Zoë 100% $&` + "\x00%!"
 	when := time.Date(2026, time.November, 19, 12, 0, 0, 0, time.UTC)
 	later := when.Add(14 * 24 * time.Hour)
-	rows := ruleRows([]service.PolicyLogEntry{{Version: 1000, AnnouncedAt: when, EffectiveAt: later, Pending: true, NoticeDays: 14,
+	rows := (&rc{}).ruleRows([]service.PolicyLogEntry{{Version: 1000, AnnouncedAt: when, EffectiveAt: later, Pending: true, NoticeDays: 14,
 		Reason: unsafe, NoticeReason: unsafe, Changes: map[string]any{"signup_grant": int64(9007199254740993), "custom": unsafe, "enabled": true},
 		Previous: map[string]any{"signup_grant": int64(-9007199254740993), "enabled": false}}}, 2)
 	wantLines := []string{"custom: " + unsafe, "enabled: no to yes", "Sign-up grant: -90071992547409.93 to 90071992547409.93"}
@@ -142,7 +142,7 @@ func TestRulesCatalogueRowsAndStates(t *testing.T) {
 		if got := fmtChangeValue("currency_name", "1000", 2); got != "1000" {
 			t.Fatalf("numeric-looking text changed: %q", got)
 		}
-		rows := ruleRows([]service.PolicyLogEntry{{Version: 1000,
+		rows := (&rc{}).ruleRows([]service.PolicyLogEntry{{Version: 1000,
 			Changes:  map[string]any{"inactivity_days": 3650, "dispute_window_days": 1000},
 			Previous: map[string]any{"inactivity_days": 1000},
 		}}, 2)

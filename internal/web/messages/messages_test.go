@@ -82,6 +82,8 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 	for key, e := range keys {
 		var args []any
 		switch key {
+		case "date.short", "date.time":
+			args = []any{"first", "second", "third"}
 		case "unit.plural":
 			args = []any{"Credit"}
 		case "notice.credit_limit_used":

@@ -314,7 +314,7 @@ func (c *rc) invitationRow(i *domain.Invitation, now time.Time) invRow {
 	// Status is always one of the catalogue labels above, never submitted text.
 	// The plain accessible name uses the same viewer zone/layout as the time element.
 	return invRow{ID: i.ID, Status: status, Expires: c.when(i.ExpiresAt),
-		ExpiresLabel: c.at(i.ExpiresAt).Format("2 Jan 2006, 15:04 MST"), CanRevoke: canRevoke}
+		ExpiresLabel: messages.DateTime(c.at(i.ExpiresAt)), CanRevoke: canRevoke}
 }
 
 func (s *server) invitations(w http.ResponseWriter, r *http.Request, c *rc) {

@@ -232,6 +232,17 @@ test('set the time zone using only the keyboard', async ({ as }) => {
   await typeText(page, 'Europe/Berlin');
   await page.keyboard.press('Enter');
   await expect(page.getByText('Europe/Berlin').first()).toBeVisible();
+  await page.goto('/account/sessions');
+  const times = page.locator('main time');
+  await expect(times.first()).toBeVisible();
+  for (const stamp of await times.all()) {
+    const instant = await stamp.getAttribute('datetime');
+    expect(instant).toMatch(/Z$/);
+    const clock = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit',
+    }).format(new Date(instant));
+    await expect(stamp).toHaveText(new RegExp(clock + ' (CET|CEST)$'));
+  }
 });
 
 test('mark all notifications as read using only the keyboard', async ({ as, st }) => {

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"golang.org/x/text/feature/plural"
 	"golang.org/x/text/language"
@@ -56,6 +57,18 @@ func Text(key string, args ...any) string {
 		panic("unknown UI message: " + key)
 	}
 	return message.NewPrinter(language.English, message.Catalog(builder)).Sprintf(key, args...)
+}
+
+// Date returns a calendar date in the time's own location. Components are
+// ungrouped, and month names and their ordering belong to the catalogue.
+func Date(t time.Time) string {
+	month := Text("date.month." + t.Format("Jan"))
+	return Text("date.short", t.Format("2"), month, t.Format("2006"))
+}
+
+// DateTime returns the visible date, local clock and zone abbreviation.
+func DateTime(t time.Time) string {
+	return Text("date.time", Date(t), t.Format("15:04"), t.Format("MST"))
 }
 
 // Parts keeps the text surrounding one template-owned element as ordinary

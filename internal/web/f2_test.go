@@ -311,6 +311,14 @@ func TestTimeZoneDisplay(t *testing.T) {
 	al.mustContain(p, "1 Mar 2026, 17:30 IST", `datetime="2026-03-01T12:00:00Z"`)
 	al.mustNotContain(p, "12:00 UTC")
 	al.mustContain(al.get(b+"/history"), "17:30 IST")
+	// A second proposal gives Alice both a notification and a pending row in the inbox.
+	w.propose(w.bob, w.aliceM, 100)
+	_, _, sessionID := browserSession(t, al)
+	revokeURL := "/account/sessions/" + sessionID + "/revoke"
+	for _, page := range []*pg{al.get(b + "/inbox"), al.get("/account/sessions"), al.get(revokeURL), al.post(revokeURL, al.get(revokeURL), url.Values{})} {
+		al.mustContain(page, `datetime="2026-03-01T12:00:00Z">1 Mar 2026, 17:30 IST</time>`)
+		al.mustNotContain(page, "12:00 UTC</time>")
+	}
 	// another person is unaffected
 	bb := w.browser(t)
 	bb.login("bob@example.org")
