@@ -1,6 +1,34 @@
 # Circula handoff
 
-## 2026-11-20 Pacific: current Core continuation
+## 2026-11-23 Pacific: UX-047 rules-log quantity source checkpoint
+
+Main was freshly verified at `fff81fc7f64cb4858c09d4a3a6f1ff0a55a1a337`.
+PR #130 setup precision and its integration qualification are complete; do not
+repeat that patch or finalizer. Its durable final record is on
+[evidence commit 048b519](https://github.com/djshellshoxxx/circula/blob/048b51940f4533d746e48dc3acf69e548ee61f09/docs/qa/UX047-setup-precision-integration-2026-11-20.md).
+
+The active partial Core feature remains UX-047. This bounded slice is [PR #131](https://github.com/djshellshoxxx/circula/pull/131),
+`codex/ux047-rule-quantities-20261123`. Corrected product source is
+`037f10a7d8729ab7e3add4c06e724e30b8e8cd77` over regression-only source
+`15664ad3341428b24d1ccf8c9078b9f2f12fb9cc`. Its five-file presentation change
+uses catalogue integer formatting for policy quantities while retaining exact
+amounts and ungrouped identifiers. See the [current acceptance/traceability
+and continuation record](docs/qa/UX047-rule-quantities-2026-11-23.md).
+Independent source reviews approved; local browser-message tests passed 16/16.
+Go execution is unavailable locally. Native regression-only run 45232559048
+failed exactly the new raw-quantity and rendered-row assertions. The maintained
+[PR qualification/handoff](https://github.com/djshellshoxxx/circula/pull/131#issuecomment-7109225318)
+records subsequent corrected final-head CI, merge and actual-main results.
+This checked-in source checkpoint makes no subsequent green-result claim.
+
+UX-047 remains partial. SEC-026 and GOV-021 policy holds, held PRs
+#83/#85/#86/#94/#107, translation scope, manual/external gates and all fifteen
+future modules remain untouched. If #131 is open, finish its current-head gates;
+if merged, verify its maintained final record and let a fresh run choose another
+bounded UX-047 investigation.
+The older dated sections below are historical where superseded.
+
+## 2026-11-20 Pacific: prior Core continuation (historical)
 
 Core consolidation and finalization are recorded at `main@87651d36558a8e421e41fbd76c514045d88c74ed`. The [post-merge continuation record](https://github.com/djshellshoxxx/circula/blob/8f936b6eb4eefbe85250ee5cf44a839ad361e4ce/docs/consolidation/CORE_POSTMERGE_CONTINUATION_20261120.md) preserves the exact main qualification and historical PR dispositions.
 

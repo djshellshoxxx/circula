@@ -4,8 +4,10 @@ The sections below preserve the scope and qualification recorded for each
 catalogue continuation. Their original "not migrated" and pending-check
 statements describe their historical slice; later continuations and dated
 integrated-source qualification supersede those statements. The current
-[setup precision qualification](../qa/UX047-setup-precision-2026-11-20.md)
-records the 2026-11-20 Pacific continuation. UX-047 remains partial.
+[rules-log quantity record](../qa/UX047-rule-quantities-2026-11-23.md)
+records the 2026-11-23 Pacific source checkpoint and links its maintained provider qualification. The prior
+[setup precision slice is fully qualified](https://github.com/djshellshoxxx/circula/blob/048b51940f4533d746e48dc3acf69e548ee61f09/docs/qa/UX047-setup-precision-integration-2026-11-20.md).
+UX-047 remains partial.
 
 `internal/web/messages/en.json` is the first English message catalogue. It is
 embedded in the binary; there is no runtime file, language selector or new
@@ -770,3 +772,15 @@ initial linked-worktree build failure followed by the successful identical
 source build. Current-head CI and actual-main qualification remain distinct
 integration gates. This continuation does not complete UX-047 or select a new
 locale.
+
+## Rules-log quantity continuation — 2026-11-23 Pacific
+
+Policy quantities in rules change rows now pass through `rules.quantity` and
+catalogue integer formatting: 1000 to 3650 days displays 1,000 to 3,650.
+The three visible monetary keys retain exact fixed-point strings, versions
+stay ungrouped, and numeric-looking member text stays text. The catalogue now
+contains 1,459 entries. Existing cited rules/terms tests gained quantity and
+exact-integer cases; see the [current source/acceptance record](../qa/UX047-rule-quantities-2026-11-23.md)
+for revisions, source reviews, available local checks and pending runtime gates.
+The setup precision slice above is already integrated and qualified; its
+pending-check wording describes its original checkpoint. UX-047 remains partial.
