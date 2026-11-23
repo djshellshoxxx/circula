@@ -1,5 +1,29 @@
 # Circula handoff
 
+## 2026-11-23 Pacific: finish UX-047 native qualification (#132)
+
+PR #131 is merged as `d3c5ce67a252a9111e98729c7b967ecb9cc7cdc8` after
+all seven exact-head jobs passed (3,278 named Linux passes, six explicit skips,
+597 browser passes). Actual-main run 45237650449 then exposed the Windows
+package-wide default ten-minute timeout; this is not complete qualification.
+The newly started service test was closing SQLite at the alarm; store passed
+597.914s, and web/messages passed. Preserve that failure as evidence.
+
+The one active partial feature remains UX-047. [PR #132](https://github.com/djshellshoxxx/circula/pull/132),
+`codex/ux047-windows-qualification-20261123`, proposes only an explicit bounded
+Windows package budget. Source `089c3a196d436e8c3fb4c71d8949e57529b0382a`
+is based on the freshly verified merge above. Every test, `-count=1`, the
+non-race Windows limitation and the 30-minute job bound are retained. Independent
+evidence review approved the mechanism, conditional on an uncached full native
+Windows pass and all applicable exact-head checks. Product code is unchanged.
+See the [failure/acceptance record](docs/qa/UX047-native-windows-qualification-2026-11-23.md)
+and maintained [integration handoff](https://github.com/djshellshoxxx/circula/pull/131#issuecomment-7109225318).
+
+Finish #132 and subsequent actual-main qualification before releasing this slice
+or selecting another investigation. Do not repeat #130/#131 product patches,
+touch held policy PRs or inspect/run any future module. UX-047 remains partial.
+Older dated checkpoints below are historical where superseded.
+
 ## 2026-11-23 Pacific: UX-047 rules-log quantity source checkpoint
 
 Main was freshly verified at `fff81fc7f64cb4858c09d4a3a6f1ff0a55a1a337`.
