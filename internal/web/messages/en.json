@@ -3250,6 +3250,9 @@
   "rules.no": {
     "other": "no"
   },
+  "rules.quantity": {
+    "other": "%[1]d"
+  },
   "rules.change": {
     "other": "%[1]s: %[2]s to %[3]s"
   },

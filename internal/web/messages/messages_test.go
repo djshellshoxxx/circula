@@ -102,7 +102,7 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			"report.target_transaction", "report.related_disputes_for", "report.review_reference",
 			"report.subject", "report.reported_by", "report.mark_handled_named", "report.handling_note":
 			args = []any{"example"}
-		case "inbox.unread_count":
+		case "inbox.unread_count", "rules.quantity":
 			args = []any{1000}
 		case "admin.check.summary":
 			args = []any{1000, "9223372036854775807"}
