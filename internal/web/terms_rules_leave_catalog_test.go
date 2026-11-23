@@ -121,6 +121,30 @@ func TestRulesCatalogueRowsAndStates(t *testing.T) {
 	}
 	body := renderGovCatalogue(t, "rules", &page{Slug: "town", D: &rulesData{}})
 	wantGovCatalogue(t, body, "This network has not published terms.", "Change log")
+
+	t.Run("policy quantities use catalogue formatting", func(t *testing.T) {
+		for _, tc := range []struct {
+			value any
+			want  string
+		}{
+			{int(0), "0"}, {int(1), "1"}, {int(1000), "1,000"}, {int(3650), "3,650"},
+			{int64(0), "0"}, {int64(1), "1"}, {int64(1000), "1,000"}, {int64(3650), "3,650"},
+		} {
+			if got := fmtChangeValue("inactivity_days", tc.value, 2); got != tc.want {
+				t.Errorf("quantity %T(%v): got %q, want %q", tc.value, tc.value, got, tc.want)
+			}
+		}
+		rows := ruleRows([]service.PolicyLogEntry{{Version: 1000,
+			Changes:  map[string]any{"inactivity_days": 3650, "dispute_window_days": 1000},
+			Previous: map[string]any{"inactivity_days": 1000},
+		}}, 2)
+		body := renderGovCatalogue(t, "rules", &page{Slug: "town", D: &rulesData{Rows: rows}})
+		wantGovCatalogue(t, body, "Version 1000", label("inactivity_days")+": 1,000 to 3,650",
+			label("dispute_window_days")+": 1,000")
+		if strings.Contains(body, "Version 1,000") {
+			t.Fatal("version identifier was formatted as a quantity")
+		}
+	})
 }
 
 // UX-047, FR-014, GOV-010: blockers still suppress departure while export stays
@@ -204,3 +228,4 @@ func TestTermsRulesLeaveCatalogueEscapesMessages(t *testing.T) {
 		})
 	}
 }
+
