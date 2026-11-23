@@ -4,8 +4,9 @@ The sections below preserve the scope and qualification recorded for each
 catalogue continuation. Their original "not migrated" and pending-check
 statements describe their historical slice; later continuations and dated
 integrated-source qualification supersede those statements. The current
-[rules-log quantity record](../qa/UX047-rule-quantities-2026-11-23.md)
-records the 2026-11-23 Pacific source checkpoint and links its maintained provider qualification. The prior
+[unit-suffix record](../qa/UX047-unit-suffix-2026-11-23.md)
+records the active #133 source checkpoint and required integration gates. The prior
+[rules-log quantity slice is fully qualified](https://github.com/djshellshoxxx/circula/blob/547d24b62a6b23ab2c8d9851e23d4a4e152182f8/docs/qa/UX047-rule-quantities-integration-2026-11-23.md). The prior
 [setup precision slice is fully qualified](https://github.com/djshellshoxxx/circula/blob/048b51940f4533d746e48dc3acf69e548ee61f09/docs/qa/UX047-setup-precision-integration-2026-11-20.md).
 UX-047 remains partial.
 
@@ -784,3 +785,21 @@ exact-integer cases; see the [current source/acceptance record](../qa/UX047-rule
 for revisions, source reviews, available local checks and pending runtime gates.
 The setup precision slice above is already integrated and qualified; its
 pending-check wording describes its original checkpoint. UX-047 remains partial.
+
+## Existing currency-unit suffix continuation — 2026-11-23 Pacific
+
+[PR #133](https://github.com/djshellshoxxx/circula/pull/133) moves only the existing
+English `s` suffix from `unitFor` into `unit.plural` (`%[1]ss`). The catalogue
+now contains 1,460 entries. Exact minor-unit singular decisions and the existing
+case-insensitive already-s rule remain in the helper. No artificial count or
+floating-point amount enters plural selection, and no irregular-noun or new
+locale policy is invented. This externalizes an existing English suffix; it
+neither fixes a demonstrated wrong-English message nor completes unit/whole-UI
+localization. The old initial-scope exclusion above is historical.
+
+Existing `TestUnitForPlural` gains precision/sign/fraction/large-integer/custom
+name cases. `TestProposalMessageIsPlainText` gains a catalogue-owned unit and
+escaping contract, and the existing catalogue completeness test supplies its
+string argument. The focused native red proof failed on the absent key before
+implementation; see the [current source/acceptance record](../qa/UX047-unit-suffix-2026-11-23.md).
+Full corrected-head and actual-main qualification remain required.

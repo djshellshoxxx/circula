@@ -1,6 +1,31 @@
 # Circula handoff
 
-## 2026-11-23 Pacific: UX-047 native qualification source checkpoint (#132)
+## 2026-11-23 Pacific: active UX-047 unit-suffix continuation (#133)
+
+The completed #130 precision and #131/#132 quantity/native qualification slices
+are not repeated. Starting main is `9cb4cc0250db487d6fd4760227ce906c4ea5f58f`,
+qualified by Core run 45259862932 (all nine jobs, attempt 1). Its final evidence
+is on preserved commit `547d24b62a6b23ab2c8d9851e23d4a4e152182f8`.
+
+The single active partial feature remains UX-047. [Draft #133](https://github.com/djshellshoxxx/circula/pull/133),
+`codex/ux047-unit-suffix-20261123`, externalizes only the existing English
+currency-unit suffix. Exact fixed-point singular selection, existing-s handling,
+amounts, names and contextual escaping remain unchanged; no new morphology or
+locale policy is selected. Native regression-only source
+`3d3e7e059e2a694709f99d7414322870db69814b`, run 45272197441, job 138034623179,
+failed the new catalogue contract with `unknown UI message: unit.plural`.
+The full race step did not run after that focused failure.
+
+The corrected source requires focused and full exact-head CI, independent diff
+review and separate actual-main qualification before completion. Read the
+[current acceptance/traceability record](docs/qa/UX047-unit-suffix-2026-11-23.md)
+and #133's maintained PR description before acting. If #133 is incomplete,
+finish this same slice; once merged and fully qualified, do not repeat it and
+use a fresh investigator for another bounded UX-047 gap. UX-047 is not complete.
+Held policy PRs, SEC-026/GOV-021 decisions and all fifteen future modules remain
+untouched. No release/deployment/licence or history changes are authorized.
+
+## 2026-11-23 Pacific: prior native qualification source checkpoint (#132, historical)
 
 PR #131 is merged as `d3c5ce67a252a9111e98729c7b967ecb9cc7cdc8` after
 all seven exact-head jobs passed (3,278 named Linux passes, six explicit skips,

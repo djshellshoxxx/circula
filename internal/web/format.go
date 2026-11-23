@@ -28,7 +28,7 @@ func unitFor(name string, v int64, dec int) string {
 	if strings.HasSuffix(strings.ToLower(name), "s") {
 		return name
 	}
-	return name + "s"
+	return messages.Text("unit.plural", name)
 }
 
 func makeBalance(v int64, dec int, unit string) balanceVM {
