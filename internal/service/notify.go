@@ -43,11 +43,21 @@ const maxMarkIDs = 200
 // path inside the network (for example "/trades/<id>"). A non-empty dedupe key
 // makes the call a no-op when the member already has that key.
 func (s *Service) notify(tx store.Tx, netID, memberID, kind, title, body, link, dedupe string) error {
+	notice := inboxNotice(kind, title, body, link)
+	notice.DedupeKey = dedupe
+	return s.deliverNotice(tx, netID, memberID, notice)
+}
+
+func inboxNotice(kind, title, body, link string) store.Notification {
+	return store.Notification{Kind: kind, Title: title, Body: body, Link: link}
+}
+
+func (s *Service) deliverNotice(tx store.Tx, netID, memberID string, notice store.Notification) error {
 	if memberID == "" {
 		return nil
 	}
-	_, err := tx.InsertNotification(store.Notification{ID: s.id(), NetworkID: netID, MemberID: memberID, Kind: kind,
-		Title: title, Body: body, Link: link, DedupeKey: dedupe, CreatedAt: s.now()})
+	notice.ID, notice.NetworkID, notice.MemberID, notice.CreatedAt = s.id(), netID, memberID, s.now()
+	_, err := tx.InsertNotification(notice)
 	return err
 }
 
@@ -60,13 +70,17 @@ func (s *Service) adminNotice(tx store.Tx, netID, memberID, kind, title, body, l
 
 // notifyOthers notifies each distinct member id except skip.
 func (s *Service) notifyOthers(tx store.Tx, netID string, ids []string, skip, kind, title, body, link string) error {
+	return s.notifyRecipients(tx, netID, ids, skip, inboxNotice(kind, title, body, link))
+}
+
+func (s *Service) notifyRecipients(tx store.Tx, netID string, ids []string, skip string, notice store.Notification) error {
 	seen := map[string]bool{skip: true, "": true}
 	for _, id := range ids {
 		if seen[id] {
 			continue
 		}
 		seen[id] = true
-		if err := s.notify(tx, netID, id, kind, title, body, link, ""); err != nil {
+		if err := s.deliverNotice(tx, netID, id, notice); err != nil {
 			return err
 		}
 	}

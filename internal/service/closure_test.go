@@ -47,6 +47,10 @@ func TestClosureBlockersPreviewAndNotice(t *testing.T) {
 	if !hasKind(w.inbox(w.b), service.NotifClosureScheduled) {
 		t.Fatal("member not notified of the closure date")
 	}
+	stored := w.notificationDates(w.b, service.NotifClosureScheduled)[domain.NoticeClosureScheduled]
+	if stored == nil || !stored.At.Equal(c.ClosingAt) || stored.ClosureReason != c.Reason || stored.ReadOnlyDays != c.ReadOnlyDays {
+		t.Fatalf("closure notice does not retain the scheduled event: %+v", stored)
+	}
 	_, err = w.schedule("again", 0)
 	wantCode(t, err, domain.ErrInvalidState)
 	if !hasKind(auditActions(w), service.ActClosureScheduled) {
@@ -254,6 +258,11 @@ func TestDisputeDeadlinesAndReminders(t *testing.T) {
 	w.Clock.Advance(14 * 24 * time.Hour)
 	if n := tu.Must(w.Svc.RemindOverdueDisputes(w.Ctx, sysJob)); n != 1 {
 		t.Fatalf("decision reminders: %d", n)
+	}
+	dates := w.notificationDates(rev, service.NotifDisputeOverdue)
+	if len(dates) != 2 || dates[domain.NoticeResponseDue] == nil || dates[domain.NoticeDecisionDue] == nil ||
+		!dates[domain.NoticeResponseDue].At.Equal(v.Deadlines.ResponseDeadline) || !dates[domain.NoticeDecisionDue].At.Equal(v.Deadlines.DecisionTarget) {
+		t.Fatalf("deadline reminders did not preserve each deadline: %+v", dates)
 	}
 	// Silence did not decide the case: the reviewer still assesses it.
 	r := tu.Must(w.resolve(rev, d.ID, domain.OutcomeDismissed, 0, "no evidence"))

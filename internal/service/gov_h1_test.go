@@ -61,6 +61,10 @@ func TestPolicyNoticePeriod(t *testing.T) {
 	if len(log) != 2 || !log[0].Pending || log[0].NoticeDays != 14 || log[0].Changes["default_credit_limit"] != int64(1000) {
 		t.Fatalf("log = %+v", log)
 	}
+	dates := w.notificationDates(w.a, service.NotifPolicyNotice)
+	if len(dates) != 1 || dates[domain.NoticePolicyEffective] == nil || !dates[domain.NoticePolicyEffective].At.Equal(log[0].EffectiveAt) {
+		t.Fatalf("policy event does not retain the announced instant: %+v", dates)
+	}
 	if !log[0].EffectiveAt.Equal(w.Clock.Now().AddDate(0, 0, 14)) {
 		t.Errorf("effective at %v", log[0].EffectiveAt)
 	}

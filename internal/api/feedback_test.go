@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/testutil"
 )
 
@@ -172,6 +173,14 @@ func TestNotificationsAPI(t *testing.T) {
 	}
 	if cnt(w.bobT) != 0 {
 		t.Fatal("still unread")
+	}
+	// The member changes their zone after delivery. API body and shape stay canonical.
+	closure := testutil.Must(w.env.Svc.ScheduleClosure(w.env.Ctx, w.admin, w.net.ID, service.ClosureInput{Reason: "winding down"}))
+	testutil.Must(0, w.env.Svc.SetTimeZone(w.env.Ctx, w.bob, "Pacific/Kiritimati"))
+	row := decode[page](t, w.get(w.bobT, "/notifications")).Data[0]
+	body := row["body"].(string)
+	if len(row) != 8 || row["kind"] != service.NotifClosureScheduled || !strings.Contains(body, "closes on "+closure.ClosingAt.UTC().Format("2 Jan 2006")+": winding down.") {
+		t.Fatalf("dated notice changed the API: %+v", row)
 	}
 	// auth required; read-only tokens may list but not mark
 	wantProblem(t, w.get("", "/notifications"), 401, "unauthenticated")

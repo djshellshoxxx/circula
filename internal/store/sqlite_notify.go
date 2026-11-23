@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"encoding/json"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -191,9 +192,17 @@ func (t *txImpl) CountReportsSince(netID, reporterID string, since time.Time) (i
 }
 
 func (t *txImpl) InsertNotification(n Notification) (bool, error) {
-	res, err := t.exec(`INSERT INTO notifications(id,network_id,member_id,kind,title,body,link,dedupe_key,created_at)
-		VALUES (?,?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING`, n.ID, n.NetworkID, n.MemberID, n.Kind, n.Title, n.Body,
-		n.Link, n.DedupeKey, ms(n.CreatedAt))
+	var event sql.NullString
+	if n.EventDate != nil {
+		data, err := json.Marshal(n.EventDate)
+		if err != nil {
+			return false, err
+		}
+		event = sql.NullString{String: string(data), Valid: true}
+	}
+	res, err := t.exec(`INSERT INTO notifications(id,network_id,member_id,kind,title,body,link,dedupe_key,created_at,event_date)
+		VALUES (?,?,?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING`, n.ID, n.NetworkID, n.MemberID, n.Kind, n.Title, n.Body,
+		n.Link, n.DedupeKey, ms(n.CreatedAt), event)
 	if err != nil {
 		return false, err
 	}
@@ -202,7 +211,7 @@ func (t *txImpl) InsertNotification(n Notification) (bool, error) {
 }
 
 func (t *txImpl) ListNotifications(netID, memberID string, f NotificationFilter) ([]*Notification, error) {
-	q := `SELECT id,network_id,member_id,kind,title,body,link,dedupe_key,created_at,read_at FROM notifications
+	q := `SELECT id,network_id,member_id,kind,title,body,link,dedupe_key,created_at,read_at,event_date FROM notifications
 		WHERE network_id = ? AND member_id = ?`
 	args := []any{netID, memberID}
 	if f.UnreadOnly {
@@ -224,9 +233,15 @@ func (t *txImpl) ListNotifications(netID, memberID string, f NotificationFilter)
 		var n Notification
 		var created int64
 		var read sql.NullInt64
+		var event sql.NullString
 		if err := rows.Scan(&n.ID, &n.NetworkID, &n.MemberID, &n.Kind, &n.Title, &n.Body, &n.Link, &n.DedupeKey,
-			&created, &read); err != nil {
+			&created, &read, &event); err != nil {
 			return nil, err
+		}
+		if event.Valid {
+			if err := json.Unmarshal([]byte(event.String), &n.EventDate); err != nil {
+				return nil, err
+			}
 		}
 		n.CreatedAt, n.ReadAt = fromMS(created), ptrTime(read)
 		out = append(out, &n)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	store "github.com/djshellshoxxx/circula/internal/repository"
@@ -95,10 +96,11 @@ func (s *Service) remindNetwork(ctx context.Context, netID string) (int, error) 
 				}
 				for _, k := range []struct {
 					kind, title, body string
+					at                time.Time
 					due               bool
 				}{
-					{"response", "A dispute has no response", fmt.Sprintf("The other party did not respond by %s. The case stays open for your assessment.", dl.ResponseDeadline.Format("2 Jan 2006")), dl.ResponseOverdue},
-					{"decision", "A dispute is past its decision target", fmt.Sprintf("The decision target of %s has passed.", dl.DecisionTarget.Format("2 Jan 2006")), dl.DecisionOverdue},
+					{domain.NoticeResponseDue, "A dispute has no response", fmt.Sprintf("The other party did not respond by %s. The case stays open for your assessment.", dl.ResponseDeadline.Format("2 Jan 2006")), dl.ResponseDeadline, dl.ResponseOverdue},
+					{domain.NoticeDecisionDue, "A dispute is past its decision target", fmt.Sprintf("The decision target of %s has passed.", dl.DecisionTarget.Format("2 Jan 2006")), dl.DecisionTarget, dl.DecisionOverdue},
 				} {
 					if !k.due {
 						continue
@@ -122,7 +124,9 @@ func (s *Service) remindNetwork(ctx context.Context, netID string) (int, error) 
 							eligible = append(eligible, id)
 						}
 					}
-					if err := s.notifyOthers(tx, netID, eligible, "", NotifDisputeOverdue, k.title, k.body, "/disputes/"+d.ID); err != nil {
+					notice := inboxNotice(NotifDisputeOverdue, k.title, k.body, "/disputes/"+d.ID)
+					notice.EventDate = &domain.NotificationDate{Event: k.kind, At: k.at}
+					if err := s.notifyRecipients(tx, netID, eligible, "", notice); err != nil {
 						return err
 					}
 					sent++

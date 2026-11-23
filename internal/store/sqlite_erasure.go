@@ -105,7 +105,7 @@ func (t *txImpl) RedactNotificationNames(netID, memberID, _ string) (int64, erro
 		UNION SELECT '/members/' || ?
 		UNION SELECT '/admin/members/' || ?
 	)
-	UPDATE notifications SET body = '' WHERE network_id = ? AND body <> ''
+	UPDATE notifications SET body = '', event_date = NULL WHERE network_id = ? AND body <> ''
 		AND (member_id = ? OR link IN (SELECT link FROM related_links))`,
 		memberID, netID, netID, memberID, memberID, netID, memberID)
 	if err != nil {

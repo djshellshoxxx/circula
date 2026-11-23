@@ -30,7 +30,7 @@ func govRepo(tx store.Tx) (store.GovRepo, error) {
 }
 
 // notifyActive writes one inbox entry for every active member except skip.
-func (s *Service) notifyActive(tx store.Tx, netID, skip, kind, title, body, link string) error {
+func (s *Service) notifyActive(tx store.Tx, netID, skip string, notice store.Notification) error {
 	after := ""
 	for {
 		ms, err := tx.ListMembers(netID, store.MemberFilter{Statuses: []domain.MemberStatus{domain.MemberActive}, AfterID: after, Limit: 500})
@@ -42,7 +42,7 @@ func (s *Service) notifyActive(tx store.Tx, netID, skip, kind, title, body, link
 			ids = append(ids, m.ID)
 			after = m.ID
 		}
-		if err := s.notifyOthers(tx, netID, ids, skip, kind, title, body, link); err != nil {
+		if err := s.notifyRecipients(tx, netID, ids, skip, notice); err != nil {
 			return err
 		}
 		if len(ms) < 500 {
@@ -90,8 +90,8 @@ func (s *Service) PublishTerms(ctx context.Context, actor domain.Actor, netID, b
 		if err := g.InsertTerms(netID, t); err != nil {
 			return err
 		}
-		if err := s.notifyActive(tx, netID, "", NotifTermsPublished, "Updated network terms",
-			"The network published version "+strconv.Itoa(v)+" of its rules and terms. Read and accept them before your next trade.", "/terms"); err != nil {
+		if err := s.notifyActive(tx, netID, "", inboxNotice(NotifTermsPublished, "Updated network terms",
+			"The network published version "+strconv.Itoa(v)+" of its rules and terms. Read and accept them before your next trade.", "/terms")); err != nil {
 			return err
 		}
 		out = &t
