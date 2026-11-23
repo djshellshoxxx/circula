@@ -118,9 +118,9 @@ func fmtAny(v any) string {
 	case string:
 		return x
 	case int:
-		return strconv.Itoa(x)
+		return messages.Text("rules.quantity", x)
 	case int64:
-		return strconv.FormatInt(x, 10)
+		return messages.Text("rules.quantity", x)
 	case bool:
 		if x {
 			return messages.Text("rules.yes")
