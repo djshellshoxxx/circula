@@ -1,6 +1,6 @@
 # Circula handoff
 
-## 2026-11-23 Pacific: finish UX-047 native qualification (#132)
+## 2026-11-23 Pacific: UX-047 native qualification source checkpoint (#132)
 
 PR #131 is merged as `d3c5ce67a252a9111e98729c7b967ecb9cc7cdc8` after
 all seven exact-head jobs passed (3,278 named Linux passes, six explicit skips,
@@ -19,8 +19,10 @@ Windows pass and all applicable exact-head checks. Product code is unchanged.
 See the [failure/acceptance record](docs/qa/UX047-native-windows-qualification-2026-11-23.md)
 and maintained [integration handoff](https://github.com/djshellshoxxx/circula/pull/131#issuecomment-7109225318).
 
-Finish #132 and subsequent actual-main qualification before releasing this slice
-or selecting another investigation. Do not repeat #130/#131 product patches,
+The maintained integration handoff records subsequent exact-head and actual-main
+outcomes. If #132 or its integration qualification is incomplete, finish this
+same slice. If it is merged and fully qualified, do not repeat its finalization;
+let a fresh run investigate a different current-source UX-047 gap. Do not repeat #130/#131 product patches,
 touch held policy PRs or inspect/run any future module. UX-047 remains partial.
 Older dated checkpoints below are historical where superseded.
 

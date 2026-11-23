@@ -1,6 +1,6 @@
 # UX-047 native Windows qualification continuation
 
-Checkpoint: 2026-11-23 Pacific. Source/acceptance record; passing results follow in the maintained [integration handoff](https://github.com/djshellshoxxx/circula/pull/131#issuecomment-7109225318).
+Checkpoint: 2026-11-23 Pacific. Source/acceptance record; subsequent provider results are recorded in the maintained [integration handoff](https://github.com/djshellshoxxx/circula/pull/131#issuecomment-7109225318).
 
 - Starting actual main: `d3c5ce67a252a9111e98729c7b967ecb9cc7cdc8`, tree `004ff13caaf1532a30d488432110f2499e443a68`.
 - PR #131 product source/head: `037f10a7d8729ab7e3add4c06e724e30b8e8cd77` / `a2b4229031cb18ff3517ad429b86e54c9edc329a`. All seven applicable PR jobs passed; its named Linux results were 3,278 passes, six skips, zero failures, and browser results were 597 passes.
@@ -18,4 +18,4 @@ Independent review inspected the original stack and approved this bounded candid
 
 No Go test/requirement symbols change. The existing UX-047 citations and generated inventory remain intact; CI freshness is required. No new unit test is added for a command-only runner budget; real complete native execution is the proof. Local Go is unavailable. No local native runtime or passing rerun is fabricated.
 
-Finish #132, verify its exact current head and applicable native/default checks, merge normally only after qualification, then verify actual main and publish exact source/Actions/artifact evidence. Keep the original #131 and follow-up branches. If a test assertion or timeout persists, inspect it rather than weakening the workload. Only after this same slice is qualified should a fresh run investigate a different current-source UX-047 gap. UX-047 remains partial; translations, policy/manual/external gates, held PRs #83/#85/#86/#94/#107 and all fifteen future modules stay untouched. No deployment, release, licence choice or history rewriting.
+If #132 or its maintained integration record remains incomplete, finish the same slice: verify its exact current head and applicable native/default checks, merge normally only after qualification, then verify actual main and publish exact source/Actions/artifact evidence. If already merged and fully qualified, do not repeat that finalization. Keep the original #131 and follow-up branches. If a test assertion or timeout persists, inspect it rather than weakening the workload. Only after this same slice is qualified should a fresh run investigate a different current-source UX-047 gap. UX-047 remains partial; translations, policy/manual/external gates, held PRs #83/#85/#86/#94/#107 and all fifteen future modules stay untouched. No deployment, release, licence choice or history rewriting.
