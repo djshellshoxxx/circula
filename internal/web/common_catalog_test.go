@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 // UX-047: the actual dashboard and shared shell resolve catalogue labels
@@ -39,6 +40,12 @@ func TestDashboardCatalogueAndUnitNames(t *testing.T) {
 }
 
 func TestDashboardInflectsEachAmountAndCapsDebtMeter(t *testing.T) {
+	if got := messages.Text("balance.amount", "−90071992547409.93", "100% hours"); got != "−90071992547409.93 100% hours" {
+		t.Fatalf("inexact amount or altered unit name: %q", got)
+	}
+	if got := messages.Text("dashboard.meter_percentage", 37); got != "37%" {
+		t.Fatalf("meter label: %q", got)
+	}
 	p := &page{D: &dash{Card: makeCard(&service.BalanceView{
 		Decimals: 2, CreditLimit: 100, ReservedOutgoing: 200, Available: -100,
 		AwaitingFromOthers: 0, Balance: -(1 << 62),
@@ -47,7 +54,7 @@ func TestDashboardInflectsEachAmountAndCapsDebtMeter(t *testing.T) {
 	if err := mustLoadTemplates()["dashboard"].ExecuteTemplate(&b, "content", p); err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"1.00 credit</dd>", "2.00 credits</dd>", "−1.00 credit</strong>", "0.00 credits</dd>", "value=\"100\""} {
+	for _, want := range []string{"1.00 credit</dd>", "2.00 credits</dd>", "−1.00 credit</strong>", "0.00 credits</dd>", `value="100" aria-label="Credit limit in use">100%</meter>`} {
 		if !strings.Contains(b.String(), want) {
 			t.Errorf("missing dashboard value %q", want)
 		}

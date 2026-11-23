@@ -192,17 +192,21 @@ func (t *txImpl) CountReportsSince(netID, reporterID string, since time.Time) (i
 }
 
 func (t *txImpl) InsertNotification(n Notification) (bool, error) {
-	var event sql.NullString
+	args := []any{n.ID, n.NetworkID, n.MemberID, n.Kind, n.Title, n.Body, n.Link, n.DedupeKey, ms(n.CreatedAt)}
+	// Keep ordinary notices writable when populating historical upgrade fixtures.
+	// On current schemas the omitted event_date defaults to NULL.
+	query := `INSERT INTO notifications(id,network_id,member_id,kind,title,body,link,dedupe_key,created_at)
+		VALUES (?,?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING`
 	if n.EventDate != nil {
 		data, err := json.Marshal(n.EventDate)
 		if err != nil {
 			return false, err
 		}
-		event = sql.NullString{String: string(data), Valid: true}
+		query = `INSERT INTO notifications(id,network_id,member_id,kind,title,body,link,dedupe_key,created_at,event_date)
+			VALUES (?,?,?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING`
+		args = append(args, string(data))
 	}
-	res, err := t.exec(`INSERT INTO notifications(id,network_id,member_id,kind,title,body,link,dedupe_key,created_at,event_date)
-		VALUES (?,?,?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING`, n.ID, n.NetworkID, n.MemberID, n.Kind, n.Title, n.Body,
-		n.Link, n.DedupeKey, ms(n.CreatedAt), event)
+	res, err := t.exec(query, args...)
 	if err != nil {
 		return false, err
 	}

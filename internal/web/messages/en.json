@@ -83,6 +83,9 @@
   "balance.spoken_level": {
     "other": "Level, zero %[1]s"
   },
+  "balance.amount": {
+    "other": "%[1]s %[2]s"
+  },
   "balance.limit_used": {
     "other": "You are using %[1]s of your %[2]s credit limit."
   },
@@ -298,6 +301,9 @@
   },
   "dashboard.needs": {
     "other": "Trades waiting for you"
+  },
+  "dashboard.meter_percentage": {
+    "other": "%[1]d%%"
   },
   "dashboard.used": {
     "other": "Credit limit in use"
