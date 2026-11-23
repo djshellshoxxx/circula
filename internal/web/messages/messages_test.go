@@ -52,6 +52,21 @@ func TestProposalMessageIsPlainText(t *testing.T) {
 	if strings.Contains(b.String(), "<img") || !strings.Contains(b.String(), "&lt;img") {
 		t.Fatal("message crossed the HTML escaping boundary")
 	}
+	t.Run("currency unit inflection stays catalogue plain text", func(t *testing.T) {
+		for _, name := range []string{"Credit", "Zoë 100% $&", "<img src=x>", "9007199254740993"} {
+			got := Text("unit.plural", name)
+			if got != name+"s" {
+				t.Fatalf("unit %q: got %q", name, got)
+			}
+			var escaped bytes.Buffer
+			if err := template.Must(template.New("unit").Parse("{{.}}")).Execute(&escaped, got); err != nil {
+				t.Fatal(err)
+			}
+			if strings.Contains(escaped.String(), "<img") {
+				t.Fatal("unit crossed the HTML escaping boundary")
+			}
+		}
+	})
 }
 
 func TestUnknownMessageFailsVisibly(t *testing.T) {
@@ -67,6 +82,8 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 	for key, e := range keys {
 		var args []any
 		switch key {
+		case "unit.plural":
+			args = []any{"Credit"}
 		case "notice.credit_limit_used":
 			args = []any{"90071992547409.93", "90071992547409.94", "90"}
 		case "error.fallback.reference", "error.reference", "help.balance.credit", "help.balance.debt", "help.balance.level",
