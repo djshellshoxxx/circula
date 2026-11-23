@@ -147,7 +147,9 @@ jobs:
       - name: test
         if: runner.os == 'Windows'
         # The race detector needs cgo, which the Windows runner does not provide by default.
-        run: go test -count=1 ./...
+        # The complete SQLite-heavy package reached Go's implicit 10m alarm
+        # during cleanup in native CI. Keep every test and the 30m job bound.
+        run: go test -count=1 -timeout=20m ./...
 
   build:
     name: build release targets
