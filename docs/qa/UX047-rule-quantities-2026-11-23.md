@@ -1,6 +1,6 @@
 # UX-047 rules-log quantity continuation
 
-Checkpoint: 2026-11-23 Pacific. Status: candidate; runtime qualification pending.
+Checkpoint: 2026-11-23 Pacific. Status: source checkpoint. The maintained [PR qualification/handoff](https://github.com/djshellshoxxx/circula/pull/131#issuecomment-7109225318) records subsequent final-head and integration results.
 
 - Qualified starting main: `fff81fc7f64cb4858c09d4a3a6f1ff0a55a1a337` (PR #130 already complete).
 - Branch / PR: `codex/ux047-rule-quantities-20261123`, [#131](https://github.com/djshellshoxxx/circula/pull/131).
@@ -56,7 +56,9 @@ following independent review. The original assertions' behavior is unchanged.
 - Fresh live main/ref, open Core PR metadata and actual-main CI were read before editing. Main still matches the completed #130 source.
 - Independent number/type investigation, diff review and acceptance/security review found no remaining blocker in the bounded correction. They are source reviews, not independent external security qualification.
 - Local `node --test scripts/test_app_messages.cjs`: 16 passed, zero failures/skips, on unchanged browser code. JSON validation and diff whitespace checks passed.
-- No local Go compiler is installed. No local Go test, vet, race, build, browser or screen-reader result is claimed. Exact-head CI results and regression failure logs are still pending at this documentation checkpoint.
+- No local Go compiler is installed. No local Go test, vet, race, build, browser or screen-reader result is claimed.
+- Native red proof: [run 45232559048](https://github.com/djshellshoxxx/circula/actions/runs/45232559048), test job 137895869325, regression-only source `52d6c943b97b3502b6a8f1a7269c7f150e2270ba`. The focused race step passed the messages package, then failed only `TestRulesCatalogueRowsAndStates/policy_quantities_use_catalogue_formatting`: four raw-digit int/int64 mismatches at 1000/3650 and two missing grouped rendered-row assertions. The full race step was correctly skipped after that expected failure. This is real failing product execution, not a synthetic output or a failing workflow setup.
+- Corrected-head full qualification follows this source checkpoint and is recorded in the maintained PR handoff. No green result is inferred from the red run.
 - Merge remains blocked until applicable checks pass at the final current PR head, its diff is verified and the integration record is published. Preserve all topic/evidence branches; never force-push.
 
 Policy-log reads continue removing the private dual-control threshold. This
@@ -70,9 +72,11 @@ not closed by this slice. All fifteen future modules remain out of scope.
 
 ## Fresh continuation prompt
 
-Read live main, #131 and its current head/checks plus this note, HANDOFF.md and
-docs/TODO.md. Continue only the active UX-047 rules-log quantity slice until its
-regression evidence, exact-head CI and integration handoff are complete. Do not
+Read live main, #131 and its current head/checks, the maintained PR handoff,
+this note, HANDOFF.md and docs/TODO.md. If #131 remains open, finish the UX-047
+rules-log quantity slice and its exact-head CI/integration record. If merged,
+verify that final record and select a different bounded current-source UX-047
+investigation with a fresh investigator. Do not
 repeat #130 setup precision, inspect future modules, touch held policy PRs or
 claim whole UX-047 complete. After this slice is qualified, release ownership
 and let a fresh run select a different bounded current-source UX-047 investigation.

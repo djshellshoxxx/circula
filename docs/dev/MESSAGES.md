@@ -5,7 +5,7 @@ catalogue continuation. Their original "not migrated" and pending-check
 statements describe their historical slice; later continuations and dated
 integrated-source qualification supersede those statements. The current
 [rules-log quantity record](../qa/UX047-rule-quantities-2026-11-23.md)
-records the 2026-11-23 Pacific continuation and its pending gates. The prior
+records the 2026-11-23 Pacific source checkpoint and links its maintained provider qualification. The prior
 [setup precision slice is fully qualified](https://github.com/djshellshoxxx/circula/blob/048b51940f4533d746e48dc3acf69e548ee61f09/docs/qa/UX047-setup-precision-integration-2026-11-20.md).
 UX-047 remains partial.
 
