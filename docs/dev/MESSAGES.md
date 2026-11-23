@@ -770,3 +770,15 @@ initial linked-worktree build failure followed by the successful identical
 source build. Current-head CI and actual-main qualification remain distinct
 integration gates. This continuation does not complete UX-047 or select a new
 locale.
+
+## Rules-log quantity continuation — 2026-11-23 Pacific
+
+Policy quantities in rules change rows now pass through `rules.quantity` and
+catalogue integer formatting: 1000 to 3650 days displays 1,000 to 3,650.
+The three visible monetary keys retain exact fixed-point strings, versions
+stay ungrouped, and numeric-looking member text stays text. The catalogue now
+contains 1,459 entries. Existing cited rules/terms tests gained quantity and
+exact-integer cases; see the [current source/acceptance record](../qa/UX047-rule-quantities-2026-11-23.md)
+for revisions, source reviews, available local checks and pending runtime gates.
+The setup precision slice above is already integrated and qualified; its
+pending-check wording describes its original checkpoint. UX-047 remains partial.
