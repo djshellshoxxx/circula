@@ -2,6 +2,7 @@ package store_test
 
 import (
 	"context"
+	"database/sql"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -63,6 +64,9 @@ func TestReportDisputeContextMigrationPreservesAndRetries(t *testing.T) {
 		tu.Must(0, insertHistoricalReport(legacy.DB(), *report))
 	}
 	before := tu.Snapshot(t, legacy.DB())
+	// v26 adds event_date. Compare all ten old fields (in original row order)
+	// separately across the combined upgrade, then check that new context is NULL.
+	noticesBefore := historicalNotifications(t, legacy.DB())
 	shape := reportSchemaShape(t, legacy.DB())
 	var originalSQL string
 	tu.Must(0, legacy.DB().QueryRow("SELECT sql FROM sqlite_master WHERE name='reports'").Scan(&originalSQL))
@@ -96,13 +100,23 @@ func TestReportDisputeContextMigrationPreservesAndRetries(t *testing.T) {
 	tu.Must(0, err)
 	tu.Must(0, legacy.Close())
 	delete(before.Tables, "schema_migrations")
-	delete(before.Tables, "reports") // all original fields and row count are compared separately
+	delete(before.Tables, "notifications") // every old value is compared below
+	delete(before.Tables, "reports")       // all original fields and row count are compared separately
 	for pass := 0; pass < 2; pass++ {
 		upgraded := tu.Must(store.Open(ctx, path))
 		t.Cleanup(func() { _ = upgraded.Close() })
 		after := tu.Snapshot(t, upgraded.DB())
 		delete(after.Tables, "schema_migrations")
 		delete(after.Tables, "reports")
+		delete(after.Tables, "notifications")
+		if !reflect.DeepEqual(noticesBefore, historicalNotifications(t, upgraded.DB())) {
+			t.Fatal("context migration/reopen changed historical notification values")
+		}
+		var dated int
+		tu.Must(0, upgraded.DB().QueryRow("SELECT COUNT(*) FROM notifications WHERE event_date IS NOT NULL").Scan(&dated))
+		if dated != 0 {
+			t.Fatal("migration inferred dates on legacy notifications")
+		}
 		if changed := before.Changed(after); len(changed) != 0 {
 			t.Fatalf("context migration/reopen changed unrelated data: %v", changed)
 		}
@@ -167,4 +181,28 @@ func TestReportDisputeContextMigrationPreservesAndRetries(t *testing.T) {
 		}
 		tu.Must(0, upgraded.Close())
 	}
+}
+
+// historicalNotifications reads every stored v24 notification field. Raw SQLite
+// JSON arrays preserve NULL, integer and text values without using current DTOs.
+func historicalNotifications(t *testing.T, db *sql.DB) []string {
+	t.Helper()
+	rows, err := db.Query(`SELECT json_array(id,network_id,member_id,kind,title,body,link,dedupe_key,created_at,read_at)
+		FROM notifications ORDER BY rowid`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = rows.Close() }()
+	var result []string
+	for rows.Next() {
+		var row string
+		if err := rows.Scan(&row); err != nil {
+			t.Fatal(err)
+		}
+		result = append(result, row)
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+	return result
 }
