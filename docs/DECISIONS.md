@@ -410,7 +410,7 @@ Entries use the template in [13 section 1.3](specs/13-assumptions-risks-decision
 - Dates: opened 2026-10-21; as-built record written 2026-10-21 (this pass)
 - Owner who decides: Product owner (confirm)
 - Context and requirements: OQ-UX-03, OQ-UX-05, OQ-UX-07, OQ-FR-5, OQ-FR-6, OQ-DAT-05 (scope questions).
-- Decision: UI and API text in English only; strings are not externalised (UX-047 not built). Listing prices optional. Open join mode is built as a configuration option (FR-012). Trades have exactly two parties and one amount. No per-member remembered preferences. Entries are never partially settled.
+- Decision: UI and API text in English only. The original 2026-10-21 build did not externalise strings; subsequent UX-047 continuations provide a partial English catalogue and number/plural formatting (see docs/dev/MESSAGES.md). This implementation update does not approve additional languages or claim whole-UI completion. Listing prices optional. Open join mode is built as a configuration option (FR-012). Trades have exactly two parties and one amount. No per-member remembered preferences. Entries are never partially settled.
 - Rationale: Recommended defaults in 02, 04, 06, 08.
 - Recommended default and whether adopted: Recommended defaults adopted
 - Requirements or documents changed: 04 OQ-FR-5/6; 06 OQ-DAT-05; 08 OQ-UX-03/05/07 (moved here)
