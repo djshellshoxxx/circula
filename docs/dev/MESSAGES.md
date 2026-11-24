@@ -28,12 +28,6 @@ result to trusted HTML. Unknown keys fail visibly instead of printing a key to
 the user. The embedded catalogue is validated on load. Each new entry needs a
 formatting test, including its plural forms and argument ordering where relevant.
 
-The shared browser tab title uses `common.title.public` for the screen name
-alone and `common.title.network` when a network name is available. The screen
-name is argument 1 and the network name is argument 2. Each message supplies
-the brand and separators. `TestDocumentTitleCatalogue` renders both formats
-with reordered text and checks that names remain escaped inside `<title>`.
-
 ## Initial catalogue scope (historical)
 
 Migrated: all six administrator-overview count sentences, overview actions and
@@ -60,6 +54,12 @@ The candidate financial-message change extends the catalogue to balance state an
 `TestBalanceCatalogueMessages` and `TestTransactionCatalogueRows` are new regression checks, and the catalogue completeness test supplies the new interpolation arguments. These checks have not run locally because the execution environment is unavailable; candidate CI is authoritative. This is still a partial UX-047 migration, not a locale-scope decision or completion of all UI text.
 
 ## Shared-shell and dashboard continuation
+
+The shared browser tab title uses `common.title.public` for the screen name
+alone and `common.title.network` when a network name is available. The screen
+name is argument 1 and the network name is argument 2. Each message supplies
+the brand and separators. `TestDocumentTitleCatalogue` renders both formats
+with reordered text and checks that names remain escaped inside `<title>`.
 
 The next candidate exposes `msg` as a plain-text template helper backed by the same English catalogue. It migrates shared labels, pagination labels, dashboard headings/actions/empty states, main navigation, persistent network notices and unread/new counts. User-controlled values remain subject to contextual HTML escaping. The dashboard uses `Card.Unit`, already inflected by the formatter, instead of appending another `s` to the network unit. `TestDashboardCatalogueAndUnitNames` renders the real shell/dashboard with ordinary, already-plural and HTML-sensitive unit names.
 
