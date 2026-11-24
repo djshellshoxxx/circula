@@ -55,6 +55,12 @@ The candidate financial-message change extends the catalogue to balance state an
 
 ## Shared-shell and dashboard continuation
 
+The shared browser tab title uses `common.title.public` for the screen name
+alone and `common.title.network` when a network name is available. The screen
+name is argument 1 and the network name is argument 2. Each message supplies
+the brand and separators. `TestDocumentTitleCatalogue` renders both formats
+with reordered text and checks that names remain escaped inside `<title>`.
+
 The next candidate exposes `msg` as a plain-text template helper backed by the same English catalogue. It migrates shared labels, pagination labels, dashboard headings/actions/empty states, main navigation, persistent network notices and unread/new counts. User-controlled values remain subject to contextual HTML escaping. The dashboard uses `Card.Unit`, already inflected by the formatter, instead of appending another `s` to the network unit. `TestDashboardCatalogueAndUnitNames` renders the real shell/dashboard with ordinary, already-plural and HTML-sensitive unit names.
 
 Timestamp-rich notices still retain their existing `time` markup; they are not converted to trusted catalogue HTML. Remaining templates, other handlers, JavaScript and complete locale/number/date scope are still open. This continuation does not complete UX-047 or approve translations.

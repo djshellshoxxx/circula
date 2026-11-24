@@ -2,6 +2,7 @@ package web
 
 import (
 	"errors"
+	"fmt"
 	"html/template"
 	"io"
 	"log/slog"
@@ -12,7 +13,48 @@ import (
 	"testing"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
+
+func TestDocumentTitleCatalogue(t *testing.T) {
+	const screen = "History 75% & </title>"
+	const network = "Community 100% & <North>"
+	reordered := func(key string, args ...any) string {
+		switch key {
+		case "common.title.public":
+			return fmt.Sprintf("Circula | %[1]s", args...)
+		case "common.title.network":
+			return fmt.Sprintf("Circula | %[2]s | %[1]s", args...)
+		default:
+			return messages.Text(key, args...)
+		}
+	}
+	for _, tc := range []struct {
+		name, netName, want string
+		reorder             bool
+	}{
+		{"public English", "", screen + " - Circula", false},
+		{"network English", network, screen + " - " + network + " - Circula", false},
+		{"public reordered", "", "Circula | " + screen, true},
+		{"network reordered", network, "Circula | " + network + " | " + screen, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			tpl := mustLoadTemplates()["login"]
+			if tc.reorder {
+				tpl.Funcs(template.FuncMap{"msg": reordered})
+			}
+			var body strings.Builder
+			if err := tpl.ExecuteTemplate(&body, "base", &page{Title: screen, NetName: tc.netName}); err != nil {
+				t.Fatal(err)
+			}
+			_, after, _ := strings.Cut(body.String(), "<title>")
+			title, _, found := strings.Cut(after, "</title>")
+			if want := template.HTMLEscapeString(tc.want); !found || title != want {
+				t.Errorf("document title %q, want %q", title, want)
+			}
+		})
+	}
+}
 
 // These HTTP cases need no database: the public error path must not read one.
 func sharedPagesServer() *server {
