@@ -85,7 +85,7 @@ func (s *server) renderSecurity(w http.ResponseWriter, r *http.Request, c *rc, s
 		}
 	}
 	p.Title, p.D = messages.Text("auth.title.security"), d
-	s.render(w, r, nil, "security", status, p)
+	s.render(w, r, c, "security", status, p)
 }
 
 func (s *server) securityPage(w http.ResponseWriter, r *http.Request, c *rc) {

@@ -4414,5 +4414,47 @@
   },
   "admin.break_glass.status_expired": {
     "other": "expired"
+  },
+  "date.short": {
+    "other": "%[1]s %[2]s %[3]s"
+  },
+  "date.time": {
+    "other": "%[1]s, %[2]s %[3]s"
+  },
+  "date.month.Jan": {
+    "other": "Jan"
+  },
+  "date.month.Feb": {
+    "other": "Feb"
+  },
+  "date.month.Mar": {
+    "other": "Mar"
+  },
+  "date.month.Apr": {
+    "other": "Apr"
+  },
+  "date.month.May": {
+    "other": "May"
+  },
+  "date.month.Jun": {
+    "other": "Jun"
+  },
+  "date.month.Jul": {
+    "other": "Jul"
+  },
+  "date.month.Aug": {
+    "other": "Aug"
+  },
+  "date.month.Sep": {
+    "other": "Sep"
+  },
+  "date.month.Oct": {
+    "other": "Oct"
+  },
+  "date.month.Nov": {
+    "other": "Nov"
+  },
+  "date.month.Dec": {
+    "other": "Dec"
   }
 }

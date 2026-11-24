@@ -46,7 +46,7 @@ Summary: built 31, not built 7, partial 22.
 | UX-021 | P0 | built | Field messages name the field, describe the problem in words and suggest a correction; table tests over every domain code and every service field name |
 | UX-022 | P0 | partial | Source refresh 2026-11-20: base templates link invalid fields, retain nonsecret values and provide a focusable summary; `internal/web/static/app.js` moves focus. HTTP catalogue tests cover retained values. Browser focus and manual accessibility qualification remain separate. |
 | UX-023 | P0 | partial | inputmode decimal on amount fields; format text in helper |
-| UX-024 | P1 | partial | Source refresh 2026-11-20: `internal/web/render.go` applies the chosen zone, its abbreviation and a UTC `time[datetime]`; `TestTimeZoneDisplay` covers trade/detail/history and per-person settings. Browser/manual qualification remains separate. |
+| UX-024 | P1 | partial | `TestTimeZoneDisplay` exercises per-person preferences on trade history, inbox, active sessions and session confirmation. `TestInactivePage` covers date-only membership records across local midnight. HTML instants carry UTC to millisecond precision. Manual qualification remains open. |
 | UX-025 | P0 | built | Generic 5xx page with request reference |
 | UX-026 | P0 | partial | Live region on some pages; asynchronous announcements not verified |
 | UX-027 | P0 | partial | Disabled controls explained in text; not audited for all |

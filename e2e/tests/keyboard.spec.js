@@ -14,10 +14,10 @@ async function focused(page) {
 }
 
 /** Presses Tab until the focused element's name matches; returns the Tab count. */
-async function tabTo(page, re, max = 80) {
+async function tabTo(page, re, max = 80, selector) {
   for (let i = 1; i <= max; i++) {
     await page.keyboard.press('Tab');
-    if (re.test(await focused(page))) return i;
+    if (re.test(await focused(page)) && (!selector || await page.locator(selector + ':focus').count())) return i;
   }
   throw new Error(`could not reach an element named ${re} by Tab within ${max} presses; last focus: "${await focused(page)}"`);
 }
@@ -228,10 +228,23 @@ test('respond to a dispute using only the keyboard', async ({ as, st }) => {
 test('set the time zone using only the keyboard', async ({ as }) => {
   const page = await as('alice');
   await page.goto('/account/time-zone');
-  await tabTo(page, /^Time zone$/);
+  await tabTo(page, /^Time zone$/, 80, 'input');
+  await page.keyboard.press('ControlOrMeta+a');
   await typeText(page, 'Europe/Berlin');
   await page.keyboard.press('Enter');
-  await expect(page.getByText('Europe/Berlin').first()).toBeVisible();
+  await expect(page.locator('#flash')).toContainText('Time zone saved.');
+  await expect(page.locator('main strong')).toHaveText('Europe/Berlin');
+  await page.goto('/account/sessions');
+  const times = page.locator('main time');
+  await expect(times.first()).toBeVisible();
+  for (const stamp of await times.all()) {
+    const instant = await stamp.getAttribute('datetime');
+    expect(instant).toMatch(/Z$/);
+    const clock = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit',
+    }).format(new Date(instant));
+    await expect(stamp).toHaveText(new RegExp(clock + ' (CET|CEST)$'));
+  }
 });
 
 test('mark all notifications as read using only the keyboard', async ({ as, st }) => {

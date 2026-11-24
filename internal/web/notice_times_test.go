@@ -11,6 +11,12 @@ import (
 // A2-13: composing notices must keep trusted time elements separate from
 // ordinary text, which still needs the template's escaping.
 func TestFrozenAndCheckTimesRenderAsElements(t *testing.T) {
+	// Markup and subseconds come from the timestamp, independently of the visible label.
+	stamp := time.Date(2026, 1, 1, 0, 15, 0, 125987654, time.UTC).In(time.FixedZone("A&B", -3600))
+	want := `<time datetime="2026-01-01T00:15:00.125Z">31 Dec 2025, 23:15 A&amp;B</time>`
+	if got := string(fmtTime(stamp)); got != want {
+		t.Errorf("year boundary: got %q, want %q", got, want)
+	}
 	w := newWorld(t)
 	if err := w.env.Svc.SetTimeZone(w.env.Ctx, w.admin, "Asia/Kolkata"); err != nil {
 		t.Fatal(err)

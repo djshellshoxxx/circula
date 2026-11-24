@@ -40,7 +40,7 @@ func (s *server) sessionsPage(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, nil, "sessions", http.StatusOK, &page{Title: messages.Text("sessions.title"), D: rows})
+	s.render(w, r, c, "sessions", http.StatusOK, &page{Title: messages.Text("sessions.title"), D: rows})
 }
 
 func (s *server) sessionsRevokeOthersPage(w http.ResponseWriter, r *http.Request, _ *rc) {
@@ -73,7 +73,7 @@ func (s *server) sessionRevokePage(w http.ResponseWriter, r *http.Request, c *rc
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, nil, "session_revoke", http.StatusOK, &page{Title: messages.Text("sessions.confirm_title"), D: target})
+	s.render(w, r, c, "session_revoke", http.StatusOK, &page{Title: messages.Text("sessions.confirm_title"), D: target})
 }
 
 func (s *server) sessionRevokePost(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -83,7 +83,7 @@ func (s *server) sessionRevokePost(w http.ResponseWriter, r *http.Request, c *rc
 		return
 	}
 	if r.PostFormValue("confirm") != "yes" {
-		s.render(w, r, nil, "session_revoke", http.StatusUnprocessableEntity,
+		s.render(w, r, c, "session_revoke", http.StatusUnprocessableEntity,
 			&page{Title: messages.Text("sessions.confirm_title"), D: target,
 				Summary: messages.Text("sessions.confirm_required"),
 				Errors:  []fieldErr{{"confirm", messages.Text("sessions.confirm_label")}}})

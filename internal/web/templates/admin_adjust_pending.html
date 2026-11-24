@@ -20,8 +20,8 @@
   <th scope="row" data-label="{{msg "admin.adjust.member"}}">{{.Target}}</th>
   <td data-label="{{msg "admin.adjust.adjustment"}}">{{msg "admin.adjust.row_amount" .Dir .Amount (unit $.Unit .AmountMinor $.Dec)}}</td>
   <td data-label="{{msg "admin.adjust.reason"}}">{{.Reason}}{{if .RelatedTxID}}{{$related := msgAround "admin.adjust.related_sentence"}}<p>{{$related.Before}}<a href="/n/{{$.Slug}}/trades/{{.RelatedTxID}}">{{msg "admin.adjust.original_entry_lower"}}</a>{{$related.After}}</p>{{end}}</td>
-  <td data-label="{{msg "admin.adjust.requested_by"}}">{{.Proposer}}, {{time .Created}}</td>
-  <td data-label="{{msg "admin.adjust.status"}}">{{if .Decider}}{{msg "admin.adjust.status_by" .StatusText .Decider}}{{else}}{{.StatusText}}{{end}}{{if eq .Status "pending"}}{{if .Expired}}{{msg "admin.adjust.expired_suffix"}}{{else}}{{$expires := msgAround "admin.adjust.expires_suffix"}}{{$expires.Before}}{{time .Expires}}{{$expires.After}}{{end}}{{end}}</td>
+  <td data-label="{{msg "admin.adjust.requested_by"}}">{{.Proposer}}, {{$.Time .Created}}</td>
+  <td data-label="{{msg "admin.adjust.status"}}">{{if .Decider}}{{msg "admin.adjust.status_by" .StatusText .Decider}}{{else}}{{.StatusText}}{{end}}{{if eq .Status "pending"}}{{if .Expired}}{{msg "admin.adjust.expired_suffix"}}{{else}}{{$expires := msgAround "admin.adjust.expires_suffix"}}{{$expires.Before}}{{$.Time .Expires}}{{$expires.After}}{{end}}{{end}}</td>
   <td data-label="{{msg "admin.adjust.actions"}}">
     {{if .CanApprove}}<form method="post" action="/n/{{$.Slug}}/admin/adjustments/{{.ID}}/approve" class="inline">{{template "csrf" $}}<button type="submit" name="step" value="review" aria-label="{{msg "admin.adjust.review_named" .Target}}">{{msg "admin.adjust.review_approval"}}</button></form>
     <form method="post" action="/n/{{$.Slug}}/admin/adjustments/{{.ID}}/reject" class="inline">{{template "csrf" $}}<button type="submit" class="secondary" aria-label="{{msg "admin.adjust.reject_named" .Target}}">{{msg "admin.adjust.reject"}}</button></form>{{end}}

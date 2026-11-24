@@ -1,10 +1,19 @@
 package messages
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 // UX-047: time-zone UI text keeps IANA IDs literal and retains the existing
 // display-only scope, validation guidance and save feedback.
 func TestTimeZoneMessages(t *testing.T) {
+	for i, month := range []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"} {
+		at := time.Date(2026, time.Month(i+1), 2, 3, 4, 5, 0, time.UTC)
+		if got := DateTime(at); got != "2 "+month+" 2026, 03:04 UTC" {
+			t.Errorf("month %d: %q", i+1, got)
+		}
+	}
 	for _, tc := range []struct {
 		key  string
 		args []any

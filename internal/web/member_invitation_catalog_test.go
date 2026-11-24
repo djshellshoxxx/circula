@@ -222,7 +222,7 @@ func TestInactiveMembersCatalogue(t *testing.T) {
 		case len(tc.rows) == 0:
 			wantMemberCatalogue(t, body, "No member is flagged as inactive.", "60 days.")
 		default:
-			wantMemberCatalogue(t, body, "60 days.", `aria-label="Inactive members table"`, `data-label="Joined">2026-11-19</td>`,
+			wantMemberCatalogue(t, body, "60 days.", `aria-label="Inactive members table"`, `data-label="Joined"><time datetime="2026-11-19">2026-11-19</time></td>`,
 				`<caption>Inactive members of `+template.HTMLEscapeString(memberCatalogueUnsafe)+`</caption>`,
 				`href="/n/town/admin/members/member-1000/limit" aria-label="`+template.HTMLEscapeString("Set credit limit "+memberCatalogueUnsafe)+`">Set credit limit</a>`)
 		}

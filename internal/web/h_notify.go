@@ -65,7 +65,7 @@ func (s *server) inbox(w http.ResponseWriter, r *http.Request, c *rc) {
 		d.Filter = "unread"
 	}
 	for _, n := range ns {
-		row := inboxRow{ID: n.ID, Title: n.Title, Body: n.Body, Unread: n.ReadAt == nil, When: fmtTime(n.CreatedAt)}
+		row := inboxRow{ID: n.ID, Title: n.Title, Body: n.Body, Unread: n.ReadAt == nil, When: c.when(n.CreatedAt)}
 		if n.Link != "" {
 			row.Href = c.base() + n.Link
 		}
@@ -82,7 +82,7 @@ func (s *server) inbox(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	for _, t := range pending {
-		d.Waiting = append(d.Waiting, makeRow(t, c.Me, names, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals))
+		d.Waiting = append(d.Waiting, c.row(t, names))
 	}
 	ds, err := s.svc.ListDisputesAwaitingMyResponse(r.Context(), c.actor, c.netID())
 	if err != nil {
@@ -90,7 +90,7 @@ func (s *server) inbox(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	for _, x := range ds {
-		d.Disputes = append(d.Disputes, awaitingDispute{ID: x.ID, Category: categoryLabel(x.Category), Opened: fmtTime(x.OpenedAt)})
+		d.Disputes = append(d.Disputes, awaitingDispute{ID: x.ID, Category: categoryLabel(x.Category), Opened: c.when(x.OpenedAt)})
 	}
 	s.render(w, r, c, "inbox", 200, &page{Title: messages.Text("inbox.title"), D: d, V: map[string]string{"show": d.Filter}})
 }
@@ -170,7 +170,7 @@ func (s *server) reportFormData(r *http.Request, c *rc, typ, id, disputeID strin
 			return nil, domain.Invalid("dispute_id", "the selected case does not match the report target")
 		}
 		return &reportFormData{Type: typ, ID: id, Label: label, Cats: reportCats, DisputeID: caseContext.DisputeID,
-			CaseDescription: messages.Text("report.case_description", caseContext.MemberName, c.at(caseContext.OpenedAt).Format("2 Jan 2006")),
+			CaseDescription: messages.Text("report.case_description", caseContext.MemberName, messages.Date(c.at(caseContext.OpenedAt))),
 			CaseHref:        c.base() + "/disputes/" + caseContext.DisputeID}, nil
 	}
 	label, ok := c.reportTarget(typ, id)
@@ -261,7 +261,7 @@ func (s *server) reportQueue(w http.ResponseWriter, r *http.Request, c *rc) {
 	d := &reportsData{Filter: status}
 	for _, x := range rs {
 		row := reportRow{ID: x.ID, Reporter: x.ReporterName, Target: x.TargetLabel, Note: x.Note,
-			Status: x.Status, HandlingNote: x.HandlingNote, Open: x.Status == "open", Created: fmtTime(x.CreatedAt)}
+			Status: x.Status, HandlingNote: x.HandlingNote, Open: x.Status == "open", Created: c.when(x.CreatedAt)}
 		row.About, row.PlainAbout = reportAbout(x.Category, x.TargetType, x.TargetLabel)
 		switch x.TargetType {
 		case service.ReportMember:

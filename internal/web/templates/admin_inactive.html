@@ -10,7 +10,7 @@
 <thead><tr><th scope="col">{{msg "validation.label.name"}}</th><th scope="col">{{msg "admin.inactive.joined"}}</th><th scope="col">{{msg "admin.members.actions"}}</th></tr></thead>
 <tbody>{{range .D.Rows}}<tr>
   <th scope="row" data-label="{{msg "validation.label.name"}}">{{.DisplayName}}</th>
-  <td data-label="{{msg "admin.inactive.joined"}}">{{.JoinedAt.Format "2006-01-02"}}</td>
+  <td data-label="{{msg "admin.inactive.joined"}}">{{with $.ISODate .JoinedAt}}<time datetime="{{.}}">{{.}}</time>{{end}}</td>
   <td data-label="{{msg "admin.members.actions"}}">{{$m := .}}{{range .Actions}}<a href="/n/{{$.Slug}}/admin/members/{{$m.ID}}/{{.Value}}" aria-label="{{msg "admin.members.action_for" .Label $m.DisplayName}}">{{.Label}}</a> {{end}}</td>
 </tr>{{end}}</tbody></table></div>
 {{else}}<p>{{msg "admin.inactive.empty"}}</p>{{end}}

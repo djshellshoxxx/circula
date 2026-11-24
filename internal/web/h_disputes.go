@@ -149,11 +149,11 @@ func (s *server) disputeFormData(r *http.Request, c *rc) (*disputeForm, error) {
 	if !v.Tx.IsParty(c.Me.ID) {
 		return nil, domain.NotFound("trade")
 	}
-	row := makeRow(v.Tx, c.Me, c.memberNames(), c.Net.Policy.CurrencyName, c.Net.Policy.Decimals)
+	row := c.row(v.Tx, c.memberNames())
 	d := &disputeForm{TxID: v.Tx.ID, Cats: categories, Row: row}
 	if dl := v.Tx.DisputeDeadlineAt; dl != nil {
 		at := c.at(*dl)
-		d.Deadline, d.DeadlineText = fmtTime(at), at.Format("2 Jan 2006, 15:04 MST")
+		d.Deadline, d.DeadlineText = fmtTime(at), messages.DateTime(at)
 	}
 	return d, nil
 }

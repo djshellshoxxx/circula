@@ -1,6 +1,6 @@
 {{define "content"}}
 {{with .D.Terms}}
-{{$published := msgAround "terms.published" (printf "%d" .Version)}}<p>{{$published.Before}}{{time .PublishedAt}}{{$published.After}}</p>
+{{$published := msgAround "terms.published" (printf "%d" .Version)}}<p>{{$published.Before}}{{$.Time .PublishedAt}}{{$published.After}}</p>
 <section aria-labelledby="terms-h"><h2 id="terms-h" class="sr">{{msg "terms.text_heading"}}</h2>
 {{range $.D.Paras}}<p>{{.}}</p>{{end}}</section>
 {{if $.D.NeedsAcceptance}}

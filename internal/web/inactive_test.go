@@ -21,10 +21,14 @@ func TestInactivePage(t *testing.T) {
 		"join_mode": {"invite"}, "departure_rule": {"retain"}, "reason": {"test"}, "notice_days": {"0"}, "notice_reason": {"test"}}
 	adm.mustContain(adm.post("/n/town/admin/policy", f, vals), "Policy saved")
 
+	if err := w.env.Svc.SetTimeZone(w.env.Ctx, w.admin, "Pacific/Kiritimati"); err != nil {
+		t.Fatal(err)
+	}
 	w.env.Clock.Advance(90 * 24 * time.Hour)
 	adm2 := w.browser(t) // the first session has idled out
 	adm2.login("admin@example.org")
-	adm2.mustContain(adm2.get("/n/town/admin/inactive"), "60 days", "Inactive members of", "bob")
+	adm2.mustContain(adm2.get("/n/town/admin/inactive"), "60 days", "Inactive members of", "bob",
+		`<time datetime="2026-03-02">2026-03-02</time>`)
 
 	al := w.browser(t)
 	al.login("alice@example.org")

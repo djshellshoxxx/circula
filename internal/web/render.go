@@ -59,6 +59,25 @@ type page struct {
 	FrozenSince template.HTML
 	// SnapshotAt labels network figures even when scripting or connectivity fails (PER-022).
 	SnapshotAt template.HTML
+
+	displayZone *time.Location
+}
+
+// Time renders a stored instant in the viewer's display zone.
+func (p *page) Time(t time.Time) template.HTML {
+	return fmtTime(p.localTime(t))
+}
+
+// ISODate preserves date-only precision for membership join dates.
+func (p *page) ISODate(t time.Time) string {
+	return p.localTime(t).Format(time.DateOnly)
+}
+
+func (p *page) localTime(t time.Time) time.Time {
+	if p.displayZone == nil {
+		return t.UTC()
+	}
+	return t.In(p.displayZone)
 }
 
 func (p *page) Val(k string) string { return p.V[k] }
@@ -145,8 +164,8 @@ func fmtTime(t time.Time) template.HTML {
 	}
 	// The text uses t's own zone (UTC unless the handler moved it with rc.at); the machine-readable
 	// attribute is always UTC.
-	//nolint:gosec // both values are formatted times, no user input
-	return template.HTML(fmt.Sprintf(`<time datetime="%s">%s</time>`, t.UTC().Format(time.RFC3339), t.Format("2 Jan 2006, 15:04 MST")))
+	//nolint:gosec // the attribute is UTC RFC3339 and the catalogue text is HTML-escaped.
+	return template.HTML(fmt.Sprintf(`<time datetime="%s">%s</time>`, t.UTC().Truncate(time.Millisecond).Format(time.RFC3339Nano), template.HTMLEscapeString(messages.DateTime(t))))
 }
 
 // at moves t into the viewer's display time zone (UTC when none is set).
@@ -179,15 +198,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 	p.ReqID = reqID(r)
 	p.Flash = s.takeFlash(w, r)
 	p.Idem = randHex(16)
-	if c == nil {
-		if p.Dec == 0 {
-			p.Dec = 2
-		}
-		if s.opts.Edge.SessionToken(r) != "" {
-			p.Authed = true
-		}
-	}
-	if c != nil {
+	if c != nil && c.Net != nil {
 		p.Authed = true
 		p.NetName, p.Slug = c.Net.Name, c.Net.Slug
 		p.Dec, p.Unit = c.Net.Policy.Decimals, c.Net.Policy.CurrencyName
@@ -198,6 +209,17 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 		}
 		p.Unread = c.unreadCount()
 		p.SnapshotAt = c.when(s.opts.Clock.Now())
+	} else {
+		if c != nil {
+			c.loadDisplayZone()
+		}
+		if p.Dec == 0 {
+			p.Dec = 2
+		}
+		p.Authed = s.opts.Edge.SessionToken(r) != "" || p.Authed
+	}
+	if c != nil {
+		p.displayZone = c.loc
 	}
 	if p.Authed {
 		if at, ext, ok := s.expiry(r); ok {
@@ -268,7 +290,7 @@ func (c *rc) notice() string {
 		return messages.Text("notice.admin_required")
 	}
 	if cl := c.Net.Closure; cl != nil && !cl.Done() {
-		return messages.Text("notice.closing_date", cl.ClosingAt.Format("2 Jan 2006"))
+		return messages.Text("notice.closing_date", messages.Date(c.at(cl.ClosingAt)))
 	}
 	if c.Net.Suspended() {
 		return messages.Text("notice.trading_paused")

@@ -41,7 +41,7 @@ func (s *server) policyData(r *http.Request, c *rc) *policyPageData {
 	if log, err := s.svc.PolicyLog(r.Context(), c.actor, c.netID()); err == nil {
 		for _, e := range log {
 			if e.Pending {
-				row := ruleRows([]service.PolicyLogEntry{e}, c.Net.Policy.Decimals)[0]
+				row := c.ruleRows([]service.PolicyLogEntry{e}, c.Net.Policy.Decimals)[0]
 				d.Pending = &row
 				break
 			}

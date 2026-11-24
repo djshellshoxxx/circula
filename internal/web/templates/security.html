@@ -30,7 +30,7 @@
 <h2>{{msg "security.notices.heading"}}</h2>
 {{if .D.Notices}}
   {{if .D.Unseen}}<form method="post" action="/account/security/ack">{{template "csrf" .}}<p>{{msg "security.notices.unseen" .D.Unseen}} <button type="submit" class="secondary">{{msg "security.notices.mark_read"}}</button></p></form>{{end}}
-  <ul class="rows">{{range .D.Notices}}<li><p>{{if .New}}<strong>{{msg "security.notices.new"}}</strong> {{end}}{{.Text}}{{if .Detail}} ({{.Detail}}){{end}}</p><p>{{time .When}}</p></li>{{end}}</ul>
+  <ul class="rows">{{range .D.Notices}}<li><p>{{if .New}}<strong>{{msg "security.notices.new"}}</strong> {{end}}{{.Text}}{{if .Detail}} ({{.Detail}}){{end}}</p><p>{{$.Time .When}}</p></li>{{end}}</ul>
   <p>{{msg "security.notices.advice"}}</p>
 {{else}}<p>{{msg "security.notices.none"}}</p>{{end}}
 {{end}}
