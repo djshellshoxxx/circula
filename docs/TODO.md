@@ -1,6 +1,27 @@
 # Circula current work
 
-## 2026-11-23 Pacific: active UX-047 unit-suffix continuation (#133)
+## 2026-11-23 Pacific: UX-047 shared-shell titles (#137), post-merge qualification
+
+PR [#137](https://github.com/djshellshoxxx/circula/pull/137) merged normally as
+`418d2ed4b289c183d1fbd087b8f7b7ee6451169e` from reviewed source
+`73c5afb0eeebb54c3cf7645c0300fee12cd1d733`; topic preserved.
+All seven applicable source Core jobs passed in 45312460743 (attempt 1):
+3,284 named Linux passes, six explicit skips, zero failures; browser 597.
+Source, tested candidate and actual merge share tree
+`ac2c359216d12c46965c84b45b971025daae5993`.
+
+**Actual-main qualification remains open:** Core 45321695163 attempt 1 at
+2026-11-24 04:42 UTC had seven successful jobs, including Windows and browser;
+Linux and macOS race jobs were still running. Scorecard 45321695017 succeeded.
+Do not repeat the patch/merge or infer a full main pass from source results.
+Read the [exact acceptance, evidence and continuation record](qa/UX047-title-qualification-2026-11-23.md)
+and [maintained public checkpoint](https://github.com/djshellshoxxx/circula/pull/137#issuecomment-7120513504).
+Finish the title slice before another investigation. #135/#136 retain their coordinator;
+coordinate notification-path ownership before the later suspension-category gap.
+UX-047 remains partial; policy/locale/manual/external gates and all fifteen future modules remain untouched.
+Older checkpoints below are historical, not instructions to repeat completed integrations.
+
+## 2026-11-23 Pacific: prior UX-047 unit-suffix source checkpoint (#133, historical)
 
 The completed #130 precision and #131/#132 quantity/native qualification slices
 are not repeated. Starting main is `9cb4cc0250db487d6fd4760227ce906c4ea5f58f`,
