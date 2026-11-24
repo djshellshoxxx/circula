@@ -224,6 +224,12 @@
   "common.skip": {
     "other": "Skip to main content"
   },
+  "common.title.public": {
+    "other": "%[1]s - Circula"
+  },
+  "common.title.network": {
+    "other": "%[1]s - %[2]s - Circula"
+  },
   "balance.limit_notice": {
     "other": "Credit limit notice:"
   },

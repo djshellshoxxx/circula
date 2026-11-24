@@ -28,6 +28,12 @@ result to trusted HTML. Unknown keys fail visibly instead of printing a key to
 the user. The embedded catalogue is validated on load. Each new entry needs a
 formatting test, including its plural forms and argument ordering where relevant.
 
+The shared browser tab title uses `common.title.public` for the screen name
+alone and `common.title.network` when a network name is available. The screen
+name is argument 1 and the network name is argument 2. Each message supplies
+the brand and separators. `TestDocumentTitleCatalogue` renders both formats
+with reordered text and checks that names remain escaped inside `<title>`.
+
 ## Initial catalogue scope (historical)
 
 Migrated: all six administrator-overview count sentences, overview actions and
