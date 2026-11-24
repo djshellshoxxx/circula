@@ -39,18 +39,26 @@ is an artifact observation, not an independently recomputed digest. Browser log:
 Independent source, acceptance and provider/merge reviews found zero bounded blockers.
 Exact-pinned Node helper suites separately passed 24 tests; these are mock-DOM/helper checks.
 
-## Actual-main qualification still open
+## Verified actual-main qualification
 
-At 2026-11-24 04:42 UTC (November 23 Pacific),
-[Core 45321695163](https://github.com/djshellshoxxx/circula/actions/runs/45321695163) attempt 1
-had seven successful jobs; Linux and macOS Intel race were still running.
-Windows job 138201504445 passed `go test -count=1 -timeout=20m ./...`:
-16 passing packages plus two no-test packages, without cached package results.
-Browser job 138201504074 recorded 597 passed.
+[Core 45321695163](https://github.com/djshellshoxxx/circula/actions/runs/45321695163)
+passed all nine applicable jobs on attempt 1 at exact main `418d2ed4b289c183d1fbd087b8f7b7ee6451169e`.
+Linux artifact `14890858220`: 138,532 bytes, SHA-256
+`d56d0646d9e05c15625a85d893c08a97fc1eda054c0c93c97426d61e7d08f54f`,
+matched original ZIP bytes to provider size/digest. Recorded clean actual-main head, exit 0,
+uncached full race command: 3,284 named passes, six skips, zero failures, 16 passing packages and
+two no-test packages; title parent and all four controls passed. Its recorded source digest matches
+the source-run artifact; this observation does not replace either execution.
+Browser job 138201504074: 597 passed. Windows 138201504445:
+`go test -count=1 -timeout=20m ./...`, non-race, 16 passing packages plus two no-test packages.
+macOS Intel 138201504638: `go test -race -count=1 -p 2 -timeout=45m ./...`,
+16 passing packages plus two no-test packages. Neither native log reports cached package results.
+Mac service/store/web/messages elapsed times: 1477.509/896.722/525.733/1.384 seconds.
 [Scorecard 45321695017](https://github.com/djshellshoxxx/circula/actions/runs/45321695017)
-completed successfully; execution success does not resolve its policy/licence findings.
-No actual-main full pass is claimed. The title integration must remain active until the remaining native
-jobs, Linux artifact and final durable evidence are verified.
+succeeded, reporting 5.9 across 18 checks; findings remain open.
+The export-reader native workflow is inapplicable to the five product/source changed paths.
+No source repair, rerun, test removal or budget increase was required.
+Independent final artifact/native review is preserved with the evidence.
 
 ## Provenance and limits
 
@@ -67,12 +75,28 @@ Fuzz/load, reproducible-build target and packaging checks are bounded. Manual sc
 independent security review, whole-UI externalization, translation/locale scope and owner policy decisions
 remain separate gates. UX-047 remains partial.
 
-## Exact continuation
+## Evidence and fresh-agent handoff
 
-Fresh-check main and Core 45321695163 for the merged revision. Inspect all nine applicable jobs, original
-Linux artifact and native logs; fix only a real failure, then publish final qualification and verify readback.
-Do not repeat #137's patch, source CI or merge. After this title slice is qualified, stop this run at the boundary.
-A fresh investigator may then verify the suspension-category inbox gap, after coordinating #136's
-notification-path ownership. Preserve authored escaped reason, raw API/audit category values and legacy data.
-#135/#136 retain their coordinator. Five held policy PRs, all fifteen future modules, licence selection,
-release/deployment and history/branch deletion are out of scope.
+[Evidence archive](evidence/UX047-title-evidence-2026-11-23.tar.gz): 775,907 bytes,
+SHA-256 `d4fcab7986f68dd6549d99bff60b15e057791a84b93e6732a776fb050e041456`,
+Git blob `69a4d30d1e1ac8999e193fd005fe5afe73982d52`.
+75 payloads plus SHA256SUMS; every payload checked against its manifest.
+Archive contains original PR/main Linux ZIPs, provider logs/metadata, pinned inputs,
+text-composition snapshots and independent source/acceptance/native/provider/documentation reviews.
+Historical pending observations in those original records are preserved, superseded by this final qualification.
+
+Audit branch `audit/ux047-title-qualification-20261123` preserves its original pending checkpoint
+`6cdd910a9bf8817ab1374f7f390ae16d6bfc776c` and appends this final documentation/evidence.
+It is not merged into main. Main product tree remains the qualified #137 tree.
+HANDOFF.md, docs/TODO.md and the UX-047 traceability row now supersede historical #133/pending instructions.
+Verify published commit/tree/ref and every modified file before relying on this record.
+
+Title slice accepted; foreground ownership for this slice is released. Stop this run at this boundary.
+Fresh-agent prompt: Read live main, current PR heads/ownership, HANDOFF.md, TODO, decisions/specs and this
+final qualification. Do not redo #130–#134 or #137. #135/#136 remain the other coordinator's work;
+check actual state and coordinate notification-path ownership. Then investigate only the evidenced
+platform-suspension category inbox gap: reuse existing labels while preserving authored reason
+`security_incident & <policy>` escaped verbatim, raw API/audit category values and legacy notices.
+Write a failing current-source service/HTTP regression before any repair. Keep UX-047 partial and
+all five policy PRs/fifteen future modules untouched. Do not release/deploy, select a licence,
+invent owner approval, force-push, rewrite history or delete branches.

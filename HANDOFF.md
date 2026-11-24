@@ -1,25 +1,26 @@
 # Circula handoff
 
-## 2026-11-23 Pacific: UX-047 shared-shell titles (#137), post-merge qualification
+## 2026-11-23 Pacific: shared-shell title integration (#137) qualified
 
-PR [#137](https://github.com/djshellshoxxx/circula/pull/137) merged normally as
-`418d2ed4b289c183d1fbd087b8f7b7ee6451169e` from reviewed source
-`73c5afb0eeebb54c3cf7645c0300fee12cd1d733`; topic preserved.
-All seven applicable source Core jobs passed in 45312460743 (attempt 1):
-3,284 named Linux passes, six explicit skips, zero failures; browser 597.
-Source, tested candidate and actual merge share tree
-`ac2c359216d12c46965c84b45b971025daae5993`.
+PR [#137](https://github.com/djshellshoxxx/circula/pull/137) is merged normally as
+`418d2ed4b289c183d1fbd087b8f7b7ee6451169e`; preserved topic source
+`73c5afb0eeebb54c3cf7645c0300fee12cd1d733`.
+Source Core 45312460743 passed all seven applicable jobs; actual-main Core
+45321695163 passed all nine jobs, both attempt 1. Each Linux artifact records
+3,284 named passes, six explicit skips, zero failures, including the title parent
+and four controls. Both browser suites passed 597. Native Windows non-race and
+macOS Intel race each passed 16 test-bearing packages plus two no-test packages.
+Scorecard 45321695017 succeeded; its 5.9/18 findings and owner policy/licence gates remain open.
 
-**Actual-main qualification remains open:** Core 45321695163 attempt 1 at
-2026-11-24 04:42 UTC had seven successful jobs, including Windows and browser;
-Linux and macOS race jobs were still running. Scorecard 45321695017 succeeded.
-Do not repeat the patch/merge or infer a full main pass from source results.
-Read the [exact acceptance, evidence and continuation record](docs/qa/UX047-title-qualification-2026-11-23.md)
-and [maintained public checkpoint](https://github.com/djshellshoxxx/circula/pull/137#issuecomment-7120513504).
-Finish the title slice before another investigation. #135/#136 retain their coordinator;
-coordinate notification-path ownership before the later suspension-category gap.
-UX-047 remains partial; policy/locale/manual/external gates and all fifteen future modules remain untouched.
-Older checkpoints below are historical, not instructions to repeat completed integrations.
+Read the [final title qualification](docs/qa/UX047-title-qualification-2026-11-23.md) for exact refs, artifact digests,
+commands, provenance and limits. This evidence branch changes documentation only;
+it is not a further product merge. UX-047 remains partial.
+Do not repeat #137's patch, CI or merge. Stop this run at the title boundary.
+A fresh investigator must first read live refs and coordinate #136 notification-path
+ownership before verifying the suspension-category inbox gap. #135/#136 retain their
+other coordinator; no merge is inferred. Preserve authored escaped reasons, raw API/audit
+category codes and legacy data. All five policy PRs and fifteen future modules stay untouched.
+
 
 ## 2026-11-23 Pacific: prior UX-047 unit-suffix source checkpoint (#133, historical)
 
