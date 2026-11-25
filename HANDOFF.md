@@ -2,7 +2,7 @@
 
 ## 2026-11-24 Pacific: UX-047 notification/dashboard integration complete (#134–#138)
 
-Every non-held Core branch is merged; final main qualification is recorded below. Current main is
+Every non-held Core branch is merged and main is qualified. Current main is
 `f4243e317e01b7a95b6deff137c707f00b2e5761` (merge of
 [#138](https://github.com/djshellshoxxx/circula/pull/138)). Do not repeat any
 slice below.
@@ -12,7 +12,7 @@ slice below.
 | #133 | Catalogue-owned currency-unit suffix | `a1e424c` | push run 45278925063 |
 | #134 | Account/network timestamps in the member's time zone | `73b98ec` | push run 45294258651 |
 | #137 | Catalogue browser titles for public/network pages | `418d2ed` | push run 45321695163, nightly 45405536221 |
-| #135, #136 via #138 | Dashboard amount/meter messages; policy, closure and dispute notice dates in the recipient's current time zone (migration 0026, nullable `event_date`, cleared with the body on erasure) | `f4243e3` | PR run 45540044015 (7/7 exact-head); push run 45543080887 (in progress: 7/9 green incl. native Windows; Linux and macOS race pending) |
+| #135, #136 via #138 | Dashboard amount/meter messages; policy, closure and dispute notice dates in the recipient's current time zone (migration 0026, nullable `event_date`, cleared with the body on erasure) | `f4243e3` | PR run 45540044015 (7/7 exact-head); push run 45543080887 (all nine jobs, attempt 1, incl. Linux/macOS race and native Windows) |
 
 #135 (`fa696eb`) is an ancestor of #136 (`efea7f9`); #138 composed #136 with
 `418d2ed` at tree `f9607f06c28b99d7b2d63a4031f065c436dd0abf`. GitHub recorded
