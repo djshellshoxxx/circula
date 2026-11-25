@@ -1,6 +1,33 @@
 # Circula handoff
 
-## 2026-11-23 Pacific: active UX-047 unit-suffix continuation (#133)
+## 2026-11-24 Pacific: UX-047 notification/dashboard integration complete (#134–#138)
+
+Every non-held Core branch is merged and main is qualified. Current main is
+`f4243e317e01b7a95b6deff137c707f00b2e5761` (merge of
+[#138](https://github.com/djshellshoxxx/circula/pull/138)). Do not repeat any
+slice below.
+
+| PR | Scope | Main merge | Actual-main qualification |
+| --- | --- | --- | --- |
+| #133 | Catalogue-owned currency-unit suffix | `a1e424c` | push run 45278925063 |
+| #134 | Account/network timestamps in the member's time zone | `73b98ec` | push run 45294258651 |
+| #137 | Catalogue browser titles for public/network pages | `418d2ed` | push run 45321695163, nightly 45405536221 |
+| #135, #136 via #138 | Dashboard amount/meter messages; policy, closure and dispute notice dates in the recipient's current time zone (migration 0026, nullable `event_date`, cleared with the body on erasure) | `f4243e3` | PR run 45540044015 (7/7 exact-head); push run 45543080887 (all nine jobs, attempt 1, incl. Linux/macOS race and native Windows) |
+
+#135 (`fa696eb`) is an ancestor of #136 (`efea7f9`); #138 composed #136 with
+`418d2ed` at tree `f9607f06c28b99d7b2d63a4031f065c436dd0abf`. GitHub recorded
+#135 and #136 as merged through #138. Their source branches are preserved.
+Before merge, ancestry and tree were re-verified, the store/erasure/handler diff
+was re-reviewed (only erasure path clears `event_date`; no other reader of the
+table), and local Go 1.26.11 `go vet ./internal/...` plus non-race domain, web,
+messages, api, store and service tests passed.
+
+Only policy-held work stays open: #83 (AUD4-F02 owner decision), #85/#107
+(GOV-021), #86/#94 (SEC-026). Their decisions, all fifteen future modules and
+release/deployment/licence/history gates remain untouched. UX-047 remains
+partial: a fresh investigator should pick one new bounded current-source gap.
+
+## 2026-11-23 Pacific: UX-047 unit-suffix continuation (#133, historical)
 
 The completed #130 precision and #131/#132 quantity/native qualification slices
 are not repeated. Starting main is `9cb4cc0250db487d6fd4760227ce906c4ea5f58f`,
