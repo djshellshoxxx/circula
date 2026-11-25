@@ -82,8 +82,14 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 	for key, e := range keys {
 		var args []any
 		switch key {
+		case "inbox.dated.policy", "inbox.dated.dispute_response", "inbox.dated.dispute_decision":
+			args = []any{"1 Nov 2026"}
+		case "inbox.dated.closure":
+			args = []any{30, "1 Nov 2026", "membership vote"}
 		case "date.short", "date.time":
 			args = []any{"first", "second", "third"}
+		case "dashboard.meter_percentage":
+			args = []any{85}
 		case "unit.plural":
 			args = []any{"Credit"}
 		case "notice.credit_limit_used":
@@ -91,7 +97,7 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 		case "error.fallback.reference", "error.reference", "help.balance.credit", "help.balance.debt", "help.balance.level",
 			"notice.membership_pending.body", "notice.frozen", "histbal.hint", "histbal.field_error", "histbal.at_utc", "histbal.reason.format":
 			args = []any{"example"}
-		case "balance.spoken_credit", "balance.spoken_debt", "balance.limit_used":
+		case "balance.amount", "balance.spoken_credit", "balance.spoken_debt", "balance.limit_used":
 			args = []any{"12.50", "credits"}
 		case "notice.closing_date", "balance.spoken_level", "status.waiting_other", "reversal.ledger", "row.ledger", "join.network.title", "join.network.invite_only", "join.flash.joined", "join.terms.heading":
 			args = []any{"example"}

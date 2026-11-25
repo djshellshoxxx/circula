@@ -26,7 +26,7 @@ const (
 
 // notifyMembers sends one inbox entry to every active member (adminsOnly: only
 // active administrators).
-func (s *Service) notifyMembers(tx store.Tx, netID string, adminsOnly bool, kind, title, body string) error {
+func (s *Service) notifyMembers(tx store.Tx, netID string, adminsOnly bool, notice store.Notification) error {
 	after := ""
 	for {
 		ms, err := tx.ListMembers(netID, store.MemberFilter{Statuses: []domain.MemberStatus{domain.MemberActive}, AfterID: after, Limit: 500})
@@ -37,7 +37,7 @@ func (s *Service) notifyMembers(tx store.Tx, netID string, adminsOnly bool, kind
 			if adminsOnly && !m.HasRole(domain.RoleAdmin) {
 				continue
 			}
-			if err := s.notify(tx, netID, m.ID, kind, title, body, "", ""); err != nil {
+			if err := s.deliverNotice(tx, netID, m.ID, notice); err != nil {
 				return err
 			}
 		}
@@ -76,8 +76,8 @@ func (s *Service) SuspendNetwork(ctx context.Context, actor domain.Actor, netID,
 			TargetID: netID, Reason: reason, Before: map[string]any{"suspended": p.net.Suspended()}, After: map[string]any{"suspended": true}}); err != nil {
 			return err
 		}
-		return s.notifyMembers(tx, netID, false, NotifNetworkSuspended, "Trading is paused",
-			"An administrator has paused trading: "+reason+". You can still read balances and history and download your data.")
+		return s.notifyMembers(tx, netID, false, inboxNotice(NotifNetworkSuspended, "Trading is paused",
+			"An administrator has paused trading: "+reason+". You can still read balances and history and download your data.", ""))
 	})
 }
 
@@ -113,8 +113,8 @@ func (s *Service) ResumeNetwork(ctx context.Context, actor domain.Actor, netID, 
 		if still {
 			return nil // members are told when the platform lifts its suspension
 		}
-		return s.notifyMembers(tx, netID, false, NotifNetworkResumed, "Trading has resumed",
-			"An administrator has resumed trading: "+reason+".")
+		return s.notifyMembers(tx, netID, false, inboxNotice(NotifNetworkResumed, "Trading has resumed",
+			"An administrator has resumed trading: "+reason+".", ""))
 	})
 }
 
@@ -170,8 +170,8 @@ func (s *Service) PlatformSuspendNetwork(ctx context.Context, actor domain.Actor
 			TargetID: net.ID, Reason: reason, After: map[string]any{"category": cat, "operator": op}}); err != nil {
 			return err
 		}
-		return s.notifyMembers(tx, net.ID, true, NotifNetworkSuspended, "The platform has suspended this network",
-			fmt.Sprintf("Category: %s. Reason: %s. Members can still read balances and history and download their data.", cat, reason))
+		return s.notifyMembers(tx, net.ID, true, inboxNotice(NotifNetworkSuspended, "The platform has suspended this network",
+			fmt.Sprintf("Category: %s. Reason: %s. Members can still read balances and history and download their data.", cat, reason), ""))
 	})
 }
 
@@ -207,6 +207,6 @@ func (s *Service) PlatformResumeNetwork(ctx context.Context, actor domain.Actor,
 		if net.SuspensionOf(domain.SuspendedByAdmin) != nil {
 			return nil
 		}
-		return s.notifyMembers(tx, net.ID, false, NotifNetworkResumed, "Trading has resumed", "The platform has lifted its suspension: "+reason+".")
+		return s.notifyMembers(tx, net.ID, false, inboxNotice(NotifNetworkResumed, "Trading has resumed", "The platform has lifted its suspension: "+reason+".", ""))
 	})
 }

@@ -59,7 +59,7 @@ type balanceCard struct {
 func makeCard(b *service.BalanceView, unit string) *balanceCard {
 	d := b.Decimals
 	amount := func(v int64) string {
-		return minus(plainAmt(v, d)) + " " + unitFor(unit, v, d)
+		return messages.Text("balance.amount", minus(plainAmt(v, d)), unitFor(unit, v, d))
 	}
 	c := &balanceCard{Balance: makeBalance(b.Balance, d, unit), Limit: amount(b.CreditLimit),
 		Reserved: amount(b.ReservedOutgoing), Available: amount(b.Available), Awaiting: amount(b.AwaitingFromOthers)}

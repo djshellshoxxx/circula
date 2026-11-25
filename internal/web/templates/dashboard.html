@@ -14,7 +14,7 @@
     <dt>{{msg "dashboard.awaiting"}}</dt><dd>{{.Card.Awaiting}}</dd>
   </dl>
   {{if .Card.InDebt}}<p>{{.Card.Used}}</p>
-  {{if .Card.UsedPct}}<meter class="meter" min="0" max="100" value="{{.Card.UsedPct}}" aria-label="{{msg "dashboard.used"}}">{{.Card.UsedPct}}%</meter>{{end}}{{end}}
+  {{if .Card.UsedPct}}<meter class="meter" min="0" max="100" value="{{.Card.UsedPct}}" aria-label="{{msg "dashboard.used"}}">{{msg "dashboard.meter_percentage" .Card.UsedPct}}</meter>{{end}}{{end}}
   <p>{{msg "dashboard.explain"}} <a href="/help">{{msg "dashboard.help"}}</a></p>
 </section>
 <div class="actions"><a class="btn" href="/n/{{$.Slug}}/trades/new">{{msg "dashboard.propose"}}</a> <a class="btn secondary" href="/n/{{$.Slug}}/history">{{msg "dashboard.history"}}</a></div>
