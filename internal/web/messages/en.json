@@ -83,6 +83,9 @@
   "balance.spoken_level": {
     "other": "Level, zero %[1]s"
   },
+  "balance.amount": {
+    "other": "%[1]s %[2]s"
+  },
   "balance.limit_used": {
     "other": "You are using %[1]s of your %[2]s credit limit."
   },
@@ -304,6 +307,9 @@
   },
   "dashboard.needs": {
     "other": "Trades waiting for you"
+  },
+  "dashboard.meter_percentage": {
+    "other": "%[1]d%%"
   },
   "dashboard.used": {
     "other": "Credit limit in use"
@@ -4462,5 +4468,18 @@
   },
   "date.month.Dec": {
     "other": "Dec"
+  },
+  "inbox.dated.policy": {
+    "other": "A change to the network rules takes effect on %[1]s. See the rules page for what changes."
+  },
+  "inbox.dated.closure": {
+    "one": "The network closes on %[2]s: %[3]s. You can keep trading until then; open proposals are cancelled on that date. History stays readable and you can download your data for %[1]d day afterwards.",
+    "other": "The network closes on %[2]s: %[3]s. You can keep trading until then; open proposals are cancelled on that date. History stays readable and you can download your data for %[1]d days afterwards."
+  },
+  "inbox.dated.dispute_response": {
+    "other": "The other party did not respond by %[1]s. The case stays open for your assessment."
+  },
+  "inbox.dated.dispute_decision": {
+    "other": "The decision target of %[1]s has passed."
   }
 }

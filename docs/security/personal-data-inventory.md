@@ -72,7 +72,8 @@ and administrators are told not to write personal data into reasons ([erasure.md
 | `reports.handling_note` | free text | Administrator's handling note | Lifetime of the network | Not exported | Kept: an administrator's record |
 | `challenges.reason` | free text | A member's challenge of a governance decision (GOV-016) | Lifetime of the network | Not exported | Kept (gap, see [Findings](#findings)) |
 | `challenges.rationale` | free text | Decision on the challenge | Lifetime of the network | Not exported | Kept: the decider's record |
-| `notifications.body` | free text | Inbox text; can contain display names | Read notifications deleted after 90 days; unread kept | Not exported | Emptied when it names the member, and the member's own inbox |
+| `notifications.body` | free text | Inbox text can contain display names and the closure reason | Read notifications deleted after 90 days; unread kept | Not exported | Emptied in the member's own inbox and in notices linked to their member record, trades, or disputes |
+| `notifications.event_date` | free text | Event type and instant for dated inbox messages. Scheduled closures also retain the administrator's reason and read-only period. | Read notifications deleted after 90 days; unread kept | Not exported | Cleared in the same update as the body for the member's own inbox and notices linked to their member record, trades, or disputes |
 | `announcements.title` | free text | Administrator announcement title | Lifetime of the network (append-only) | Not exported | Kept: an administrator's record |
 | `announcements.body` | free text | Administrator announcement text | Lifetime of the network (append-only) | Not exported | Kept: an administrator's record |
 | `network_terms.body` | free text | The network's published rules and terms (GOV-009) | Lifetime of the network (versioned) | Not exported | Kept: a published network record |

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -32,9 +33,44 @@ func (c *rc) unreadCount() int {
 }
 
 type inboxRow struct {
+	Dated                 *inboxDatedBody
 	ID, Title, Body, Href string
 	Unread                bool
 	When                  any
+}
+
+type inboxDatedBody struct {
+	messages.TwoParts
+	Date, ISODate, Reason string
+}
+
+// datedBody supplies a template-owned calendar date and escaped, ordinary text.
+// Legacy, redacted and unrecognized records keep their stored body.
+func (c *rc) datedBody(n *service.Notification) *inboxDatedBody {
+	d := n.EventDate
+	if n.Body == "" || d == nil || d.At.IsZero() {
+		return nil
+	}
+	at := c.at(d.At)
+	body := inboxDatedBody{Date: messages.Date(at), ISODate: at.Format(time.DateOnly)}
+	var key string
+	switch d.Event {
+	case domain.NoticePolicyEffective:
+		key = "inbox.dated.policy"
+	case domain.NoticeClosureScheduled:
+		body.TwoParts = messages.AroundTwoCount("inbox.dated.closure", d.ReadOnlyDays)
+		body.Reason = d.ClosureReason
+		return &body
+	case domain.NoticeResponseDue:
+		key = "inbox.dated.dispute_response"
+	case domain.NoticeDecisionDue:
+		key = "inbox.dated.dispute_decision"
+	default:
+		return nil
+	}
+	parts := messages.Around(key)
+	body.Before, body.After = parts.Before, parts.After
+	return &body
 }
 
 type awaitingDispute struct {
@@ -65,7 +101,7 @@ func (s *server) inbox(w http.ResponseWriter, r *http.Request, c *rc) {
 		d.Filter = "unread"
 	}
 	for _, n := range ns {
-		row := inboxRow{ID: n.ID, Title: n.Title, Body: n.Body, Unread: n.ReadAt == nil, When: c.when(n.CreatedAt)}
+		row := inboxRow{ID: n.ID, Title: n.Title, Body: n.Body, Dated: c.datedBody(n), Unread: n.ReadAt == nil, When: c.when(n.CreatedAt)}
 		if n.Link != "" {
 			row.Href = c.base() + n.Link
 		}

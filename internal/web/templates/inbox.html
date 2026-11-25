@@ -16,7 +16,7 @@
   <ul class="rows">
   {{range .Items}}<li>
     <p>{{if .Unread}}<span class="tag">{{msg "inbox.unread"}}</span> {{else}}<span class="tag">{{msg "inbox.read"}}</span> {{end}}{{if .Href}}<a href="{{.Href}}">{{.Title}}</a>{{else}}<strong>{{.Title}}</strong>{{end}}</p>
-    <p>{{.Body}} &middot; {{.When}}</p>
+    <p>{{with .Dated}}{{.Before}}<time datetime="{{.ISODate}}">{{.Date}}</time>{{.Between}}{{.Reason}}{{.After}}{{else}}{{.Body}}{{end}} &middot; {{.When}}</p>
     {{if .Unread}}<form method="post" action="/n/{{$.Slug}}/inbox/read">{{template "csrf" $}}<input type="hidden" name="id" value="{{.ID}}"><button type="submit" class="link" aria-label="{{msg "inbox.mark_read_named" .Title}}">{{msg "inbox.mark_read"}}</button></form>{{end}}
   </li>{{end}}
   </ul>

@@ -115,9 +115,12 @@ func (s *Service) ScheduleClosure(ctx context.Context, actor domain.Actor, netID
 			Reason: c.Reason, After: map[string]any{"closing_at": c.ClosingAt.UnixMilli(), "notice_days": days}}); err != nil {
 			return err
 		}
-		if err := s.notifyMembers(tx, netID, false, NotifClosureScheduled, "This network will close",
+		notice := inboxNotice(NotifClosureScheduled, "This network will close",
 			"The network closes on "+c.ClosingAt.Format("2 Jan 2006")+": "+c.Reason+". You can keep trading until then; open proposals are cancelled on that date. "+
-				fmt.Sprintf("History stays readable and you can download your data for %d days afterwards.", c.ReadOnlyDays)); err != nil {
+				fmt.Sprintf("History stays readable and you can download your data for %d days afterwards.", c.ReadOnlyDays), "")
+		notice.EventDate = &domain.NotificationDate{Event: domain.NoticeClosureScheduled, At: c.ClosingAt,
+			ClosureReason: c.Reason, ReadOnlyDays: c.ReadOnlyDays}
+		if err := s.notifyMembers(tx, netID, false, notice); err != nil {
 			return err
 		}
 		out = &c
@@ -157,8 +160,8 @@ func (s *Service) CancelClosure(ctx context.Context, actor domain.Actor, netID, 
 			Reason: strings.TrimSpace(reason), Before: map[string]any{"closing_at": p.net.Closure.ClosingAt.UnixMilli()}}); err != nil {
 			return err
 		}
-		return s.notifyMembers(tx, netID, false, NotifClosureCancelled, "The closure is cancelled",
-			"The planned closure of this network was cancelled: "+strings.TrimSpace(reason)+".")
+		return s.notifyMembers(tx, netID, false, inboxNotice(NotifClosureCancelled, "The closure is cancelled",
+			"The planned closure of this network was cancelled: "+strings.TrimSpace(reason)+".", ""))
 	})
 }
 
@@ -288,9 +291,9 @@ func (s *Service) finaliseOne(ctx context.Context, actor domain.Actor, candidate
 			return err
 		}
 		closed = true
-		return s.notifyMembers(tx, netID, false, NotifNetworkClosed, "This network is closed",
+		return s.notifyMembers(tx, netID, false, inboxNotice(NotifNetworkClosed, "This network is closed",
 			"The network is closed: "+n.Closure.Reason+". History stays readable and you can download your data for "+
-				fmt.Sprintf("%d days; new trades are not possible.", n.Closure.ReadOnlyDays))
+				fmt.Sprintf("%d days; new trades are not possible.", n.Closure.ReadOnlyDays), ""))
 	})
 	return closed, err
 }

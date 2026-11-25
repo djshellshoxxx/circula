@@ -321,9 +321,11 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 					return "", err
 				}
 				if days > 0 {
-					if err := s.notifyActive(tx, netID, "", NotifPolicyNotice, "Rule change announced",
+					notice := inboxNotice(NotifPolicyNotice, "Rule change announced",
 						"A change to the network rules takes effect on "+eff.Format("2 Jan 2006")+". See the rules page for what changes.",
-						"/policy"); err != nil {
+						"/policy")
+					notice.EventDate = &domain.NotificationDate{Event: domain.NoticePolicyEffective, At: eff}
+					if err := s.notifyActive(tx, netID, "", notice); err != nil {
 						return "", err
 					}
 				}

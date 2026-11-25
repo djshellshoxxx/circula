@@ -65,6 +65,7 @@ type Notification struct {
 	ID, NetworkID, MemberID, Kind, Title, Body, Link, DedupeKey string
 	CreatedAt                                                   time.Time
 	ReadAt                                                      *time.Time
+	EventDate                                                   *domain.NotificationDate `json:"-"`
 }
 
 // NotificationFilter selects a member's notifications, newest first by id.

@@ -17,6 +17,16 @@ func (w *world) inbox(a domain.Actor) []string {
 	return kinds
 }
 
+func (w *world) notificationDates(a domain.Actor, kind string) map[string]*domain.NotificationDate {
+	dates := map[string]*domain.NotificationDate{}
+	for _, n := range tu.Must(w.Svc.ListNotifications(w.Ctx, a, w.net.ID, service.NotificationQuery{})) {
+		if n.Kind == kind && n.EventDate != nil {
+			dates[n.EventDate.Event] = n.EventDate
+		}
+	}
+	return dates
+}
+
 func hasKind(kinds []string, k string) bool {
 	for _, x := range kinds {
 		if x == k {

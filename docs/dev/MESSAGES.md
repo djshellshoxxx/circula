@@ -28,6 +28,16 @@ result to trusted HTML. Unknown keys fail visibly instead of printing a key to
 the user. The embedded catalogue is validated on load. Each new entry needs a
 formatting test, including its plural forms and argument ordering where relevant.
 
+## Dated inbox notices
+
+Starting with migration 0026, rule changes, scheduled closures and overdue
+response/decision reminders retain the event instant alongside their original
+UTC notification text. The HTML inbox formats the calendar date in the member's
+current display zone, including when that preference changes after delivery.
+The API continues to return the stored text. Older notices retain their exact
+wording because their recorded dates lack the original time of day. Member
+erasure clears the event context in the same update that clears the body.
+
 ## Initial catalogue scope (historical)
 
 Migrated: all six administrator-overview count sentences, overview actions and
