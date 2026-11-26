@@ -1,5 +1,21 @@
 # Circula handoff
 
+## 2026-11-26 Pacific: UX-047 platform-suspension inbox categories
+
+The bounded continuation on `fix/ux047-platform-notice-categories-20261126`
+starts from `main@3faeed76c41467a75b09bc75e7185a98a92f8219`. Platform-suspension
+notices now use the existing readable category labels in the HTML inbox.
+Only the exact known stored format is recognized; operator reasons, historical
+records and API responses remain unchanged. Unknown and erased records keep
+their stored wording. No migration or suspension-policy change is introduced.
+
+The [qualification record](docs/qa/UX047-platform-notices-2026-11-26.md)
+preserves the failing regression source, passing local checks and independent
+review. The resulting PR's current-head checks remain the integration gate.
+UX-047 is still partial. Main merges require separate owner authorization;
+the five policy-held PRs, future modules and release/deployment gates remain
+unchanged. The completed #130–#139 work below is historical context.
+
 ## 2026-11-24 Pacific: UX-047 notification/dashboard integration complete (#134–#138)
 
 Every non-held Core branch is merged and main is qualified. Current main is

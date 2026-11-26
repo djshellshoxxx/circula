@@ -3952,6 +3952,12 @@
   "admin.network.category_hosting_agreement": {
     "other": "Hosting agreement"
   },
+  "inbox.platform_suspension.title": {
+    "other": "The platform has suspended this network"
+  },
+  "inbox.platform_suspension.body": {
+    "other": "Category: %[1]s. Reason: %[2]s. Members can still read balances and history and download their data."
+  },
   "erasure.action": {
     "other": "Erase personal data"
   },
