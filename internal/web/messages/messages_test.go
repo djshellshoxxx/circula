@@ -82,6 +82,8 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 	for key, e := range keys {
 		var args []any
 		switch key {
+		case "inbox.platform_suspension.body":
+			args = []any{"Security incident", "operator reason"}
 		case "inbox.dated.policy", "inbox.dated.dispute_response", "inbox.dated.dispute_decision":
 			args = []any{"1 Nov 2026"}
 		case "inbox.dated.closure":

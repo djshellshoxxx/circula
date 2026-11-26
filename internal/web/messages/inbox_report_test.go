@@ -16,6 +16,8 @@ func TestInboxReportMessages(t *testing.T) {
 		{"inbox.unread_count", []any{1000}, "1,000 unread."},
 		{"inbox.no_unread", nil, "No unread notifications."},
 		{"inbox.all_read", nil, "All notifications are marked as read."},
+		{"inbox.platform_suspension.title", nil, "The platform has suspended this network"},
+		{"inbox.platform_suspension.body", []any{"Security incident", name}, "Category: Security incident. Reason: " + name + ". Members can still read balances and history and download their data."},
 		{"inbox.dispute_opened", []any{"Quality"}, "A dispute was opened on a trade with you (Quality)"},
 		{"inbox.dispute_response", []any{"19 Nov 2026, 12:00 UTC"}, "Opened 19 Nov 2026, 12:00 UTC. You can add your response."},
 		{"inbox.mark_read_named", []any{name}, "Mark as read: " + name},
