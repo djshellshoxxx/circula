@@ -59,3 +59,21 @@ history rewrite or branch deletion. Retain six existing Core skips and manual,
 external, locale and bounded fuzz/load/repro/packaging limits.
 
 Evidence archive `evidence/UX047-member-role-lists-2026-11-28.tar.gz`: 26810 bytes, SHA256 `a87830a0c7fb700e0a923a84b93826c888efbbda84644c70f723478817829f21`; four payloads plus digest manifest. The original design review includes its interrupted append; the complete delivered source conclusion is preserved separately. This is not a CI artifact.
+
+## Narrow-screen follow-up
+
+The first PR build passed all seven applicable jobs in
+[run 46127440071](https://github.com/djshellshoxxx/circula/actions/runs/46127440071),
+including 597 browser tests and 3,292 named Linux race passes with six skips.
+An additional 125 repetitions of the member-role template test passed with the
+race detector. The packaged Linux build served 240 authenticated member-list
+requests from eight concurrent clients. Each response preserved two ordered
+role labels, the single-role and ordinary-member cases, and the expected action
+links. The normal grant and removal forms also updated the displayed roles.
+
+At 320 CSS pixels, Chromium/axe flagged the founder's “Mark as in default” link
+in both colour schemes. The 137 × 22 px link had only 15.6 px of safe clickable
+space. The repair gives each member action a wrapping inline block with a
+minimum width and height of 24 CSS pixels. A browser regression measures the
+actions and checks the role semantics and accessibility of the narrow page.
+See PR #144 for qualification of the corrected tree and its integration.
