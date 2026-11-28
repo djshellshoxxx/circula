@@ -25,7 +25,7 @@ function element(attributes = {}, textContent = '') {
   };
 }
 
-function run({ online = true, session = false, extendable = true, remaining = 180000, response, pathname = '/n/one/trades/new' } = {}) {
+function run({ online = true, session = false, extendable = true, remaining = 180000, response, expiryText, pathname = '/n/one/trades/new' } = {}) {
   let current = now;
   let timerID = 0;
   const timers = new Map();
@@ -43,6 +43,7 @@ function run({ online = true, session = false, extendable = true, remaining = 18
   if (session) {
     elements['session-warning'] = element({
       'data-expires': String((now + remaining) / 1000),
+      'data-expires-text': expiryText,
       'data-extendable': String(extendable),
       'data-extendable-message': 'Continue before {time}; use the stay button.',
       'data-fixed-message': 'This fixed session ends at {time}; save your work.',
@@ -405,4 +406,37 @@ test('pageshow clears pending and displayed feedback when a history page returns
       assertIdle(app);
     }
   }
+});
+
+
+// UX-024, UX-047: the server's catalogue formatter owns the visible expiry;
+// the browser's zone must not replace the selected account zone.
+test('session warning preserves server-formatted selected-zone expiry literally', () => {
+  const expiryText = "19 Nov 2026, 17:33 IST <time> $& $' $` $$";
+  for (const extendable of [true, false]) {
+    const app = run({ session: true, remaining: 30000, extendable, expiryText });
+    assert.equal(app.elements['session-msg'].textContent, extendable
+      ? `Continue before ${expiryText}; use the stay button.`
+      : `This fixed session ends at ${expiryText}; save your work.`);
+    assertDraftRetained(app);
+  }
+});
+
+test('extension replaces the visible expiry with the new server-formatted selected-zone text', async () => {
+  const expiryText = '19 Nov 2026, 17:30 IST';
+  const nextText = '19 Nov 2026, 17:40 IST <later> $&';
+  const app = run({
+    session: true, remaining: 30000, expiryText,
+    response: () => Promise.resolve({ ok: true, json: () => Promise.resolve({
+      expires: (now + 600000) / 1000, extendable: false, expires_text: nextText,
+    }) }),
+  });
+  app.elements['session-extend'].dispatch('click');
+  await new Promise(setImmediate);
+  assert.equal(app.elements['session-warning'].hidden, true);
+  assert.equal(app.timers.size, 1);
+  app.fireTimer(480000);
+  assert.equal(app.elements['session-msg'].textContent, `This fixed session ends at ${nextText}; save your work.`);
+  assert.equal(app.elements['session-extend'].hidden, true);
+  assertDraftRetained(app);
 });
