@@ -93,6 +93,7 @@
   var login = document.getElementById('session-login');
   var expires = parseInt(box.getAttribute('data-expires'), 10) * 1000;
   var extendable = box.getAttribute('data-extendable') === 'true';
+  var expiryText = box.getAttribute('data-expires-text');
   var lead = 120000, warnTimer = null, endTimer = null;
 
   function clock(ms) {
@@ -107,7 +108,7 @@
     next();
     extend.hidden = !extendable;
     msg.textContent = box.getAttribute(extendable ? 'data-extendable-message' : 'data-fixed-message')
-      .replace('{time}', function () { return clock(expires); });
+      .replace('{time}', function () { return expiryText || clock(expires); });
     box.hidden = false;
     box.focus();
     clearTimeout(endTimer);
@@ -132,6 +133,8 @@
       .then(function (r) { if (!r.ok) { throw new Error('status ' + r.status); } return r.json(); })
       .then(function (j) {
         expires = j.expires * 1000; extendable = !!j.extendable;
+        // Old cached pages/servers may omit the new presentation field.
+        expiryText = typeof j.expires_text === 'string' ? j.expires_text : null;
         clearTimeout(endTimer);
         box.hidden = true; schedule();
       })
