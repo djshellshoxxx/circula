@@ -17,8 +17,8 @@
 <tbody>{{range .D.Rows}}<tr>
   <th scope="row" data-label="{{msg "validation.label.name"}}">{{.DisplayName}}{{if .DefaultFlag}} <span class="tag">{{msg "admin.members.in_default"}}</span>{{end}}</th>
   <td data-label="{{msg "validation.label.status"}}">{{.StatusLabel}}</td>
-  <td data-label="{{msg "admin.members.roles"}}">{{if .Roles}}{{.Roles}}{{else}}{{msg "admin.members.member_role"}}{{end}}</td>
-  <td data-label="{{msg "admin.members.actions"}}">{{$m := .}}{{range .Actions}}<a href="/n/{{$.Slug}}/admin/members/{{$m.ID}}/{{.Value}}" aria-label="{{msg "admin.members.action_for" .Label $m.DisplayName}}">{{.Label}}</a> {{end}}</td>
+  <td data-label="{{msg "admin.members.roles"}}">{{if .Roles}}<ul class="role-list">{{range .Roles}}<li>{{.}}</li>{{end}}</ul>{{else}}{{msg "admin.members.member_role"}}{{end}}</td>
+  <td class="member-actions" data-label="{{msg "admin.members.actions"}}">{{$m := .}}{{range .Actions}}<a href="/n/{{$.Slug}}/admin/members/{{$m.ID}}/{{.Value}}" aria-label="{{msg "admin.members.action_for" .Label $m.DisplayName}}">{{.Label}}</a> {{end}}</td>
 </tr>{{end}}</tbody></table></div>
 <p>{{msg "admin.members.matches" .D.Pages.Total}}</p>
 {{template "pagenav" dict "Label" (msg "admin.members.pages") "Pages" .D.Pages}}

@@ -49,6 +49,8 @@ dl.kv dt{font-weight:600}
 dl.kv dd{margin:0;overflow-wrap:anywhere}
 .big{font-size:1.75rem;font-weight:700;margin:.25rem 0}
 .meter{display:block;width:100%;height:1rem;border:2px solid var(--line);border-radius:6px}
+ul.role-list{margin:0;padding-inline-start:1.25rem}
+.member-actions a{display:inline-block;min-inline-size:24px;min-block-size:24px;max-inline-size:100%}
 ul.rows{list-style:none;margin:0;padding:0}
 ul.rows>li{border-top:1px solid var(--line);padding:.75rem 0}
 .scroll{overflow-x:auto}

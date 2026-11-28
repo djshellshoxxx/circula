@@ -37,7 +37,7 @@ func (s *server) adminHome(w http.ResponseWriter, r *http.Request, c *rc) {
 type memberRow struct {
 	*domain.Member
 	StatusLabel string
-	Roles       string
+	Roles       []string
 	Actions     []option
 }
 
@@ -70,7 +70,7 @@ func newMemberRow(m *domain.Member) memberRow {
 	for _, role := range m.Roles {
 		roles = append(roles, memberRoleLabel(role))
 	}
-	return memberRow{Member: m, StatusLabel: memberStatusLabel(m.Status), Roles: strings.Join(roles, ", "), Actions: actionsFor(m)}
+	return memberRow{Member: m, StatusLabel: memberStatusLabel(m.Status), Roles: roles, Actions: actionsFor(m)}
 }
 
 type memberActionDef struct {
