@@ -32,6 +32,34 @@ func (c *rc) unreadCount() int {
 	return n
 }
 
+// inboxNoticeText recognizes the exact historical format written by
+// PlatformSuspendNetwork. Only the four known category values are translated;
+// the reason remains literal data. Unrecognized or redacted records retain
+// their stored text. Do not use the network's current suspension to reconstruct
+// history, or change the notification shared with storage and the API.
+func inboxNoticeText(n *service.Notification) (string, string) {
+	if n.Kind != service.NotifNetworkSuspended || n.Title != "The platform has suspended this network" ||
+		n.Link != "" || n.EventDate != nil {
+		return n.Title, n.Body
+	}
+	for _, category := range [...]string{
+		domain.SuspendLegalOrder, domain.SuspendSecurityIncident,
+		domain.SuspendPlatformAbuse, domain.SuspendHostingAgreement,
+	} {
+		rest, ok := strings.CutPrefix(n.Body, "Category: "+category+". Reason: ")
+		if !ok {
+			continue
+		}
+		reason, ok := strings.CutSuffix(rest, ". Members can still read balances and history and download their data.")
+		if ok && reason != "" && strings.TrimSpace(reason) == reason {
+			return messages.Text("inbox.platform_suspension.title"),
+				messages.Text("inbox.platform_suspension.body", networkSuspensionCategory(category), reason)
+		}
+		break
+	}
+	return n.Title, n.Body
+}
+
 type inboxRow struct {
 	Dated                 *inboxDatedBody
 	ID, Title, Body, Href string
@@ -101,7 +129,8 @@ func (s *server) inbox(w http.ResponseWriter, r *http.Request, c *rc) {
 		d.Filter = "unread"
 	}
 	for _, n := range ns {
-		row := inboxRow{ID: n.ID, Title: n.Title, Body: n.Body, Dated: c.datedBody(n), Unread: n.ReadAt == nil, When: c.when(n.CreatedAt)}
+		title, body := inboxNoticeText(n)
+		row := inboxRow{ID: n.ID, Title: title, Body: body, Dated: c.datedBody(n), Unread: n.ReadAt == nil, When: c.when(n.CreatedAt)}
 		if n.Link != "" {
 			row.Href = c.base() + n.Link
 		}

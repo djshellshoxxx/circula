@@ -1,6 +1,17 @@
 # Circula current work
 
-## 2026-11-23 Pacific: active UX-047 unit-suffix continuation (#133)
+## 2026-11-26 Pacific: platform-suspension inbox wording
+
+UX-047 remains partial. The current bounded continuation is
+`fix/ux047-platform-notice-categories-20261126`, from `main@3faeed76`.
+It presents the four known platform-suspension categories through the existing
+English catalogue while preserving reasons, stored history and API responses.
+The [source qualification](qa/UX047-platform-notices-2026-11-26.md) records the
+regression, local race/build checks and independent review. Complete the
+resulting PR's current-head gates before seeking owner merge authorization.
+Do not repeat #130–#139 or change the five policy-held PRs or future modules.
+
+## 2026-11-23 Pacific: unit-suffix continuation (#133, historical)
 
 The completed #130 precision and #131/#132 quantity/native qualification slices
 are not repeated. Starting main is `9cb4cc0250db487d6fd4760227ce906c4ea5f58f`,

@@ -1,11 +1,31 @@
 # UI messages (UX-047)
 
+## Platform-suspension inbox continuation — 2026-11-26 Pacific
+
+`inbox.platform_suspension.title` and `inbox.platform_suspension.body` render
+the exact known platform-suspension notice using the four existing
+`admin.network.category_*` labels. The catalogue has 1,484 entries; all 1,482
+previous entries are unchanged. Operator reasons remain literal strings and
+the inbox template continues to escape them.
+
+This is an explicit compatibility renderer for the stored English format in
+`PlatformSuspendNetwork`: the kind, title, category prefix and final sentence
+must match, the reason must be nonempty and already trimmed, and there must
+be no link or event-date context. Unknown formats and erased bodies fall back
+to the exact saved text. The renderer neither consults the current suspension
+nor changes stored records or API output. A producer-format change therefore
+retains its own wording until separately supported. No new locale or schema is
+introduced. See the [qualification record](../qa/UX047-platform-notices-2026-11-26.md).
+UX-047 remains partial.
+
+## Earlier continuation records
+
 The sections below preserve the scope and qualification recorded for each
 catalogue continuation. Their original "not migrated" and pending-check
 statements describe their historical slice; later continuations and dated
-integrated-source qualification supersede those statements. The current
+integrated-source qualification supersede those statements. The historical
 [unit-suffix record](../qa/UX047-unit-suffix-2026-11-23.md)
-records the active #133 source checkpoint and required integration gates. The prior
+records the original #133 source checkpoint and required integration gates. The prior
 [rules-log quantity slice is fully qualified](https://github.com/djshellshoxxx/circula/blob/547d24b62a6b23ab2c8d9851e23d4a4e152182f8/docs/qa/UX047-rule-quantities-integration-2026-11-23.md). The prior
 [setup precision slice is fully qualified](https://github.com/djshellshoxxx/circula/blob/048b51940f4533d746e48dc3acf69e548ee61f09/docs/qa/UX047-setup-precision-integration-2026-11-20.md).
 UX-047 remains partial.
