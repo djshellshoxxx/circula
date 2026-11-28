@@ -1,5 +1,22 @@
 # Circula current work
 
+## 2026-11-27 Pacific: session-warning expiry presentation (UX-047 / UX-024)
+
+The bounded current slice on `fix/ux047-session-expiry-text-20261127` starts from
+`3faeed76c41467a75b09bc75e7185a98a92f8219`. Session warnings now consume
+catalogue-formatted server expiry text where viewer context is available;
+the extension route explicitly loads the saved display zone. Numeric expiry,
+timers, authentication and CSRF retain their contracts. Nil-viewer pages retain
+an explicit UTC fallback; broader selected-zone wiring remains an assessment.
+
+The [source qualification](qa/UX047-session-warning-2026-11-27.md) records two failing Node regressions,
+26 passing corrected helper tests and the added native Go regressions.
+Go/compiler/browser execution is unavailable locally; exact-head CI is required.
+Keep this slice active until native gates are verified. #142 is independently
+qualified but remains draft under its separate owner merge-authorization gate.
+Do not duplicate its owned inbox work or any completed #130–#139 slice.
+UX-047 remains partial; locale/manual/external/policy and future-module gates stay open.
+
 ## 2026-11-23 Pacific: active UX-047 unit-suffix continuation (#133)
 
 The completed #130 precision and #131/#132 quantity/native qualification slices

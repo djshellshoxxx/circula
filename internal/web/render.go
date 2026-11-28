@@ -68,6 +68,12 @@ func (p *page) Time(t time.Time) template.HTML {
 	return fmtTime(p.localTime(t))
 }
 
+// SessionExpiryText shares the catalogue formatter and the viewer's selected
+// display zone with ordinary page timestamps. The Unix expiry still drives timers.
+func (p *page) SessionExpiryText() string {
+	return messages.DateTime(p.localTime(time.Unix(p.ExpiresAt, 0)))
+}
+
 // ISODate preserves date-only precision for membership join dates.
 func (p *page) ISODate(t time.Time) string {
 	return p.localTime(t).Format(time.DateOnly)

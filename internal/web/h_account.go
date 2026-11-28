@@ -95,11 +95,14 @@ func (s *server) expiry(r *http.Request) (at int64, extendable, ok bool) {
 // already refreshed the session's idle timer (Authenticate); it reports the
 // new expected end.
 func (s *server) sessionExtend(w http.ResponseWriter, r *http.Request, c *rc) {
+	c.loadDisplayZone()
 	at, ext, ok := s.expiry(r)
 	w.Header().Set("Content-Type", "application/json")
 	if !ok {
 		http.Error(w, `{"error":"unavailable"}`, http.StatusNotFound)
 		return
 	}
-	_ = json.NewEncoder(w).Encode(map[string]any{"expires": at, "extendable": ext})
+	_ = json.NewEncoder(w).Encode(map[string]any{"expires": at, "extendable": ext,
+		"expires_text": messages.DateTime(c.at(time.Unix(at, 0))),
+	})
 }
