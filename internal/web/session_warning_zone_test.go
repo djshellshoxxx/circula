@@ -81,7 +81,7 @@ func TestSessionWarningHTTPUsesSavedDisplayZone(t *testing.T) {
 			}
 			s := newServer(env.Svc, Options{
 				CSRFKey: []byte("0123456789abcdef0123456789abcdef"),
-				Clock: env.Clock, SessionIdle: idle, SessionMax: 24 * time.Hour,
+				Clock:   env.Clock, SessionIdle: idle, SessionMax: 24 * time.Hour,
 			})
 			h := s.wrap(s.mux)
 			request := func(method, path string, csrf bool) *httptest.ResponseRecorder {
