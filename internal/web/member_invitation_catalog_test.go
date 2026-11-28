@@ -61,7 +61,7 @@ func TestMemberCatalogueRowsAndActions(t *testing.T) {
 		if row.Member != m || row.Status != tc.status || !reflect.DeepEqual(actions, tc.actions) || row.StatusLabel != string(tc.status) {
 			t.Fatalf("member state/action selection changed: %#v", row)
 		}
-		if len(tc.roles) == 2 && row.Roles != "admin, reviewer" {
+		if len(tc.roles) == 2 && !reflect.DeepEqual(row.Roles, []string{"admin", "reviewer"}) {
 			t.Fatal("known role labels or their order changed")
 		}
 		rows = append(rows, row)
@@ -80,7 +80,7 @@ func TestMemberCatalogueRowsAndActions(t *testing.T) {
 			`href="/n/town/admin/members/member-1000/approve" aria-label="`+template.HTMLEscapeString("Approve "+memberCatalogueUnsafe)+`">Approve</a>`,
 			`<caption>Members of `+template.HTMLEscapeString(memberCatalogueUnsafe)+`</caption>`,
 			`data-label="Status">`+template.HTMLEscapeString(memberCatalogueUnsafe)+`</td>`,
-			`data-label="Roles">`+template.HTMLEscapeString(memberCatalogueUnsafe)+`</td>`)
+			`data-label="Roles"><ul class="role-list"><li>`+template.HTMLEscapeString(memberCatalogueUnsafe)+`</li></ul></td>`)
 		for _, value := range []string{"pending", "active", "suspended", "departed"} {
 			selected := strings.Contains(body, `<option value="`+value+`" selected>`)
 			if selected != (value == status) {
